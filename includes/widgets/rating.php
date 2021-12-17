@@ -252,8 +252,8 @@ class Jet_Smart_Filters_Rating_Widget extends Jet_Smart_Filters_Base_Widget {
 				'label' => esc_html__( 'Selected Color', 'jet-smart-filters' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .jet-rating input:checked ~ label'  => 'color: {{VALUE}}',
-					'{{WRAPPER}} .jet-rating input:checked ~ label ~ label'  => 'color: {{VALUE}}',
+					'{{WRAPPER}} .jet-rating input.is-checked ~ label'  => 'color: {{VALUE}}',
+					'{{WRAPPER}} .jet-rating input.is-checked ~ label ~ label'  => 'color: {{VALUE}}',
 				),
 			)
 		);
@@ -264,8 +264,8 @@ class Jet_Smart_Filters_Rating_Widget extends Jet_Smart_Filters_Base_Widget {
 				'label' => esc_html__( 'Selected On Hover Color', 'jet-smart-filters' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} .jet-rating input:not(:checked) ~ label:hover'         => 'color: {{VALUE}}',
-					'{{WRAPPER}} .jet-rating input:not(:checked) ~ label:hover ~ label' => 'color: {{VALUE}}',
+					'{{WRAPPER}} .jet-rating input:not(.is-checked) ~ label:hover'         => 'color: {{VALUE}}',
+					'{{WRAPPER}} .jet-rating input:not(.is-checked) ~ label:hover ~ label' => 'color: {{VALUE}}',
 				),
 			)
 		);

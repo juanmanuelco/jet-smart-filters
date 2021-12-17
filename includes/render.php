@@ -35,6 +35,9 @@ if ( ! class_exists( 'Jet_Smart_Filters_Render' ) ) {
 			add_action( 'wp_ajax_jet_smart_filters_get_hierarchy_level', array( $this, 'hierarchy_level' ) );
 			add_action( 'wp_ajax_nopriv_jet_smart_filters_get_hierarchy_level', array( $this, 'hierarchy_level' ) );
 
+			add_action( 'wp_ajax_jet_smart_filters_get_indexed_data', array( $this, 'get_indexed_data' ) );
+			add_action( 'wp_ajax_nopriv_jet_smart_filters_get_indexed_data', array( $this, 'get_indexed_data' ) );
+
 		}
 
 		/**
@@ -65,6 +68,30 @@ if ( ! class_exists( 'Jet_Smart_Filters_Render' ) ) {
 			);
 
 			wp_send_json_success( $hierarchy->get_levels() );
+
+		}
+
+		/**
+		 * Get indexed data
+		 * @return
+		 */
+		public function get_indexed_data() {
+
+			$provider_key     = isset( $_REQUEST['provider'] ) ? $_REQUEST['provider'] : false;
+			$indexing_filters = isset( $_REQUEST['indexing_filters'] ) ? json_decode( stripcslashes( $_REQUEST['indexing_filters'] ), true ) : false;
+			$query_args       = isset( $_REQUEST['query_args'] ) ? $_REQUEST['query_args'] : array();
+
+			if ( ! ( $provider_key && $indexing_filters ) ) {
+				return;
+			}
+
+			foreach ( $indexing_filters as $filter_id ) {
+				jet_smart_filters()->indexer->data->add_indexing_data_from_filter( $provider_key, $filter_id );
+			}
+
+			$indexed_data = jet_smart_filters()->indexer->data->get_indexed_data($provider_key, $query_args);
+
+			wp_send_json_success( $indexed_data );
 
 		}
 

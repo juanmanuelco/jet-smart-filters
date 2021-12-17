@@ -45,13 +45,13 @@
 		}
 	}
 
-	input:checked ~ label,
-	input:checked ~ label ~ label {
+	input.is-checked ~ label,
+	input.is-checked ~ label ~ label {
 		color: #ffd700;
 	}
 
-	input:not(:checked) ~ label:hover,
-	input:not(:checked) ~ label:hover ~ label {
+	input:not(.is-checked) ~ label:hover,
+	input:not(.is-checked) ~ label:hover ~ label {
 		color: #ffed85;
 	}
 

@@ -9,6 +9,7 @@ import filtersUI from 'includes/filters-ui';
 import eventBus from 'includes/event-bus';
 import preloader from 'includes/preloader';
 import {
+	getNesting,
 	isNotEmpty
 } from 'includes/utility';
 
@@ -39,8 +40,9 @@ const filtersInitializer = {
 	initializeFiltersInContainer,
 	findFilters,
 	filtersUI,
+	setIndexedData,
 	events: eventBus
-}
+};
 
 const filtersList = filtersInitializer.filtersList,
 	additionalFiltersExceptions = ['ActiveFilters', 'ActiveTags', 'ButtonRemove'];
@@ -113,7 +115,7 @@ function init() {
 				pushFilterToGroup(createAdditionalFilter(additionalProvider, additionalQueryId, filter));
 			}
 		});
-	})
+	});
 
 	// group filter initialization
 	for (const filterGroupKey in filterGroups) {
@@ -146,7 +148,7 @@ function createAdditionalFilter(additionalProvider, additionalQueryId, filter) {
 
 function pushFilterToGroup(filter) {
 	if (!filter || !filter.provider)
-		return
+		return;
 
 	const provider = filter.provider,
 		queryId = filter.queryId;
@@ -163,6 +165,44 @@ function initializeFiltersInContainer(container) {
 
 	if (filters.length)
 		init();
+}
+
+function setIndexedData(provider, query = {}) {
+	if (!filterGroups[provider] || !filterGroups[provider].indexingFilters)
+		return;
+
+	const ajaxURL = getNesting(JetSmartFilterSettings, 'ajaxurl'),
+		requestData = {
+			action: 'jet_smart_filters_get_indexed_data',
+			provider,
+			query_args: query,
+			indexing_filters: filterGroups[provider].indexingFilters
+		};
+
+	$.ajax({
+		url: ajaxURL,
+		type: 'POST',
+		dataType: 'json',
+		data: requestData,
+	}).done(function (response) {
+		if (!response.data)
+			return;
+
+		if (!window.JetSmartFilterSettings.jetFiltersIndexedData)
+			window.JetSmartFilterSettings.jetFiltersIndexedData = {};
+
+		if (!window.JetSmartFilterSettings.jetFiltersIndexedData[provider])
+			window.JetSmartFilterSettings.jetFiltersIndexedData[provider] = {};
+
+		// update indexed data
+		window.JetSmartFilterSettings.jetFiltersIndexedData[provider] = response.data;
+
+		eventBus.publish(
+			'ajaxFilters/updated',
+			provider.substring(0, provider.indexOf('/')),
+			provider.substring(provider.indexOf('/') + 1)
+		);
+	});
 }
 
 export default filtersInitializer;

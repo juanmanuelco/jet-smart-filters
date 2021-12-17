@@ -38,6 +38,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 		 */
 		public function prepare_localized_data( $args ) {
 
+			do_action( 'jet-smart-filters/indexer/before-prepare-data' );
+
 			$indexed_data = array();
 
 			foreach ( jet_smart_filters()->query->get_default_queries() as $provider => $queries ) {
@@ -60,6 +62,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 				$args['jetFiltersIndexedData'] = apply_filters( 'jet-smart-filters/filters/indexed-data', $indexed_data );
 			}
 
+			do_action( 'jet-smart-filters/indexer/after-prepare-data' );
+
 			return $args;
 
 		}
@@ -73,6 +77,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 		 */
 		public function prepare_ajax_data( $args ) {
 
+			do_action( 'jet-smart-filters/indexer/before-prepare-data' );
+
 			$provider_key     = isset( $_REQUEST['provider'] ) ? $_REQUEST['provider'] : false;
 			$indexing_filters = isset( $_REQUEST['indexing_filters'] ) ? json_decode( stripcslashes( $_REQUEST['indexing_filters'] ), true ) : false;
 
@@ -80,13 +86,11 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 				return $args;
 			}
 
-			if ( $provider_key && $indexing_filters ) {
-				foreach ( $indexing_filters as $filter_id ) {
-					$this->add_indexing_data_from_filter( $provider_key, $filter_id );
-				}
-			}
-
 			$indexed_data = array();
+
+			foreach ( $indexing_filters as $filter_id ) {
+				$this->add_indexing_data_from_filter( $provider_key, $filter_id );
+			}
 
 			if ( ! empty( $this->indexing_data[$provider_key] ) ) {
 				$query_args   = jet_smart_filters()->query->get_query_args();
@@ -96,6 +100,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 			$args['jetFiltersIndexedData'] = apply_filters( 'jet-smart-filters/filters/indexed-data', array(
 				$provider_key => $indexed_data
 			) );
+
+			do_action( 'jet-smart-filters/indexer/after-prepare-data' );
 
 			return $args;
 

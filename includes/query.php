@@ -71,6 +71,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 				unset( $query_args['tax_query'] );
 			}
 
+			if ( $this->is_ajax_filter() ) {
+				$this->_default_query = $query_args;
+
+				return;
+			}
+
 			$this->_default_query[ $provider_id ][ $query_id ] = $query_args;
 
 		}

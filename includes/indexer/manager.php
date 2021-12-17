@@ -50,7 +50,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 				}
 
 				add_action( 'restrict_manage_posts', array( $this, 'add_index_filters_button' ), 10, 2 );
-				add_action( 'wp_ajax_jet_smart_filters_admin_indexer', array( $this, 'indexing_filters' ) );
+				add_action( 'wp_ajax_jet_smart_filters_admin_indexer', array( $this, 'index_filters' ) );
 
 				if ( filter_var( jet_smart_filters()->settings->get( 'use_auto_indexing' ), FILTER_VALIDATE_BOOLEAN ) ) {
 					add_action( 'wp_after_insert_post', array( $this, 'post_updated' ), 10, 2 );
@@ -77,7 +77,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 		/**
 		 * Reindex filters data
 		 */
-		public function indexing_filters() {
+		public function index_filters() {
 
 			Jet_Smart_Filters_DB::clear_table( 'indexer' );
 
@@ -172,7 +172,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 
 			} else if ( $post->post_type === 'jet-smart-filters' ) {
 
-				$this->indexing_filters();
+				$this->index_filters();
 
 			}
 
