@@ -1,6 +1,10 @@
 # JetSmartFilters
 
 # ChangeLog
+## 2.3.7
+* ADD: indexer on get filters data request sql SET SESSION group_concat_max_len
+* ADD: check is indexer enabled on 'index_filters' method
+
 ## 2.3.6
 * SYS: renamed indexer method
 

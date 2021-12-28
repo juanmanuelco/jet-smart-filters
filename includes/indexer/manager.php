@@ -20,6 +20,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 	 */
 	class Jet_Smart_Filters_Indexer_Manager {
 
+		public $is_indexer_enabled = false;
 		public $data               = null;
 		public $controls           = null;
 		public $table_name         = null;
@@ -34,29 +35,33 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 		 */
 		public function __construct() {
 
-			if ( filter_var( jet_smart_filters()->settings->get( 'use_indexed_filters' ), FILTER_VALIDATE_BOOLEAN ) ) {
-				require jet_smart_filters()->plugin_path( 'includes/db.php' );
-				require jet_smart_filters()->plugin_path( 'includes/indexer/data.php' );
-				require jet_smart_filters()->plugin_path( 'includes/indexer/controls.php' );
+			$this->is_indexer_enabled = filter_var( jet_smart_filters()->settings->get( 'use_indexed_filters' ), FILTER_VALIDATE_BOOLEAN );
 
-				$this->data       = new Jet_Smart_Filters_Indexer_Data();
-				$this->controls   = new Jet_Smart_Filters_Indexer_Controls();
-				$this->table_name = Jet_Smart_Filters_DB::get_table_full_name( 'indexer' );
+			if ( ! $this->is_indexer_enabled ) {
+				return;
+			}
 
-				foreach ( jet_smart_filters()->settings->get( 'avaliable_post_types' ) as $post_type => $enabled ) {
-					if ( filter_var( $enabled, FILTER_VALIDATE_BOOLEAN ) ) {
-						array_push( $this->indexed_post_types, $post_type );
-					}
+			require jet_smart_filters()->plugin_path( 'includes/db.php' );
+			require jet_smart_filters()->plugin_path( 'includes/indexer/data.php' );
+			require jet_smart_filters()->plugin_path( 'includes/indexer/controls.php' );
+
+			$this->data       = new Jet_Smart_Filters_Indexer_Data();
+			$this->controls   = new Jet_Smart_Filters_Indexer_Controls();
+			$this->table_name = Jet_Smart_Filters_DB::get_table_full_name( 'indexer' );
+
+			foreach ( jet_smart_filters()->settings->get( 'avaliable_post_types' ) as $post_type => $enabled ) {
+				if ( filter_var( $enabled, FILTER_VALIDATE_BOOLEAN ) ) {
+					array_push( $this->indexed_post_types, $post_type );
 				}
+			}
 
-				add_action( 'restrict_manage_posts', array( $this, 'add_index_filters_button' ), 10, 2 );
-				add_action( 'wp_ajax_jet_smart_filters_admin_indexer', array( $this, 'index_filters' ) );
+			add_action( 'restrict_manage_posts', array( $this, 'add_index_filters_button' ), 10, 2 );
+			add_action( 'wp_ajax_jet_smart_filters_admin_indexer', array( $this, 'index_filters' ) );
 
-				if ( filter_var( jet_smart_filters()->settings->get( 'use_auto_indexing' ), FILTER_VALIDATE_BOOLEAN ) ) {
-					add_action( 'wp_after_insert_post', array( $this, 'post_updated' ), 10, 2 );
-					add_action( 'user_register', array( $this, 'user_updated' ), 10 );
-					add_action( 'profile_update', array( $this, 'user_updated' ), 10 );
-				}
+			if ( filter_var( jet_smart_filters()->settings->get( 'use_auto_indexing' ), FILTER_VALIDATE_BOOLEAN ) ) {
+				add_action( 'wp_after_insert_post', array( $this, 'post_updated' ), 10, 2 );
+				add_action( 'user_register', array( $this, 'user_updated' ), 10 );
+				add_action( 'profile_update', array( $this, 'user_updated' ), 10 );
 			}
 
 		}
@@ -76,8 +81,13 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 
 		/**
 		 * Reindex filters data
+		 * !!! this method can be called by a third party !!!
 		 */
 		public function index_filters() {
+
+			if ( ! $this->is_indexer_enabled ) {
+				return;
+			}
 
 			Jet_Smart_Filters_DB::clear_table( 'indexer' );
 
@@ -509,6 +519,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 			);
 
 			global $wpdb;
+			$wpdb->query( 'SET SESSION group_concat_max_len = 131072;' );
 			$sql = "
 			SELECT $wpdb->posts.ID, $wpdb->posts.post_title, GROUP_CONCAT($wpdb->postmeta.meta_key SEPARATOR '<-nv->') as meta_key, GROUP_CONCAT($wpdb->postmeta.meta_value SEPARATOR '<-nv->') as meta_value
 				FROM $wpdb->posts, $wpdb->postmeta
