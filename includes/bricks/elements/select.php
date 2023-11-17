@@ -3,6 +3,8 @@
 namespace Jet_Smart_Filters\Bricks_Views\Elements;
 
 // If this file is called directly, abort.
+use Bricks\Database;
+
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }

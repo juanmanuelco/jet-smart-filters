@@ -277,6 +277,8 @@ class Jet_Smart_Filters_Date_Period_Widget extends Jet_Smart_Filters_Base_Widget
 				'selectors'  => array(
 					'{{WRAPPER}} ' . $css_scheme['prev-button'] => 'margin-right: {{SIZE}}{{UNIT}};',
 					'{{WRAPPER}} ' . $css_scheme['next-button'] => 'margin-left: {{SIZE}}{{UNIT}};',
+					'.rtl {{WRAPPER}} ' . $css_scheme['prev-button'] => 'margin-left: {{SIZE}}{{UNIT}}; margin-right: 0;',
+					'.rtl {{WRAPPER}} ' . $css_scheme['next-button'] => 'margin-right: {{SIZE}}{{UNIT}}; margin-left: 0;'
 				)
 			)
 		);

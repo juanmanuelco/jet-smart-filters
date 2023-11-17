@@ -39,6 +39,8 @@ registerBlockType('jet-smart-filters/remove-filters', {
 		apply_type: attributes.apply_type,
 		remove_filters_text: attributes.remove_filters_text,
 		query_id: attributes.query_id,
+		additional_providers_enabled: attributes.additional_providers_enabled,
+		additional_providers_list: attributes.additional_providers_list,
 	},
 	className: 'jet-smart-filters-remove-filters',
 	edit: class extends wp.element.Component {

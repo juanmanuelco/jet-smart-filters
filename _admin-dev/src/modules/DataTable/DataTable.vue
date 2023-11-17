@@ -14,7 +14,7 @@
 						  :column="key"
 						  :value="value"
 						  :columnIndex="columnIndex">
-						{{value}}
+						{{ value }}
 					</slot>
 				</TableHeadCell>
 			</slot>
@@ -37,7 +37,7 @@
 							  :column="key"
 							  :value="row[key]"
 							  :rowIndex="rowIndex">
-							{{row[key]}}
+							{{ row[key] }}
 						</slot>
 					</TableBodyCell>
 				</TableRow>

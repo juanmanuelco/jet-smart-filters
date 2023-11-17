@@ -6,6 +6,7 @@ if ( empty( $args ) ) {
 
 $query_var           = $args['query_var'];
 $placeholder         = $args['placeholder'];
+$hide_apply_button   = $args['hide_apply_button'];
 $current             = $this->get_current_filter_value( $args );
 $accessibility_label = $args['accessibility_label'];
 $classes = array(
@@ -33,7 +34,7 @@ if ( '' !== $args['button_icon'] ) {
 			<div class="jet-search-filter__input-loading"></div>
 		<?php endif; ?>
 	</div>
-	<?php if ( 'ajax-ontyping' !== $args['apply_type'] ) : ?>
+	<?php if ( ! $hide_apply_button && 'ajax-ontyping' !== $args['apply_type'] ) : ?>
 		<button
 			type="button"
 			class="jet-search-filter__submit apply-filters__button"

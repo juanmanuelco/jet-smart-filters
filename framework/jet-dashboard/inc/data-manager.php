@@ -210,7 +210,7 @@ class Data_Manager {
 		switch ( $license_action ) {
 
 			case 'check-plugin-update':
-				set_site_transient( 'update_plugins', null );
+				delete_site_transient( 'update_plugins' );
 
 				wp_send_json(
 					array(

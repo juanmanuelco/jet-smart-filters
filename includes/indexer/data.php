@@ -81,7 +81,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 			}
 
 			if ( ! empty( $this->indexing_data[$provider_key] ) ) {
-				$query_args   = jet_smart_filters()->utils->merge_query_args(
+				$query_args = jet_smart_filters()->utils->merge_query_args(
 					jet_smart_filters()->query->get_default_queries(),
 					jet_smart_filters()->query->get_query_args()
 				);
@@ -233,6 +233,15 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 							}
 						}
 					}
+
+					$indexed_data[ $query_type ] = apply_filters(
+						'jet-smart-filters/filters/indexed-data/query-type-data',
+						$indexed_data[ $query_type ],
+						$query_type,
+						$key,
+						$data,
+						$this
+					);
 				}
 			}
 
@@ -441,9 +450,11 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 
 			unset( $args['jet_smart_filters'] );
 			unset( $args['paged'] );
+			unset( $args['nopaging'] );
 
 			switch ( $type ) {
 				case 'posts':
+				case 'current-wp-query':
 					$post_main_args = [
 						'post_status'    => 'publish',
 						'posts_per_page' => -1,

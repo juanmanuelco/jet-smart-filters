@@ -103,6 +103,11 @@
 		}
 	}
 
+	&__n-selected {
+		align-self: center;
+		margin: 4px;
+	}
+
 	&__body {
 		//overflow: hidden;
 		display: none;
@@ -135,6 +140,16 @@
 	.jet-filter-items-moreless {
 		padding: 5px 12px;
 		border-top: 1px solid #ebeced;
+	}
+
+	// Dropdown list
+	&__body .jet-checkboxes-list,
+	&__body .jet-radio-list,
+	&__body .jet-color-image-list {
+		&__item,
+		&__button {
+			width: 100%;
+		}
 	}
 
 	// open

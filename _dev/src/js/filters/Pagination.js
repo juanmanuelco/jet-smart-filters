@@ -179,7 +179,7 @@ export default class Pagination extends Filter {
 	onPaginationItemClick(evt) {
 		if (this.isAjaxLoading)
 			return;
-			
+
 		const $item = $(evt.currentTarget);
 		let value = $item.data('value');
 
@@ -207,9 +207,10 @@ export default class Pagination extends Filter {
 
 		if (this.pageIndex !== value && !this.moreActiveIndexes.includes(value)) {
 			this.moreActiveIndexes = [];
+			this.dataValue = value;
+			this.updateActivePagesProviderProps();
 
 			// emit pagination change
-			this.dataValue = value;
 			eventBus.publish('pagination/change', this);
 		}
 	}
@@ -224,10 +225,24 @@ export default class Pagination extends Filter {
 
 		if (value <= this.pagesCount) {
 			this.moreActiveIndexes.push(this.dataValue);
+			this.dataValue = value;
+			this.updateActivePagesProviderProps();
 
 			// emit pagination load more
-			this.dataValue = value;
 			eventBus.publish('pagination/load-more', this);
+		}
+	}
+
+	updateActivePagesProviderProps() {
+		if (!getNesting(JetSmartFilterSettings, 'props', this.provider, this.queryId))
+			return;
+
+		const providerProps = window.JetSmartFilterSettings.props[this.provider][this.queryId];
+
+		if (this.moreActiveIndexes.length) {
+			providerProps.pages = [...this.moreActiveIndexes, this.dataValue];
+		} else {
+			delete providerProps.pages;
 		}
 	}
 
@@ -258,8 +273,9 @@ export default class Pagination extends Filter {
 	}
 
 	reset() {
-		this.dataValue = 1;
 		this.moreActiveIndexes = [];
+		this.dataValue = 1;
+		this.updateActivePagesProviderProps();
 	}
 
 	resetMoreActive() {
@@ -267,6 +283,7 @@ export default class Pagination extends Filter {
 			return;
 
 		this.moreActiveIndexes = [];
+		this.updateActivePagesProviderProps();
 		this.buildPagination();
 	}
 

@@ -770,9 +770,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Active_Filters' ) ) {
 				return $this->is_editor() ? __( 'Please select a provider', 'jet-smart-filters' ) : false;
 			}
 
-			$base_class = 'jet-smart-filters-' . $this->get_name();
-			$provider   = $settings['content_provider'];
-			$query_id   = ! empty( $settings['query_id'] ) ? $settings['query_id'] : 'default';
+			$base_class           = 'jet-smart-filters-' . $this->get_name();
+			$provider             = $settings['content_provider'];
+			$query_id             = ! empty( $settings['query_id'] ) ? $settings['query_id'] : 'default';
+			$additional_providers = jet_smart_filters()->utils->get_additional_providers( $settings );
 
 			ob_start();
 
@@ -783,7 +784,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Active_Filters' ) ) {
 				$settings['filters_label'],
 				$provider,
 				$settings['apply_type'],
-				$query_id
+				$query_id,
+				$additional_providers,
 			);
 
 			if ( $this->is_editor() ) {

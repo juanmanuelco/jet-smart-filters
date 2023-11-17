@@ -3,12 +3,14 @@ import { useRouter, useRoute } from "vue-router";
 import request from "@/services/request.js";
 import popup from "@/services/popups.js";
 import { useGetter, useGetters, useActions } from "@/store/helper.js";
+import events from "@/store/events.js";
 import _array from "@/modules/helpers/array.js";
 
 const {
 	currentPage,
-	filtersList
-} = useGetters(['currentPage', 'filtersList']);
+	filtersList,
+	submenuList
+} = useGetters(['currentPage', 'filtersList', 'submenuList']);
 
 const {
 	pluginSettings,
@@ -22,8 +24,8 @@ const {
 	updateCurrentPage,
 	updateFiltersList,
 	updateFiltersListArgs,
-	updateQuantity
-} = useActions(['updateIsFiltersListLoading', 'updateIsPageLoading', 'updateCurrentPage', 'updateFiltersList', 'updateFiltersListArgs', 'updateQuantity']);
+	updateSubmenuList
+} = useActions(['updateIsFiltersListLoading', 'updateIsPageLoading', 'updateCurrentPage', 'updateFiltersList', 'updateFiltersListArgs', 'updateSubmenuList']);
 
 let router, route;
 
@@ -32,6 +34,9 @@ export const isIndexerEnabled = pluginSettings.indexer_enabled;
 export const isСhecked = computed(() => filtersList.value.some(item => item.checked));
 
 export function init() {
+	// close popup
+	popup.close();
+
 	// Init vue-router
 	router = useRouter();
 	route = useRoute();
@@ -109,13 +114,13 @@ export function updateList(args = null) {
 			updateFiltersListArgs(args);
 
 			// update quantity
-			updateQuantity({
-				filters: response.total_count,
-				trash: response.total_trash_count,
-			});
+			updateSubmenuQuantity(response.quantity);
 
 			updateIsPageLoading(false);
 			updateIsFiltersListLoading(false);
+
+			// Emit filter list updated event
+			events.emit.filtersListUpdated(response);
 		});
 };
 
@@ -143,6 +148,21 @@ export function updateListArg(key, value, resetPagination = false) {
 	updateList();
 };
 
+export function updateSubmenuQuantity(quantityData) {
+	const newSubmenuList = [...submenuList.value];
+
+	for (const key in quantityData) {
+		const itemIndex = _array.findIndexByPropertyValue(newSubmenuList, 'type', key);
+
+		if (itemIndex === -1)
+			continue;
+
+		newSubmenuList[itemIndex].count = quantityData[key];
+	}
+
+	updateSubmenuList(newSubmenuList);
+}
+
 export function goToPage(pageName, params = false) {
 	if (pageName === currentPage.value)
 		return;
@@ -158,8 +178,8 @@ export function goToPage(pageName, params = false) {
 	router.push(routerData);
 }
 
-export function toFilter(filterId) {
-	goToPage('filter', { id: filterId });
+export function toFilter(filterID) {
+	goToPage('filter', { id: filterID });
 }
 
 export function doAction(action, value) {
@@ -215,6 +235,7 @@ export default {
 	init,
 	updateList,
 	updateListArg,
+	updateSubmenuQuantity,
 	goToPage,
 	toFilter,
 	doAction,

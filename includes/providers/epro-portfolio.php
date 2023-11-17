@@ -158,7 +158,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_EPro_Portfolio' ) ) {
 		 */
 		public function in_depth() {
 
-			return false;
+			return true;
 		}
 
 		/**

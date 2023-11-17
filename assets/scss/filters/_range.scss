@@ -162,7 +162,8 @@
 			border-radius: 5px;
 			border: 1px solid #ced4da;
 
-			input[type="number"] {
+			input[min-range],
+			input[max-range] {
 				margin: 8px 12px;
 				padding: 0;
 				width: 100%;

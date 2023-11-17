@@ -5,6 +5,23 @@
 
 class Jet_Smart_Filters_Service_Filters {
 
+	private $_multilingual;
+
+	/**
+	 * Constructor for the class
+	 */
+	public function __construct() {
+		// Init admin data
+		add_action( 'init', function() {
+			if ( isset( jet_smart_filters()->admin->multilingual_support ) ) {
+				$this->_multilingual = jet_smart_filters()->admin->multilingual_support;
+			} else {
+				require_once jet_smart_filters()->plugin_path( 'admin/includes/multilingual-support.php' );
+				$this->_multilingual = new Jet_Smart_Filters_Admin_Multilingual_Support();
+			}
+		}, 9999 );
+	}
+
 	public function get( $args ) {
 
 		global $wpdb;
@@ -18,8 +35,14 @@ class Jet_Smart_Filters_Service_Filters {
 			'search'   => false,
 			'type'     => false,
 			'source'   => false,
-			'date'     => false
+			'date'     => false,
+			'language' => false
 		), $args );
+
+		// escapes data for use in a MySQL query
+		foreach ($args as $key => $value) {
+			$args[$key] = esc_sql( $value );
+		}
 
 		$status = $args['status'];
 
@@ -63,15 +86,29 @@ class Jet_Smart_Filters_Service_Filters {
 			}
 		}
 
+		// Multilingual
+		$current_language = $args['language'];
+
+		// Display all languages
+		if ( $status === 'trash' || $current_language === 'all' ) {
+			$current_language = false;
+		}
+
+		$ml_SQL_parts = $this->_multilingual->get_SQL_filters_parts( $current_language );
+		$ml_join      = $ml_SQL_parts['join'];
+		$ml_where     = $ml_SQL_parts['where'];
+
 		$sql_main = "
 		SELECT $wpdb->posts.ID, $wpdb->posts.post_title as title, $wpdb->posts.post_date as date, postmeta_type.meta_value as type, postmeta_source.meta_value as source
 		FROM $wpdb->posts
 			LEFT JOIN $wpdb->postmeta as postmeta_type ON ($wpdb->posts.ID = postmeta_type.post_ID AND postmeta_type.meta_key = '_filter_type')
 			LEFT JOIN $wpdb->postmeta as postmeta_source ON ($wpdb->posts.ID = postmeta_source.post_ID AND postmeta_source.meta_key = '_data_source')
+			$ml_join
 			WHERE $wpdb->posts.post_type = 'jet-smart-filters'
 				AND $wpdb->posts.post_status = '$status'
 				$searchSql
 				$filtrationSql
+				$ml_where
 			ORDER BY $order_by $order
 			LIMIT $offset, $per_page";
 		$filters_result = $wpdb->get_results( $sql_main, ARRAY_A );
@@ -81,10 +118,12 @@ class Jet_Smart_Filters_Service_Filters {
 		FROM $wpdb->posts
 		LEFT JOIN $wpdb->postmeta as postmeta_type ON ($wpdb->posts.ID = postmeta_type.post_ID AND postmeta_type.meta_key = '_filter_type')
 		LEFT JOIN $wpdb->postmeta as postmeta_source ON ($wpdb->posts.ID = postmeta_source.post_ID AND postmeta_source.meta_key = '_data_source')
+			$ml_join
 			WHERE $wpdb->posts.post_type = 'jet-smart-filters'
 				AND $wpdb->posts.post_status = '$status'
 				$searchSql
-				$filtrationSql";
+				$filtrationSql
+				$ml_where";
 		$count_result = $wpdb->get_results( $sql_count, ARRAY_A );
 
 		$sql_total_count = "
@@ -101,12 +140,27 @@ class Jet_Smart_Filters_Service_Filters {
 				AND $wpdb->posts.post_status = 'trash'";
 		$total_trash_count_result = $wpdb->get_results( $sql_total_trash_count, ARRAY_A );
 
-		return array(
-			'filters'           => $filters_result,
-			'count'             => $count_result[0]['count'],
-			'total_count'       => $total_count_result[0]['count'],
-			'total_trash_count' => $total_trash_count_result[0]['count'],
+		$quantity = array(
+			'filters' => $total_count_result[0]['count'],
+			'trash'   => $total_trash_count_result[0]['count'],
 		);
+
+		$output = array(
+			'filters'  => $filters_result,
+			'count'    => $count_result[0]['count'],
+			'quantity' => $quantity
+		);
+
+		if ( $this->_multilingual->is_Enabled ) {
+			// add translations quantity to response
+			$output['multilingual_quantity']        = $this->_multilingual->get_translations_count();
+			$output['multilingual_quantity']['all'] = $quantity['filters'];
+
+			// add translations data to filters list
+			$this->_multilingual->add_data_to_list( $output['filters'] );
+		}
+
+		return $output;
 	}
 
 	public function restore( $ids ) {

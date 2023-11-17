@@ -28,13 +28,13 @@ export default class SearchControl extends Filter {
 
 	addFilterChangeEvent() {
 		this.$searchSubmit.on('click', () => {
-			this.emitFiterChange();
+			this.wasСhanged();
 		});
 
 		this.$searchClear.on('click', () => {
 			this.$searchInput.val('');
 			this.$searchInput.removeClass(this.inputNotEmptyClass);
-			this.emitFiterChange();
+			this.wasСhanged();
 		});
 
 		this.$searchInput.on('keyup', evt => {
@@ -56,7 +56,7 @@ export default class SearchControl extends Filter {
 					this.$searchInput.removeClass(this.inputNotEmptyClass);
 				}
 			} else if (evt.keyCode === 13) {
-				this.emitFiterChange();
+				this.wasСhanged();
 			}
 		});
 	}
@@ -98,9 +98,9 @@ export default class SearchControl extends Filter {
 		this.$searchInput.removeClass(this.inputNotEmptyClass);
 	}
 
-	emitFiterChange() {
+	wasСhanged() {
 		this.processData();
-		super.emitFiterChange();
+		super.wasСhanged(true);
 	}
 
 	emitFiterChangeWithDelay(delay = 350) {
@@ -108,7 +108,7 @@ export default class SearchControl extends Filter {
 		this.delayID = setTimeout(() => {
 			this.$filter.addClass(this.searchLoadingClass);
 			this.processData();
-			this.emitFiterChange();
+			this.wasСhanged();
 		}, delay);
 	}
 

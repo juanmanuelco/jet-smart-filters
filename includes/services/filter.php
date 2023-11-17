@@ -29,11 +29,21 @@ class Jet_Smart_Filters_Service_Filter {
 				require_once jet_smart_filters()->plugin_path( 'admin/includes/data.php' );
 				$this->_adata = new Jet_Smart_Filters_Admin_Data();
 			}
-		}, 999 );
+
+			if ( isset( jet_smart_filters()->admin->multilingual_support ) ) {
+				$this->_multilingual = jet_smart_filters()->admin->multilingual_support;
+			} else {
+				require_once jet_smart_filters()->plugin_path( 'admin/includes/multilingual-support.php' );
+				$this->_multilingual = new Jet_Smart_Filters_Admin_Multilingual_Support();
+			}
+		}, 9999 );
 	}
 
 	public function get( $id ) {
 		global $wpdb;
+
+		// escapes data for use in a MySQL query
+		$id = esc_sql( $id );
 
 		$output_data               = false;
 		$registered_settings_names = $this->_adata->registered_settings_names();
@@ -64,6 +74,10 @@ class Jet_Smart_Filters_Service_Filter {
 
 				$output_data[$key] = $value;
 			}
+		}
+
+		if ( $this->_multilingual->is_Enabled ) {
+			$this->_multilingual->add_data_to_filter( $output_data );
 		}
 
 		return $output_data;

@@ -119,17 +119,8 @@
 	border-radius: 0 5px 5px 0;
 }
 
-// RTL
-.rtl {
-	#datepickers-container {
-		.datepicker:not(.active) {
-			left: 100000px !important;
-		}
-	}
-}
-
 // Context Bricks
-.datepicker[class*='jet-date-period-brxe-'] {
+.datepicker[class*="jet-date-period-brxe-"] {
 	max-width: none;
 }
 

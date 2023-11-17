@@ -483,7 +483,8 @@ class Jet_Smart_Filters_Bricks_Date_Range extends Jet_Smart_Filters_Bricks_Base 
 			);
 		}
 
-		$provider = ! empty( $settings['content_provider'] ) ? $settings['content_provider'] : '';
+		$provider  = ! empty( $settings['content_provider'] ) ? $settings['content_provider'] : '';
+		$filter_id = apply_filters( 'jet-smart-filters/render_filter_template/filter_id', $filter_id );
 
 		// STEP: Content provider is empty: Show placeholder text
 		if ( empty( $provider ) ) {

@@ -5,7 +5,7 @@
 			'jet-ui_select--active': isOpen,
 			'jet-ui_select--disabled': disabled
 		 }"
-		 ref="select">
+		 ref="elSelect">
 		<!-- Panel -->
 		<div class="jet-ui_select-panel"
 			 @click="onSelectClick">
@@ -99,11 +99,11 @@ export default defineComponent({
 
 	setup(props, context) {
 		// Data
-		const select = ref('');
+		const elSelect = ref(null);
 		const optionsSearch = ref('');
 
 		const dropdown = useDropDown({
-			areaElement: select,
+			areaElement: elSelect,
 			onOpen: () => { context.emit('open'); },
 			onClose: () => { context.emit('close'); }
 		});
@@ -219,7 +219,7 @@ export default defineComponent({
 		};
 
 		return {
-			select,
+			elSelect,
 			optionsList,
 			selected,
 			isOpen: dropdown.opened,

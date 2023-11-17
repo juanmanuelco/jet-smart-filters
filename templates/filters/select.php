@@ -26,10 +26,7 @@ $accessibility_label = $args['accessibility_label'];
 		}
 
 		if ( ! wp_doing_ajax() && ! empty( $args['is_loading'] ) ) {
-			if ( ! $current ) {
-				$current = 'loading';
-			}
-
+			/* if ( ! $current ) { $current = 'loading'; } */
 			$options = array( $current =>'jsf-loading-item' );
 		}
 

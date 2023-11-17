@@ -2,6 +2,66 @@
 
 # ChangeLog
 
+## 3.2.2
+* FIX: ePro Loop indexer
+* FIX: rating filter on page reload
+* FIX: added filter bricks/query/force_run
+* FIX: moved the location of the filter `bricks/query/no_results_content` before rendering
+
+## 3.2.1
+* ADD: block editor additional providers
+* ADD: range filter Inputs thousands and decimal separators
+* ADD: allow disabling apply button in the Search filter
+* ADD: ePro loop "No Result Text" option
+* UPD: allow to register custom query variables for different request types
+* UPD: allow to rewrite default query for provider and query ID pair
+* UPD: ePro loop default query
+* UPD: jetDashboard framework
+* FIX: changing duplicated filters on change
+* FIX: ePro loop + predefined filters
+* FIX: date range/period RTL datepicker arrows
+* FIX: comparison operator with decimal numbers
+* FIX: visual filter img alt
+* FIX: date filter if date 1970-1-1
+* FIX: ePro loop alternate template static item position
+* FIX: admin multilingual custom flag
+* FIX: hierarchical select filter shows empty options
+* FIX: bricks showing and hiding the load more button after filtering
+
+## 3.2.0
+* ADD: Elementor Pro Loop Grid provider
+* ADD: admin multilingual support
+* ADD: additional settings dropdown N selected
+* ADD: date period filter Min/Max Dates operations
+* ADD: 'Comparison type' option for 'Comparison operator'
+* ADD: process shortcodes in 'URL with filtered value' dynamic tag
+* UPD: checkbox filter with dropdown update selected items on input change, not on filter change
+* UPD: not include children for 'Intersection' relational operator
+* UPD: filter each query type key after indexing
+* UPD: JetDashboard module
+* FIX: admin dropdown outside click
+* FIX: custom fields JetEngine WPML string translation
+* FIX: current WP Query & Indexer compatibility
+* FIX: hierarchical filter with additional providers
+* FIX: ePro Posts returns "0.66" value instead blank list for 0 results
+* FIX: elementor popup with filters
+* FIX: elementor popup with "Improved Asset Loading" option
+* FIX: click Back button after applying filters with a redirect
+* FIX: visual filter when dragging item changes image
+* FIX: fatal error in dynamic tag when filter is deleted
+* FIX: ePro Portfolio masonry
+
+## 3.1.2
+* ADD: process shortcodes in 'URL with filtered value' dynamic tag
+* FIX: apply filter 'jet-smart-filters/render_filter_template/filter_id' for all filters
+* FIX: current WP Query & Indexer compatibility
+* FIX: date period filter period type "DAY"
+* FIX: prevent php notices on php 8.2
+* FIX: add filter Id to filter uniqueKey
+* FIX: update duplicated hierarchical filter on reload
+* FIX: fixed radio filter direction control in Bricks
+* UPD: prevent from registering DOING_AJAX constant on non-admin-ajax referrers
+
 ## 3.1.1
 * UPD: redesigned initialization of filters on the frontend
 * ADD: pagination load more

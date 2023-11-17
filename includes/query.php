@@ -31,6 +31,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 
 			add_filter( 'the_posts', array( $this, 'query_props_handler' ), 999, 2 );
 			add_filter( 'posts_pre_query', array( $this, 'set_found_rows' ), 10, 2 );
+
+			/**
+			 * Alphabet filter
+			 * Note: Moved to the __construct to better compatibility with JetEngine LoadMore and LazyLoad
+			 */
+			add_filter( 'posts_where', array( $this, 'set_query_where' ), 10, 2 );
 		}
 
 		/**
@@ -48,7 +54,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 		/**
 		 * Store default query for passed provider
 		 */
-		public function store_provider_default_query( $provider_id, $query_args, $query_id = false ) {
+		public function store_provider_default_query( $provider_id, $query_args, $query_id = false, $force_rewrite = false ) {
 
 			if ( ! $query_id ) {
 				$query_id = 'default';
@@ -58,7 +64,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 				$this->_default_query[ $provider_id ] = array();
 			}
 
-			if ( isset( $this->_default_query[ $provider_id ][ $query_id ] ) ) {
+			if ( ! $force_rewrite && isset( $this->_default_query[ $provider_id ][ $query_id ] ) ) {
 				return;
 			}
 
@@ -133,6 +139,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 			}
 		}
 
+		
 		/**
 		 * Check if is ajax filter processed
 		 */
@@ -153,13 +160,13 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 				return $this->is_ajax_filter;
 			}
 
-			if ( ! wp_doing_ajax() ) {
-				$this->is_ajax_filter = false;
+			if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $allowed_actions ) ) {
+				$this->is_ajax_filter = true;
 				return $this->is_ajax_filter;
 			}
 
-			if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $allowed_actions ) ) {
-				$this->is_ajax_filter = true;
+			if ( ! wp_doing_ajax() ) {
+				$this->is_ajax_filter = false;
 				return $this->is_ajax_filter;
 			}
 
@@ -192,14 +199,16 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 			if ( empty( $this->_props[ $provider ] ) ) {
 				$this->_props[ $provider ] = array();
 			}
+
+			if ( empty( $this->_props[ $provider ][ $query_id ] ) ) {
+				$this->_props[ $provider ][ $query_id ] = array();
+			}
 			
 			do_action( 'jet-smart-filters/query/store-query-props/' . $provider, $this, $query_id );
 
-			$this->_props[ $provider ][ $query_id ] = array(
-				'found_posts'   => $query->found_posts,
-				'max_num_pages' => $query->max_num_pages,
-				'page'          => $query->get( 'paged' )
-			);
+			$this->_props[ $provider ][ $query_id ]['found_posts']   = $query->found_posts;
+			$this->_props[ $provider ][ $query_id ]['max_num_pages'] = $query->max_num_pages;
+			$this->_props[ $provider ][ $query_id ]['page']          = $query->get( 'paged' );
 		}
 
 		/**
@@ -272,12 +281,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 		 */
 		public function get_query_props( $provider = null, $query_id = 'default' ) {
 
-			if ( ! $query_id ) {
-				$query_id = 'default';
-			}
-
 			if ( ! $provider ) {
 				return $this->_props;
+			}
+
+			if ( ! $query_id ) {
+				$query_id = 'default';
 			}
 
 			return isset( $this->_props[ $provider ][ $query_id ] ) ? $this->_props[ $provider ][ $query_id ] : array();
@@ -500,6 +509,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 					$_REQUEST['_alphabet_'] = strpos( $query_var_value, ',' ) ? explode( ',', $query_var_value ) : $query_var_value;
 
 					break;
+
+				default:
+					$_REQUEST[ '_' . $query_var . '_' ] = $query_var_value;
+					break;
 			}
 		}
 
@@ -536,7 +549,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 				}
 
 				array_walk( $data, function( $value, $key ) use ( $var ) {
-					if ( strpos( $key, $var ) ) {
+					if ( strpos( $key, '_' . $var ) !== false ) {
 						switch ( $var ) {
 							case 'tax_query':
 								$this->add_tax_query_var( $value, $this->clear_key( $key, $var ) );
@@ -658,9 +671,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 								break;
 
 							case 'alphabet':
-
 								$this->_query[ $var ] = $value;
-								add_filter( 'posts_where', array( $this, 'set_query_where' ), 10, 2 );
+								//add_filter( 'posts_where', array( $this, 'set_query_where' ), 10, 2 );
 
 								break;
 
@@ -768,6 +780,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 
 			if ( $operator ) {
 				$tax_query[ $key ]['operator'] = $operator;
+
+				if ( $operator === 'AND' ) {
+					$tax_query[ $key ]['include_children'] = false;
+				}
 			}
 
 			if ( ! empty( $this->_default_query['tax_query'] ) ) {
@@ -782,40 +798,47 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 		 */
 		public function add_date_query_var( $value ) {
 
-			$date_query = isset( $this->_query['date_query'] ) ? $this->_query['date_query'] : array();
-			$value      = explode( '-', $value );
-
-			if ( ! empty( $value[0] ) ) {
-				$after       = explode( '.', $value[0] );
-				$after_query = array(
-					'year'  => isset( $after[0] ) ? $after[0] : false,
-					'month' => isset( $after[1] ) ? $after[1] : false,
-					'day'   => isset( $after[2] ) ? $after[2] : false,
-				);
-			} else {
-				$after_query = false;
-			}
-
-			if ( ! empty( $value[1] ) ) {
-				$before       = explode( '.', $value[1] );
-				$before_query = array(
-					'year'  => isset( $before[0] ) ? $before[0] : false,
-					'month' => isset( $before[1] ) ? $before[1] : false,
-					'day'   => isset( $before[2] ) ? $before[2] : false,
-				);
-			} else {
-				$before_query = false;
-			}
-
 			$current_query = array(
 				'inclusive' => true
 			);
 
-			if ( $after_query ) {
-				$current_query['after'] = $after_query;
-			}
-			if ( $before_query ) {
-				$current_query['before'] = $before_query;
+			if ( str_contains( $value, '-' ) ) {
+				$value = explode( '-', $value );
+
+				if ( ! empty( $value[0] ) ) {
+					$after       = explode( '.', $value[0] );
+					$after_query = array(
+						'year'  => isset( $after[0] ) ? $after[0] : false,
+						'month' => isset( $after[1] ) ? $after[1] : false,
+						'day'   => isset( $after[2] ) ? $after[2] : false,
+					);
+				} else {
+					$after_query = false;
+				}
+
+				if ( ! empty( $value[1] ) ) {
+					$before       = explode( '.', $value[1] );
+					$before_query = array(
+						'year'  => isset( $before[0] ) ? $before[0] : false,
+						'month' => isset( $before[1] ) ? $before[1] : false,
+						'day'   => isset( $before[2] ) ? $before[2] : false,
+					);
+				} else {
+					$before_query = false;
+				}
+
+				if ( $after_query ) {
+					$current_query['after'] = $after_query;
+				}
+				if ( $before_query ) {
+					$current_query['before'] = $before_query;
+				}
+			} else {
+				$date = explode( '.', $value );
+
+				$current_query['year']  = isset( $date[0] ) ? $date[0] : false;
+				$current_query['month'] = isset( $date[1] ) ? $date[1] : false;
+				$current_query['day']   = isset( $date[2] ) ? $date[2] : false;
 			}
 
 			if ( !empty( $this->_default_query['date_query'] ) ) {
@@ -945,13 +968,13 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 				switch ( $compare_operand ) {
 					case 'less' :
 						$compare     = '<=';
-						$custom_type = 'NUMERIC';
+						$custom_type = 'DECIMAL(16,4)';
 
 						break;
 
 					case 'greater' :
 						$compare     = '>=';
-						$custom_type = 'NUMERIC';
+						$custom_type = 'DECIMAL(16,4)';
 
 						break;
 
@@ -1026,13 +1049,13 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 							$end_date = strtotime( str_replace( '.', '-', $date_value[1] ) ) + ( 24*60*60 ) -1;
 						}
 
-						if ( $start_date && $end_date ) {
+						if ( $start_date !== false && $end_date !== false ) {
 							$current_row['value'] = array( $start_date, $end_date );
 							$current_row['compare'] = 'BETWEEN';
-						} else if ( $start_date ) {
+						} else if ( $start_date !== false ) {
 							$current_row['value'] = $start_date;
 							$current_row['compare'] = '>=';
-						} else if ( $end_date ) {
+						} else if ( $end_date !== false ) {
 							$current_row['value'] = $end_date;
 							$current_row['compare'] = '<=';
 						}
@@ -1064,8 +1087,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 
 		public function set_query_where( $where, $query ) {
 
-			if ( $query->get( 'jet_smart_filters' ) && ! empty( $this->_query['alphabet'] ) ) {
-				$letter = $this->_query['alphabet'];
+			if ( $query->get( 'jet_smart_filters' ) && $query->get( 'alphabet' ) ) {
+				$letter = $query->get( 'alphabet' );
 
 				if ( is_array( $letter ) ) {
 					$letter = implode( '|', $letter );

@@ -33,6 +33,8 @@ registerBlockType('jet-smart-filters/check-range', {
 		apply_button_text: attributes.apply_button_text,
 		show_label: attributes.show_label,
 		query_id: attributes.query_id,
+		additional_providers_enabled: attributes.additional_providers_enabled,
+		additional_providers_list: attributes.additional_providers_list,
 		// Indexer
 		apply_indexer: attributes.apply_indexer,
 		show_counter: attributes.show_counter,
@@ -49,6 +51,9 @@ registerBlockType('jet-smart-filters/check-range', {
 		less_text: attributes.less_text,
 		dropdown_enabled: attributes.dropdown_enabled,
 		dropdown_placeholder: attributes.dropdown_placeholder,
+		dropdown_n_selected_enabled: attributes.dropdown_n_selected_enabled,
+		dropdown_n_selected_number: attributes.dropdown_n_selected_number,
+		dropdown_n_selected_text: attributes.dropdown_n_selected_text,
 		scroll_enabled: attributes.scroll_enabled,
 		scroll_height: attributes.scroll_height,
 	},

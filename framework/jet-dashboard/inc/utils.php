@@ -228,4 +228,23 @@ class Utils {
 
 		return false;
 	}
+
+	/**
+	 * @param array $attributes
+	 * @return string
+	 */
+	public static function print_html_attributes( $attributes = [] ) {
+		$rendered_attributes = [];
+
+		foreach ( $attributes as $attribute_key => $attribute_values ) {
+			if ( is_array( $attribute_values ) ) {
+				$attribute_values = implode( ' ', $attribute_values );
+			}
+
+			$rendered_attributes[] = sprintf( '%1$s="%2$s"', $attribute_key, esc_attr( $attribute_values ) );
+		}
+
+		return implode( ' ', $rendered_attributes );
+	}
+
 }

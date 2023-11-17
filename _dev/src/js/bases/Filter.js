@@ -47,10 +47,10 @@ export default class Filter {
 	}
 
 	initEvent() {
+		this.addFilterChangeEvent();
+
 		if (this.isReloadType) {
 			this.addApplyEvent();
-		} else {
-			this.addFilterChangeEvent();
 		}
 	}
 
@@ -62,7 +62,7 @@ export default class Filter {
 	addApplyEvent() {
 		this.$applyButton.on('click', () => {
 			this.processData();
-			this.emitFiterChange();
+			this.emitFiterApply();
 		});
 	}
 
@@ -102,9 +102,21 @@ export default class Filter {
 		return this.additionalProviders.includes(provider + '/' + queryId) ? true : false;
 	}
 
+	// method for emitting filter change
+	wasСhanged(applyChanges = false) {
+		this.emitFiterChange();
+
+		if (applyChanges || !this.isReloadType)
+			this.emitFiterApply();
+	}
+
 	// emitters
 	emitFiterChange() {
 		eventBus.publish('fiter/change', this);
+	}
+
+	emitFiterApply() {
+		eventBus.publish('fiter/apply', this);
 	}
 
 	emitFitersApply() {

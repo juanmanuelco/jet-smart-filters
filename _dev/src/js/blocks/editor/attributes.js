@@ -105,6 +105,18 @@ export default {
 		type: 'string',
 		default: '',
 	},
+	// Additional providers
+	additional_providers_enabled: {
+		type: 'boolean',
+		default: false,
+	},
+	additional_providers_list: {
+		type: 'array',
+		default: [{
+			additional_provider: '',
+			additional_query_id: ''
+		}],
+	},
 	// Indexer
 	apply_indexer: {
 		type: 'boolean',
@@ -212,6 +224,18 @@ export default {
 	dropdown_placeholder: {
 		type: 'string',
 		default: __('Select some options'),
+	},
+	dropdown_n_selected_enabled: {
+		type: 'boolean',
+		default: false,
+	},
+	dropdown_n_selected_number: {
+		type: 'number',
+		default: 3,
+	},
+	dropdown_n_selected_text: {
+		type: 'string',
+		default: __('and {number} others', 'jet-smart-filters'),
 	},
 	scroll_enabled: {
 		type: 'boolean',

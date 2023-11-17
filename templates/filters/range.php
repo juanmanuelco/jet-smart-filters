@@ -11,6 +11,7 @@ if ( wp_is_mobile() ) {
 
 $query_var           = $args['query_var'];
 $inputs_enabled      = $args['inputs_enabled'];
+$inputs_type         = $args['inputs_separators_enabled'] ? 'text' : 'number';
 $prefix              = $args['prefix'];
 $suffix              = $args['suffix'];
 $current             = $this->get_current_filter_value( $args );
@@ -41,7 +42,7 @@ if ( $current ) {
 				<?php if ( $prefix ) : ?>
 				<span class="jet-range__inputs__group__text"><?php echo $prefix; ?></span>
 				<?php endif; ?>
-				<input type="number" class="jet-range__inputs__min" step="<?php echo $args['step']; ?>" min="<?php echo $args['min']; ?>" max="<?php echo $args['max']; ?>" value="<?php echo $slider_val[0]; ?>" aria-label="<?php _e( 'Minimal value', 'jet-smart-filters' ); ?>" <?php echo jet_smart_filters()->data->get_tabindex_attr(); ?>/>
+				<input type="<?php echo $args['step']; ?>" class="jet-range__inputs__min" min-range step="<?php echo $args['step']; ?>" min="<?php echo $args['min']; ?>" max="<?php echo $args['max']; ?>" value="<?php echo $slider_val[0]; ?>" aria-label="<?php _e( 'Minimal value', 'jet-smart-filters' ); ?>" <?php echo jet_smart_filters()->data->get_tabindex_attr(); ?>/>
 				<?php if ( $suffix ) : ?>
 				<span class="jet-range__inputs__group__text"><?php echo $suffix ?></span>
 				<?php endif; ?>
@@ -50,7 +51,7 @@ if ( $current ) {
 				<?php if ( $prefix ) : ?>
 				<span class="jet-range__inputs__group__text"><?php echo $prefix; ?></span>
 				<?php endif; ?>
-				<input type="number" class="jet-range__inputs__max" step="<?php echo $args['step']; ?>" min="<?php echo $args['min']; ?>" max="<?php echo $args['max']; ?>" value="<?php echo $slider_val[1]; ?>" aria-label="<?php _e( 'Maximum value', 'jet-smart-filters' ); ?>" <?php echo jet_smart_filters()->data->get_tabindex_attr(); ?>/>
+				<input type="<?php echo $inputs_type; ?>" class="jet-range__inputs__max" max-range step="<?php echo $args['step']; ?>" min="<?php echo $args['min']; ?>" max="<?php echo $args['max']; ?>" value="<?php echo $slider_val[1]; ?>" aria-label="<?php _e( 'Maximum value', 'jet-smart-filters' ); ?>" <?php echo jet_smart_filters()->data->get_tabindex_attr(); ?>/>
 				<?php if ( $suffix ) : ?>
 				<span class="jet-range__inputs__group__text"><?php echo $suffix ?></span>
 				<?php endif; ?>

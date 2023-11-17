@@ -36,9 +36,12 @@ registerBlockType('jet-smart-filters/search', {
 		content_provider: attributes.content_provider,
 		apply_type: attributes.apply_type,
 		apply_button_text: attributes.apply_button_text,
+		hide_apply_button: attributes.hide_apply_button,
 		typing_min_letters_count: attributes.typing_min_letters_count,
 		show_label: attributes.show_label,
 		query_id: attributes.query_id,
+		additional_providers_enabled: attributes.additional_providers_enabled,
+		additional_providers_list: attributes.additional_providers_list,
 	},
 	className: 'jet-smart-filters-search',
 	edit: class extends wp.element.Component {
@@ -55,7 +58,8 @@ registerBlockType('jet-smart-filters/search', {
 							controlsOptions={controlsOptions}
 							disabledControls={
 								{
-									apply_button_text: props.attributes.apply_type === 'ajax-ontyping' ? true : false,
+									hide_apply_button: props.attributes.apply_type === 'ajax-ontyping' ? true : false,
+									apply_button_text: props.attributes.hide_apply_button || props.attributes.apply_type === 'ajax-ontyping' ? true : false,
 									typing_min_letters_count: props.attributes.apply_type !== 'ajax-ontyping' ? true : false,
 								}
 							}

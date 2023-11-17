@@ -4,6 +4,10 @@
  */
 namespace Jet_Smart_Filters\Bricks_Views;
 
+use Bricks\Api;
+use Bricks\Database;
+use Bricks\Helpers;
+
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
@@ -38,45 +42,13 @@ class Manager {
 			return $i18n;
 		} );
 
+		add_filter( 'bricks/posts/query_vars', [ $this, 'merge_query_vars' ], 10, 3 );
+		add_filter( 'bricks/terms/query_vars', [ $this, 'merge_query_vars' ], 10, 3 );
+		add_filter( 'bricks/users/query_vars', [ $this, 'merge_query_vars' ], 10, 3 );
+
 		require jet_smart_filters()->plugin_path( 'includes/bricks/filters/manager.php' );
 		new Filters\Manager();
 
-	}
-
-	public function register_bricks_dynamic_data_on_ajax() {
-
-		if ( ! function_exists( 'jet_engine' ) ) {
-			// Backup if JetEngine is not installed
-			global $wp_filter;
-			if ( isset( $wp_filter['wp'][8] ) ) {
-				foreach( $wp_filter['wp'][8] as $callback ) {
-					if ( is_array( $callback['function'] ) && is_object( $callback['function'][0] ) ) {
-						if ( 'Bricks\Integrations\Dynamic_Data\Providers' === get_class( $callback['function'][0] ) ) {
-							call_user_func( $callback['function'] );
-							break;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	public function enqueue_styles_for_builder() {
-
-		if ( bricks_is_builder() ) {
-
-			jet_smart_filters()->set_filters_used();
-
-			// Add JetSmartFilters icons font
-			wp_enqueue_style(
-				'jet-smart-filters-icons-font',
-				jet_smart_filters()->plugin_url( 'assets/css/lib/jet-smart-filters-icons/jet-smart-filters-icons.css' ),
-				array(),
-				jet_smart_filters()->get_version()
-			);
-
-			jet_smart_filters()->filter_types->filter_styles();
-		}
 	}
 
 	public function component_path( $relative_path = '' ) {
@@ -128,6 +100,103 @@ class Manager {
 
 	}
 
+	public function enqueue_styles_for_builder() {
+
+		if ( bricks_is_builder() ) {
+
+			jet_smart_filters()->set_filters_used();
+
+			// Add JetSmartFilters icons font
+			wp_enqueue_style(
+				'jet-smart-filters-icons-font',
+				jet_smart_filters()->plugin_url( 'assets/css/lib/jet-smart-filters-icons/jet-smart-filters-icons.css' ),
+				array(),
+				jet_smart_filters()->get_version()
+			);
+
+			jet_smart_filters()->filter_types->filter_styles();
+		}
+	}
+
+	public function register_bricks_dynamic_data_on_ajax() {
+
+		if ( ! function_exists( 'jet_engine' ) ) {
+			// Backup if JetEngine is not installed
+			global $wp_filter;
+			if ( isset( $wp_filter['wp'][8] ) ) {
+				foreach( $wp_filter['wp'][8] as $callback ) {
+					if ( is_array( $callback['function'] ) && is_object( $callback['function'][0] ) ) {
+						if ( 'Bricks\Integrations\Dynamic_Data\Providers' === get_class( $callback['function'][0] ) ) {
+							call_user_func( $callback['function'] );
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Combine JetSmartFilters $query_vars with Bricks $query_vars
+	// for the correct operation of Load more and Infinite scroll.
+	public function merge_query_vars( $query_vars, $settings, $element_id ) {
+
+		$post_id = Database::$page_data['preview_or_post_id'];
+		$bricks_data = Helpers::get_bricks_data( $post_id );
+		$isLoadMore = false;
+
+		if ( ! empty( $bricks_data ) ) {
+			foreach ( $bricks_data as $element ) {
+				$interactions = $element['settings']['_interactions'] ?? false;
+
+				if ( ! empty( $interactions ) && isset( $interactions[0]['loadMoreQuery'] ) && $interactions[0]['loadMoreQuery'] === $element_id ) {
+					$isLoadMore = true;
+				}
+			}
+		}
+
+		if ( isset( $settings['query']['infinite_scroll'] ) || $isLoadMore ) {
+
+			$jsf_query_args = jet_smart_filters()->query->get_query_args();
+
+			if ( ! empty( $jsf_query_args ) ) {
+
+				$query_vars = wp_parse_args( $jsf_query_args, $query_vars );
+
+			}
+
+		}
+
+		/**
+		 * Check if current request is a load more/infinite scroll request
+		 *
+		 * If so, do not render wrappers.
+		 *
+		 * @since 1.8.1
+		 */
+		$is_load_more_request = Api::is_current_endpoint( 'load_query_page' );
+
+		// Additional merge in case Bricks loop has default meta or tax query
+		// and Bricks loop is also filtered by meta or tax query.
+		if ( $is_load_more_request ) {
+
+			$merge_vars = $settings['query']['_merge_vars'];
+
+			if ( ! empty ( $merge_vars['meta_query'] ) && ! empty ( $query_vars['meta_query'] ) ) {
+				$query_vars['meta_query'] = array_merge( $query_vars['meta_query'], $merge_vars['meta_query'] );
+			}
+
+			if ( ! empty ( $merge_vars['tax_query'] ) && ! empty ( $query_vars['tax_query'] ) ) {
+				$query_vars['tax_query'] = array_merge( $query_vars['tax_query'], $merge_vars['tax_query'] );
+			}
+		}
+
+		return $query_vars;
+	}
+
+	public function has_bricks() {
+		return defined( 'BRICKS_VERSION' );
+	}
+
 	public static function get_allowed_providers() {
 
 		$provider_allowed = [
@@ -146,10 +215,6 @@ class Manager {
 		}
 
 		return apply_filters( 'jet-smart-filters/bricks/allowed-providers', $provider_allowed );
-	}
-
-	public function has_bricks() {
-		return defined( 'BRICKS_VERSION' );
 	}
 
 }

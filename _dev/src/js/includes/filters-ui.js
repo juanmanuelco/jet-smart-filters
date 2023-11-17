@@ -45,7 +45,8 @@ const filtersUI = {
 				$container = false,
 				$dateRangeInput = $dateRangeInput || $container.find(filtersUI.dateRange.inputSelector),
 				$dateRangeFrom = $dateRangeFrom || $container.find(filtersUI.dateRange.fromSelector),
-				$dateRangeTo = $dateRangeTo || $container.find(filtersUI.dateRange.toSelector)
+				$dateRangeTo = $dateRangeTo || $container.find(filtersUI.dateRange.toSelector),
+				onChange = onChange || undefined
 			} = props,
 				dateFormat = $dateRangeInput.data('date-format') || 'mm/dd/yy';
 
@@ -66,6 +67,9 @@ const filtersUI = {
 					$dateRangeInput.val('');
 				}
 
+				if (onChange)
+					onChange('from', fromDate.date);
+
 				to.datepicker('option', 'minDate', fromDate.date);
 			});
 
@@ -85,6 +89,9 @@ const filtersUI = {
 				} else {
 					$dateRangeInput.val('');
 				}
+
+				if (onChange)
+					onChange('from', fromDate.date);
 
 				from.datepicker('option', 'maxDate', toDate.date);
 			});

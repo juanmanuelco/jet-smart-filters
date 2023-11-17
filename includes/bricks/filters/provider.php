@@ -2,9 +2,12 @@
 
 namespace Jet_Smart_Filters\Bricks_Views\Filters;
 
+use Bricks\Assets;
 use Bricks\Database;
 use Bricks\Frontend;
+use Bricks\Helpers;
 use Bricks\Query;
+use Bricks\Theme_Styles;
 
 /**
  * Query loop bricks provider
@@ -37,6 +40,7 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 	 * Add hooks specific for exact provider
 	 */
 	public function __construct() {
+		add_filter( 'bricks/query/force_run', [ $this, 'force_query_run' ] );
 		add_filter( 'bricks/element/set_root_attributes', [ $this, 'set_attributes' ], 999, 2 );
 	}
 
@@ -132,9 +136,9 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 	public function set_default_props( $settings ) {
 
 		$query_bricks = Query::get_query_object();
-		$query_id   = $settings['jsfb_query_id'] ?? 'default';
-		$query_type = $this->get_query_type( $settings );
-		$props      = [];
+		$query_id     = $settings['jsfb_query_id'] ?? 'default';
+		$query_type   = $this->get_query_type( $settings );
+		$props        = [];
 
 		if ( ! $query_bricks ) {
 			$props = [
@@ -223,8 +227,14 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 
 		$query_id = $settings['jsfb_query_id'] ?? 'default';
 
+		$post_id = isset( Database::$page_data['original_post_id'] ) ? Database::$page_data['original_post_id'] : Database::$page_data['preview_or_post_id'];
+
+		if ( Database::$page_data['current_page_type'] === 'archive' ) {
+			$post_id = Database::$active_templates['content'];
+		}
+
 		$attrs = [
-			'filtered_post_id' => isset( Database::$active_templates['content'] ) ? Database::$active_templates['content'] : Database::$page_data['preview_or_post_id'],
+			'filtered_post_id' => $post_id,
 			'element_id'       => $element_id,
 		];
 
@@ -259,43 +269,72 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 		}
 
 		$post_id          = absint( $settings['filtered_post_id'] );
-		$element_id       = esc_attr( $settings['element_id'] );
-		$bricks_data      = get_post_meta( $post_id, BRICKS_DB_PAGE_CONTENT, true );
+		$query_element_id = esc_attr( $settings['element_id'] );
+		$bricks_data      = Helpers::get_element_data( $post_id, $query_element_id );
+		$query_vars       = ! empty( $_REQUEST['defaults'] ) ? $_REQUEST['defaults'] : [];
 		$query_id         = jet_smart_filters()->query->get_current_provider( 'query_id' );
-		$filtered_element = null;
 
 		Database::$page_data['preview_or_post_id'] = $post_id;
 
-		foreach ( $bricks_data as $element ) {
+		// STEP: Build the flat list index
+		$indexed_elements = [];
 
+		foreach ( $bricks_data['elements'] as $element ) {
 			Frontend::$elements[ $element['id'] ] = $element;
+			$indexed_elements[ $element['id'] ]   = $element;
+		}
 
-			if ( $element_id === $element['id'] ) {
-				$filtered_element = $element;
+		// STEP: Set the query element pagination
+		$query_element = $indexed_elements[ $query_element_id ];
+
+		// STEP: Add merge query vars, used to simulate the global query merge in the archives (@since 1.5.1)
+		$query_element['settings']['query']['_merge_vars'] = $query_vars;
+
+		// Remove the parent
+		if ( ! empty( $query_element['parent'] ) ) {
+			$query_element['parent']       = 0;
+			$query_element['_noRootClass'] = 1;
+		}
+
+		// STEP: Get the query loop elements (main and children)
+		$loop_elements = [ $query_element ];
+
+		$children = $query_element['children'];
+
+		while ( ! empty( $children ) ) {
+			$child_id = array_shift( $children );
+
+			if ( array_key_exists( $child_id, $indexed_elements ) ) {
+				$loop_elements[] = $indexed_elements[ $child_id ];
+
+				if ( ! empty( $indexed_elements[ $child_id ]['children'] ) ) {
+					$children = array_merge( $children, $indexed_elements[ $child_id ]['children'] );
+				}
 			}
 		}
 
-		$query_type            = $this->get_query_type( $filtered_element['settings'] );
+		// Set Theme Styles (for correct preview of query loop nodes)
+		Theme_Styles::load_set_styles( $post_id );
+
+		// STEP: Generate the styles again to catch dynamic data changes (eg. background-image)
+		$jsf_query_page_id = "jsf_{$query_element_id}";
+
+		Assets::generate_css_from_elements( $loop_elements, $jsf_query_page_id );
+
+		$inline_css = ! empty( Assets::$inline_css[ $jsf_query_page_id ] ) ? Assets::$inline_css[ $jsf_query_page_id ] : '';
+		$inline_css .= Assets::$inline_css_dynamic_data;
+
+		$query_type            = $this->get_query_type( $query_element['settings'] );
 		$is_default_query_type = $this->check_default_query_type( $query_type );
 
 		if ( $is_default_query_type ) {
 			add_action( "pre_get_{$query_type}s", [ $this, 'add_query_args' ], 10 );
 		}
 
-		add_filter( 'jet-smart-filters/render/ajax/data', function ( $data ) use ( $query_id ) {
-
-			$data['query_id']         = $query_id;
-			$data['rendered_content'] = $data['content'];
-			$data['content']          = false;
-
-			return $data;
-
-		} );
-
-		add_filter( 'bricks/query/no_results_content', function ( $content ) use ( $element_id, $query_id ) {
+		add_filter( 'bricks/query/no_results_content', function ( $content ) use ( $query_id, $query_element_id ) {
 
 			$classes = implode( ' ', [
-				'brxe-' . $element_id,
+				'brxe-' . $query_element_id,
 				'jsfb-filterable',
 				$this->query_id_class_prefix . $query_id,
 			] );
@@ -304,7 +343,27 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 
 		} );
 
-		echo Frontend::render_element( $filtered_element );
+		// STEP: Render the element after styles are generated as data-query-loop-index might be inserted through hook in Assets class (@since 1.7.2)
+		echo Frontend::render_data( $loop_elements );
+
+		$style_id = "jsf-{$query_element_id}";
+		$style    = ! empty( $inline_css ) ? "\n<style id=$style_id>/* INFINITE SCROLL CSS */\n{$inline_css}</style>\n" : '';
+		$styles   = [
+			'id'    => $style_id,
+			'style' => $style,
+		];
+
+		add_filter( 'jet-smart-filters/render/ajax/data', function ( $data ) use ( $query_id, $query_element_id, $styles ) {
+
+			$data['query_id']         = $query_id;
+			$data['rendered_content'] = $data['content'];
+			$data['content']          = false;
+			$data['styles']           = $styles;
+			$data['element_id']       = $query_element_id;
+
+			return $data;
+
+		} );
 
 		if ( $is_default_query_type ) {
 			remove_filter( "bricks/{$query_type}s/query_vars", [ $this, 'store_default_query' ] );
@@ -461,6 +520,7 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 		remove_action( "pre_get_{$query_type}s", [ $this, 'add_query_args' ], 10 );
 	}
 
+
 	/**
 	 * Get provider wrapper selector
 	 * Its CSS selector of HTML element with provider content.
@@ -501,7 +561,7 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 		}
 
 		$query_args  = jet_smart_filters()->query->get_query_args();
-		$query_vars  = array_merge($query_vars, $query_args);
+		$query_vars  = array_merge( $query_vars, $query_args );
 		$terms_query = new \WP_Term_Query( $query_vars );
 		$result      = $terms_query->get_terms();
 
@@ -538,5 +598,10 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 
 	public function get_current_page() {
 		return jet_smart_filters()->query->get_query_args()['paged'] ?? 1;
+	}
+
+	// to skip add_to_history() method in Bricks query
+	public function force_query_run() {
+		return true;
 	}
 }

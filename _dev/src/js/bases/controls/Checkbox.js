@@ -21,7 +21,7 @@ export default class CheckboxControl extends Filter {
 				this.uncheckGroup(item.target);
 
 			this.processData();
-			this.emitFiterChange();
+			this.wasСhanged();
 		});
 
 		if (this.canDeselect) {

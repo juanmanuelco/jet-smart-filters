@@ -24,14 +24,12 @@ export default class RatingControl extends Filter {
 				this.$starsRating.removeClass('is-checked');
 				$starItem.addClass('is-checked');
 			}
+
+			this.processData();
+			this.wasСhanged();
 		});
 
-		if (!this.isReloadType) {
-			this.$starsRating.on('click', (evt) => {
-				this.processData();
-				this.emitFiterChange();
-			});
-		} else {
+		if (this.isReloadType) {
 			this.addApplyEvent();
 		}
 	}
@@ -52,6 +50,8 @@ export default class RatingControl extends Filter {
 
 		this.$checked.removeClass('is-checked');
 		this.$starsRating.filter('[value="' + newData + '"]').addClass('is-checked');
+
+		this.processData();
 	}
 
 	reset() {

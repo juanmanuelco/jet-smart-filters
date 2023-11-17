@@ -20,7 +20,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Compatibility' ) ) {
 		 */
 		function __construct() {
 			// WPML compatibility
-			if ( defined( 'WPML_ST_VERSION' ) ) {
+			if ( defined( 'ICL_SITEPRESS_VERSION' ) || defined( 'WPML_ST_VERSION' ) ) {
 				add_filter( 'wcml_multi_currency_ajax_actions', array( $this, 'add_action_to_multi_currency_ajax' ) );
 				add_filter( 'jet-smart-filters/render_filter_template/filter_id', array( $this, 'modify_filter_id' ) );
 				add_filter( 'jet-smart-filters/filters/posts-source/args', array( $this, 'modify_posts_source_args' ) );

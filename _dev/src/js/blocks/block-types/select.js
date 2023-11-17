@@ -31,6 +31,8 @@ registerBlockType('jet-smart-filters/select', {
 		apply_button_text: attributes.apply_button_text,
 		show_label: attributes.show_label,
 		query_id: attributes.query_id,
+		additional_providers_enabled: attributes.additional_providers_enabled,
+		additional_providers_list: attributes.additional_providers_list,
 		// Indexer
 		apply_indexer: attributes.apply_indexer,
 		show_counter: attributes.show_counter,

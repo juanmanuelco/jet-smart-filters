@@ -1,7 +1,7 @@
 <template>
 	<template v-if="columnKey === 'title'">
 		<template v-if="currentPage === 'trash'">
-			<div class="jet_filters-list-row-title">{{value}}</div>
+			<div class="jet_filters-list-row-title">{{ value }}</div>
 			<div class="jet_filters-list-row-actions">
 				<Button class="jet_filters-list-row-actions-restore"
 						text="Restore"
@@ -15,7 +15,7 @@
 		<template v-else>
 			<router-link class="jet_filters-list-row-title"
 						 :to="`/${id}`"
-						 v-slot="{ href, navigate }">{{value}}</router-link>
+						 v-slot="{ href, navigate }">{{ value }}</router-link>
 			<div class="jet_filters-list-row-actions">
 				<router-link class="jet_filters-list-row-edit"
 							 :to="`/${id}`"
@@ -34,11 +34,14 @@
 	<template v-else-if="columnKey === 'type'">
 		<div class="jet_filters-list-row-type">
 			<img :src="value.img">
-			{{value.label}}
+			{{ value.label }}
 		</div>
 	</template>
+	<template v-else-if="currentPage === 'filters' && columnKey === 'multilingual'">
+		<ML_TableCell :id="id" />
+	</template>
 	<template v-else>
-		{{value}}
+		{{ value }}
 	</template>
 </template>
 

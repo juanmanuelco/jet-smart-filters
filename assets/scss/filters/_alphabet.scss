@@ -1,10 +1,14 @@
 .jet-alphabet-list {
-	&__wrapper {
-		display: flex;
-		flex-wrap: wrap;
+	&-wrapper {
 		margin: -5px;
-		border: 0;
-		padding: 0;
+
+		fieldset {
+			display: flex;
+			flex-wrap: wrap;
+			margin: 0;
+			padding: 0;
+			border: 0;
+		}
 	}
 
 	&__row {
@@ -37,7 +41,7 @@
 
 // Context Bricks
 .jet-smart-filters-alphabet {
-	.jet-alphabet-list__wrapper {
+	.jet-alphabet-list-wrapper {
 		gap: 8px;
 		margin: 0;
 	}

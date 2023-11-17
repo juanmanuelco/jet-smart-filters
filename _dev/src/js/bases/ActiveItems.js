@@ -223,7 +223,7 @@ export default class ActiveItems {
 		//activeFilter.additionalProviders = this.additionalProviders;
 
 		// emit reset active filter
-		eventBus.publish('fiter/change', activeFilter);
+		eventBus.publish('fiter/apply', activeFilter);
 	}
 
 	setAllProviders() {

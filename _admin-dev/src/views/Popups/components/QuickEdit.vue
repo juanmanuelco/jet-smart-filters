@@ -57,8 +57,8 @@ export default defineComponent({
 			}
 		};
 
-		const filterId = popup.data.value;
-		const filterData = filters.getById(filterId);
+		const filterID = popup.data.value;
+		const filterData = filters.getById(filterID);
 		const title = ref(filterData.title);
 		const date = ref(filterData.date);
 		const filterSavedData = reactive({
@@ -93,7 +93,7 @@ export default defineComponent({
 		};
 
 		const onApplyClick = () => {
-			filter.addAdditionallyUpdate(filterId, unsavedData.value);
+			filter.addAdditionallyUpdate(filterID, unsavedData.value);
 			filters.updateList();
 
 			filterSavedData.title = title.value;

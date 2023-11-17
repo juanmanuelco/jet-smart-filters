@@ -58,18 +58,21 @@ if ( ! class_exists( 'Jet_Smart_Filters_Checkboxes_Filter' ) ) {
 		 */
 		public function prepare_args( $args ) {
 
-			$filter_id            = $args['filter_id'];
-			$content_provider     = isset( $args['content_provider'] ) ? $args['content_provider'] : false;
-			$additional_providers = isset( $args['additional_providers'] ) ? $args['additional_providers'] : false;
-			$apply_type           = isset( $args['apply_type'] ) ? $args['apply_type'] : false;
-			$search_enabled       = isset( $args['search_enabled'] ) ? $args['search_enabled'] : false;
-			$search_placeholder   = isset( $args['search_placeholder'] ) ? $args['search_placeholder'] : __( 'Search...', 'jet-smart-filters' );
-			$less_items_count     = isset( $args['less_items_count'] ) ? $args['less_items_count'] : false;
-			$more_text            = isset( $args['more_text'] ) ? $args['more_text'] : __( 'More', 'jet-smart-filters' );
-			$less_text            = isset( $args['less_text'] ) ? $args['less_text'] : __( 'Less', 'jet-smart-filters' );
-			$scroll_height        = isset( $args['scroll_height'] ) ? $args['scroll_height'] : false;
-			$dropdown_enabled     = isset( $args['dropdown_enabled'] ) ? filter_var( $args['dropdown_enabled'], FILTER_VALIDATE_BOOLEAN ) : false;
-			$dropdown_placeholder = isset( $args['dropdown_placeholder'] ) ? $args['dropdown_placeholder'] : __( 'Select some options', 'jet-smart-filters' );
+			$filter_id                   = $args['filter_id'];
+			$content_provider            = isset( $args['content_provider'] ) ? $args['content_provider'] : false;
+			$additional_providers        = isset( $args['additional_providers'] ) ? $args['additional_providers'] : false;
+			$apply_type                  = isset( $args['apply_type'] ) ? $args['apply_type'] : false;
+			$search_enabled              = isset( $args['search_enabled'] ) ? $args['search_enabled'] : false;
+			$search_placeholder          = isset( $args['search_placeholder'] ) ? $args['search_placeholder'] : __( 'Search...', 'jet-smart-filters' );
+			$less_items_count            = isset( $args['less_items_count'] ) ? $args['less_items_count'] : false;
+			$more_text                   = isset( $args['more_text'] ) ? $args['more_text'] : __( 'More', 'jet-smart-filters' );
+			$less_text                   = isset( $args['less_text'] ) ? $args['less_text'] : __( 'Less', 'jet-smart-filters' );
+			$scroll_height               = isset( $args['scroll_height'] ) ? $args['scroll_height'] : false;
+			$dropdown_enabled            = isset( $args['dropdown_enabled'] ) ? filter_var( $args['dropdown_enabled'], FILTER_VALIDATE_BOOLEAN ) : false;
+			$dropdown_placeholder        = isset( $args['dropdown_placeholder'] ) ? $args['dropdown_placeholder'] : __( 'Select some options', 'jet-smart-filters' );
+			$dropdown_n_selected_enabled = isset( $args['dropdown_n_selected_enabled'] ) ? $args['dropdown_n_selected_enabled'] : false;
+			$dropdown_n_selected_number  = isset( $args['dropdown_n_selected_number'] ) ? $args['dropdown_n_selected_number'] : false;
+			$dropdown_n_selected_text    = isset( $args['dropdown_n_selected_text'] ) ? $args['dropdown_n_selected_text'] : false;
 
 			if ( ! $filter_id ) {
 				return false;
@@ -178,9 +181,11 @@ if ( ! class_exists( 'Jet_Smart_Filters_Checkboxes_Filter' ) ) {
 					break;
 			}
 
-			$options = jet_smart_filters()->data->maybe_include_exclude_options( $use_exclude_include, $exclude_include_options, $options );
-
-			$options = apply_filters( 'jet-smart-filters/filters/filter-options', $options, $filter_id, $this );
+			$options = apply_filters( 'jet-smart-filters/filters/filter-options',
+				jet_smart_filters()->data->maybe_include_exclude_options( $use_exclude_include, $exclude_include_options, $options ),
+				$filter_id,
+				$this
+			);
 
 			$result = array(
 				'options'              => $options,
@@ -206,6 +211,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Checkboxes_Filter' ) ) {
 
 			if ( $current_value ) {
 				$result['current_value'] = $current_value;
+			}
+
+			if ( $dropdown_n_selected_enabled ) {
+				$result['dropdown_n_selected_enabled'] = $dropdown_n_selected_enabled;
+				$result['dropdown_n_selected_number']  = $dropdown_n_selected_number;
+				$result['dropdown_n_selected_text']    = $dropdown_n_selected_text;
 			}
 
 			return $result;

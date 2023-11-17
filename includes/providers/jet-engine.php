@@ -139,6 +139,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_Jet_Engine' ) ) {
 			$render = jet_engine()->listings->get_render_instance( 'listing-grid', $attrs );
 
 			$render->render();
+
 		}
 
 		/**

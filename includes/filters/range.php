@@ -70,19 +70,20 @@ if ( ! class_exists( 'Jet_Smart_Filters_Range_Filter' ) ) {
 				return false;
 			}
 
-			$query_type     = 'meta_query';
-			$query_var      = get_post_meta( $filter_id, '_query_var', true );
-			$inputs_enabled = filter_var( get_post_meta( $filter_id, '_range_inputs_enabled', true ), FILTER_VALIDATE_BOOLEAN );
-			$prefix         = get_post_meta( $filter_id, '_values_prefix', true );
-			$suffix         = get_post_meta( $filter_id, '_values_suffix', true );
-			$source_cb      = get_post_meta( $filter_id, '_source_callback', true );
-			$min            = false;
-			$max            = false;
-			$step           = get_post_meta( $filter_id, '_source_step', true );
-			$decimal_num    = get_post_meta( $filter_id, '_values_decimal_num', true );
-			$decimal_sep    = get_post_meta( $filter_id, '_values_decimal_sep', true );
-			$thousand_sep   = get_post_meta( $filter_id, '_values_thousand_sep', true );
-			$format         = array(
+			$query_type                = 'meta_query';
+			$query_var                 = get_post_meta( $filter_id, '_query_var', true );
+			$inputs_enabled            = filter_var( get_post_meta( $filter_id, '_range_inputs_enabled', true ), FILTER_VALIDATE_BOOLEAN );
+			$inputs_separators_enabled = filter_var( get_post_meta( $filter_id, '_range_inputs_separators_enabled', true ), FILTER_VALIDATE_BOOLEAN );
+			$prefix                    = get_post_meta( $filter_id, '_values_prefix', true );
+			$suffix                    = get_post_meta( $filter_id, '_values_suffix', true );
+			$source_cb                 = get_post_meta( $filter_id, '_source_callback', true );
+			$min                       = false;
+			$max                       = false;
+			$step                      = get_post_meta( $filter_id, '_source_step', true );
+			$decimal_num               = get_post_meta( $filter_id, '_values_decimal_num', true );
+			$decimal_sep               = get_post_meta( $filter_id, '_values_decimal_sep', true );
+			$thousand_sep              = get_post_meta( $filter_id, '_values_thousand_sep', true );
+			$format                    = array(
 				'decimal_num'   => $decimal_num ? absint( $decimal_num ) : 0,
 				'decimal_sep'   => $decimal_sep ? $decimal_sep : '.',
 				'thousands_sep' => $thousand_sep ? $thousand_sep : ''
@@ -113,22 +114,23 @@ if ( ! class_exists( 'Jet_Smart_Filters_Range_Filter' ) ) {
 			}
 
 			return array(
-				'options'              => false,
-				'min'                  => $min,
-				'max'                  => $max,
-				'step'                 => $step,
-				'format'               => $format,
-				'query_type'           => $query_type,
-				'query_var'            => $query_var,
-				'query_var_suffix'     => jet_smart_filters()->filter_types->get_filter_query_var_suffix( $filter_id ),
-				'content_provider'     => $content_provider,
-				'additional_providers' => $additional_providers,
-				'apply_type'           => $apply_type,
-				'inputs_enabled'       => $inputs_enabled,
-				'prefix'               => jet_smart_filters_macros( $prefix ),
-				'suffix'               => jet_smart_filters_macros( $suffix ),
-				'filter_id'            => $filter_id,
-				'accessibility_label'  => $this->get_accessibility_label( $filter_id )
+				'options'                   => false,
+				'min'                       => $min,
+				'max'                       => $max,
+				'step'                      => $step,
+				'format'                    => $format,
+				'query_type'                => $query_type,
+				'query_var'                 => $query_var,
+				'query_var_suffix'          => jet_smart_filters()->filter_types->get_filter_query_var_suffix( $filter_id ),
+				'content_provider'          => $content_provider,
+				'additional_providers'      => $additional_providers,
+				'apply_type'                => $apply_type,
+				'inputs_enabled'            => $inputs_enabled,
+				'inputs_separators_enabled' => $inputs_separators_enabled,
+				'prefix'                    => jet_smart_filters_macros( $prefix ),
+				'suffix'                    => jet_smart_filters_macros( $suffix ),
+				'filter_id'                 => $filter_id,
+				'accessibility_label'       => $this->get_accessibility_label( $filter_id )
 			);
 		}
 

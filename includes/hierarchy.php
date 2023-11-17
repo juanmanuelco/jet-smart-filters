@@ -220,16 +220,19 @@ if ( ! class_exists( 'Jet_Smart_Filters_Hierarchy' ) ) {
 				foreach ( $prepared_values as $tax => $value ) {
 					if ( $value ) {
 
-						$table            = $wpdb->term_relationships;
-						$value            = absint( $value );
-						$term_taxonomy    = get_term( $value );
-						$term_taxonomy_id = ! is_wp_error($term_taxonomy) ? $term_taxonomy->term_taxonomy_id : false;
+						$posts_table              = $wpdb->posts;
+						$term_relationships_table = $wpdb->term_relationships;
+						$value                    = absint( $value );
+						$term_taxonomy            = get_term( $value );
+						$term_taxonomy_id         = ! is_wp_error($term_taxonomy) ? $term_taxonomy->term_taxonomy_id : false;
 
 						if ( 0 === $index ) {
-							$from  .= "SELECT t0.object_id FROM $table AS t0";
-							$where .= " WHERE t0.term_taxonomy_id = {$term_taxonomy_id}";
+							$from  .= "SELECT ID FROM $posts_table AS p
+									   LEFT JOIN $term_relationships_table AS t0 ON (p.ID = t0.object_id)";
+							$where .= " WHERE t0.term_taxonomy_id = {$term_taxonomy_id}
+										AND p.post_status = 'publish'";
 						} else {
-							$from  .= " INNER JOIN $table AS t{$index}";
+							$from  .= " INNER JOIN $term_relationships_table AS t{$index}";
 							$where .= " AND t{$index}.term_taxonomy_id = {$term_taxonomy_id}";
 							$prev   = $index - 1;
 							$on    .= "{$glue}t{$prev}.object_id = t{$index}.object_id";

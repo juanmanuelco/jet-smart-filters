@@ -1,19 +1,19 @@
 <template>
 	<div class="jet_filters-list-subnav">
-		<div v-for="item in itemsList"
-			 :key="item.name"
+		<div v-for="item in submenuList"
+			 :key="item.type"
 			 :class="[
-				'jet_filters-list-subnav-' + item.name,
-				{'jet_filters-list-subnav-active': isItemActive(item.name)}
+			 	'jet_filters-list-subnav-' + item.type,
+			 	{ 'jet_filters-list-subnav-active': isItemActive(item.type) }
 			 ]"
-			 @click="onItemClick(item.name)">
-			{{item.label}} <span>({{quantity[item.name]}})</span>
+			 @click="onItemClick(item.type)">
+			{{ item.label }} <span>({{ item.count }})</span>
 		</div>
 	</div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import { useGetters } from "@/store/helper.js";
 import filters from "@/services/filters.js";
 
@@ -21,21 +21,10 @@ export default defineComponent({
 	name: "Submenu",
 
 	setup(props, context) {
-		const itemsList = [
-			{
-				name: 'filters',
-				label: 'All filters'
-			},
-			{
-				name: 'trash',
-				label: 'Trash'
-			}
-		];
-
 		const {
 			currentPage,
-			quantity
-		} = useGetters(['currentPage', 'quantity']);
+			submenuList,
+		} = useGetters(['currentPage', 'submenuList']);
 
 		// Methods
 		const isItemActive = (itemName) => itemName === currentPage.value;
@@ -47,9 +36,8 @@ export default defineComponent({
 		};
 
 		return {
-			itemsList,
 			isItemActive,
-			quantity,
+			submenuList,
 			onItemClick
 		};
 	}

@@ -42,29 +42,20 @@ registerBlockType('jet-smart-filters/sorting', {
 		sorting_placeholder: attributes.sorting_placeholder,
 		sorting_list: attributes.sorting_list,
 		query_id: attributes.query_id,
+		additional_providers_enabled: attributes.additional_providers_enabled,
+		additional_providers_list: attributes.additional_providers_list,
 	},
 	className: 'jet-smart-filters-sorting',
 	edit: class extends wp.element.Component {
-		updateItem(item, key, value) {
-			const sortingList = clone(this.props.attributes.sorting_list),
-				currentItem = sortingList[this.getItemIndex(item)];
-
-			if (!currentItem)
-				return;
-
-			currentItem[key] = value;
-
-			this.props.setAttributes({ sorting_list: sortingList });
-		}
-
-		getItemIndex(item) {
-			return this.props.attributes.sorting_list.findIndex(sortingListItem => {
-				return sortingListItem == item;
-			})
-		}
-
 		render() {
 			const props = this.props;
+
+			const updateSortingRepeaterItem = (index, key, value) => {
+				const sortingList = clone(props.attributes.sorting_list);
+				sortingList[index][key] = value;
+
+				props.setAttributes({ sorting_list: sortingList });
+			};
 
 			return [
 				props.isSelected && (
@@ -92,7 +83,7 @@ registerBlockType('jet-smart-filters/sorting', {
 							<TextControl
 								type="text"
 								label={__('Placeholder')}
-								placeholder={ __( 'Sort...' ) }
+								placeholder={__('Sort...')}
 								value={props.attributes.sorting_placeholder}
 								onChange={newValue => {
 									props.setAttributes({ sorting_placeholder: newValue });
@@ -112,14 +103,14 @@ registerBlockType('jet-smart-filters/sorting', {
 								}}
 							>
 								{
-									(item) =>
+									(item, index) =>
 										<React.Fragment>
 											<TextControl
 												type="text"
 												label={__('Title')}
 												value={item.title}
 												onChange={newValue => {
-													this.updateItem(item, 'title', newValue)
+													updateSortingRepeaterItem(index, 'title', newValue);
 												}}
 											/>
 											<SelectControl
@@ -127,7 +118,7 @@ registerBlockType('jet-smart-filters/sorting', {
 												value={item.orderby}
 												options={options.sortingOrderby}
 												onChange={newValue => {
-													this.updateItem(item, 'orderby', newValue)
+													updateSortingRepeaterItem(index, 'orderby', newValue);
 												}}
 											/>
 											{['meta_value', 'meta_value_num', 'clause_value'].includes(item.orderby) && (
@@ -136,7 +127,7 @@ registerBlockType('jet-smart-filters/sorting', {
 													label={__('Meta key')}
 													value={item.meta_key}
 													onChange={newValue => {
-														this.updateItem(item, 'meta_key', newValue)
+														updateSortingRepeaterItem(index, 'meta_key', newValue);
 													}}
 												/>
 											)}
@@ -146,7 +137,7 @@ registerBlockType('jet-smart-filters/sorting', {
 													value={item.order}
 													options={options.sortingOrder}
 													onChange={newValue => {
-														this.updateItem(item, 'order', newValue)
+														updateSortingRepeaterItem(index, 'order', newValue);
 													}}
 												/>
 											)}

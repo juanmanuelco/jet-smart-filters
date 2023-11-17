@@ -4,15 +4,19 @@ export default function useDropDown(props = {}) {
 	const instance = getCurrentInstance();
 	const opened = ref(false);
 
+	let areaElement;
+
 	// Lifecycles
 	onMounted(() => {
-		if (props.areaElement)
-			document.addEventListener('click', documentClick);
+		areaElement = props.areaElement
+			? props.areaElement.value
+			: false
+
+		document.addEventListener('click', documentClick);
 	});
 
 	onUnmounted(() => {
-		if (props.areaElement)
-			document.removeEventListener('click', documentClick);
+		document.removeEventListener('click', documentClick);
 	});
 
 	// Methods
@@ -42,7 +46,7 @@ export default function useDropDown(props = {}) {
 		if (!opened.value)
 			return;
 
-		if ((props.areaElement.value !== evt.target) && !props.areaElement.value.contains(evt.target))
+		if (areaElement && (areaElement !== evt.target) && !areaElement.contains(evt.target))
 			close();
 	};
 

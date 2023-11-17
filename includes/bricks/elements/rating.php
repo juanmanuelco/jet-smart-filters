@@ -178,6 +178,8 @@ class Jet_Smart_Filters_Bricks_Rating extends Jet_Smart_Filters_Bricks_Base {
 			);
 		}
 
+		$filter_id = apply_filters( 'jet-smart-filters/render_filter_template/filter_id', $filter_id );
+
 		echo "<div {$this->render_attributes( '_root' )}>";
 
 		printf( '<div class="%1$s jet-filter">', $base_class );

@@ -284,6 +284,7 @@
 							action: self.actionPlugin,
 							plugin: self.pluginData['slug'],
 							version: self.rollbackVersion,
+							nonce: window.JetDashboardConfig.nonce,
 						}
 					},
 					beforeSend: function( jqXHR, ajaxSettings ) {
@@ -390,6 +391,7 @@
 						data: {
 							action: self.pluginActionType,
 							plugin: self.pluginData['slug'],
+							nonce: window.JetDashboardConfig.nonce,
 						}
 					},
 					beforeSend: function( jqXHR, ajaxSettings ) {

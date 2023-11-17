@@ -16,6 +16,7 @@ export default class SelectHierarchical {
 			const $filter = $filters.eq(index);
 			const filter = new SelectControl($container, $filter);
 
+			filter.hierarchicalInstance = this;
 			filter.name = 'select';
 			filter.$container = $container;
 			filter.isHierarchy = true;
@@ -49,12 +50,12 @@ export default class SelectHierarchical {
 			});
 
 			this.lastFilter.$applyButton.on('click', () => {
-				this.lastFilter.emitFiterChange();
+				this.lastFilter.emitFiterApply();
 			});
 		}
 
 		// Event subscriptions
-		eventBus.subscribe('fiter/change', filter => {
+		eventBus.subscribe('fiter/apply', filter => {
 			if (filter.filterId === this.filterId)
 				this.getNextHierarchyLevels(filter);
 		});
@@ -140,11 +141,11 @@ export default class SelectHierarchical {
 		});
 
 		this.ajaxRequest({ values, args }, () => {
-			filters.forEach(filter => {
+			this.filters.forEach(filter => {
 				filter.setData(filter.data);
 			});
 
-			const firstFilter = filters[0];
+			const firstFilter = this.filters[0];
 			if (firstFilter)
 				eventBus.publish('activeItems/rebuild', firstFilter.provider, firstFilter.queryId);
 		});

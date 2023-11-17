@@ -31,6 +31,8 @@ registerBlockType('jet-smart-filters/pagination', {
 		content_provider: attributes.content_provider,
 		apply_type: attributes.apply_type,
 		query_id: attributes.query_id,
+		additional_providers_enabled: attributes.additional_providers_enabled,
+		additional_providers_list: attributes.additional_providers_list,
 		// Pagination Controls
 		enable_items: attributes.enable_items,
 		pages_center_offset: attributes.pages_center_offset,

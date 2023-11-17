@@ -98,6 +98,53 @@ $this->register_jet_control(
 	]
 );
 
+/**
+ * Dropdown N Selected
+ */
+if ( $this->jet_element_render !== 'radio' ) {
+
+	$this->register_jet_control(
+		'dropdown_n_selected_enabled',
+		[
+			'tab'      => 'content',
+			'label'    => esc_html__( 'N Selected', 'jet-smart-filters' ),
+			'type'     => 'checkbox',
+			'default'  => false,
+			'required' => [ 'dropdown_enabled', '=', true ],
+		]
+	);
+
+	$this->register_jet_control(
+		'dropdown_n_selected_number',
+		[
+			'tab'         => 'content',
+			'label'       => esc_html__( 'Number of Named Items', 'jet-smart-filters' ),
+			'type'        => 'number',
+			'min'         => 0,
+			'default'     => 3,
+			'placeholder' => 3,
+			'required'    => [
+				[ 'dropdown_enabled', '=', true ],
+				[ 'dropdown_n_selected_enabled', '=', true ]
+			],
+		]
+	);
+
+	$this->register_jet_control(
+		'dropdown_n_selected_text',
+		[
+			'tab'         => 'content',
+			'label'       => esc_html__( 'Generic text', 'jet-smart-filters' ),
+			'type'        => 'text',
+			'description' => esc_html__( 'Use a {number} macro to display the number of other items', 'jet-smart-filters' ),
+			'placeholder' => esc_html__( 'and {number} others', 'jet-smart-filters' ),
+			'required' => [
+				[ 'dropdown_enabled', '=', true ],
+				[ 'dropdown_n_selected_enabled', '=', true ]
+			],
+		]
+	);
+}
 
 /**
  * Scroll controls
