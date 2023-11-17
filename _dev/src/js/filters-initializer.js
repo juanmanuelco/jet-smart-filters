@@ -7,6 +7,7 @@ import filters from 'filters';
 // Includes
 import filtersUI from 'includes/filters-ui';
 import eventBus from 'includes/event-bus';
+import eproCompat from 'includes/epro-compat';
 import preloader from 'includes/preloader';
 import {
 	getNesting,
@@ -63,6 +64,15 @@ function init() {
 	//clear previous filters
 	eventBus.channels = {};
 	filterGroups = filtersInitializer.filterGroups = {};
+
+	const beforeInitEvent = new Event('jet-smart-filters/before-init');
+	document.dispatchEvent(beforeInitEvent);
+
+	// if elementor
+	if (window.elementorFrontend) {
+		// initialize elementor PRO widgets post rendered processing
+		eproCompat.addSubscribers();
+	}
 
 	// before initialization
 	preloader.init();
@@ -125,6 +135,9 @@ function init() {
 			filterGroups[filterGroupKey] = new FilterGroup(splittedKeys[0], splittedKeys[1], filterGroups[filterGroupKey], prevQueries[filterGroupKey]);
 		}
 	}
+
+	const initedEvent = new Event('jet-smart-filters/inited');
+	document.dispatchEvent(initedEvent);
 }
 
 function findFilters(container = $('html')) {
@@ -197,11 +210,15 @@ function setIndexedData(provider, query = {}) {
 		// update indexed data
 		window.JetSmartFilterSettings.jetFiltersIndexedData[provider] = response.data;
 
-		eventBus.publish(
-			'ajaxFilters/updated',
-			provider.substring(0, provider.indexOf('/')),
-			provider.substring(provider.indexOf('/') + 1)
-		);
+		if (!filterGroups[provider])
+			return;
+
+		filterGroups[provider].filters.forEach(filter => {
+			if (!filter.indexer)
+				return;
+
+			filter.indexer.update();
+		});
 	});
 }
 

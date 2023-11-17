@@ -53,7 +53,7 @@ const filtersUI = {
 				$input: $dateRangeFrom,
 				id,
 				datepickerOptions: {
-					defaultDate: '+1w',
+					//defaultDate: '+1w',
 					dateFormat
 				}
 			}).on('change', () => {
@@ -73,7 +73,7 @@ const filtersUI = {
 				$input: $dateRangeTo,
 				id,
 				datepickerOptions: {
-					defaultDate: '+1w',
+					//defaultDate: '+1w',
 					dateFormat
 				}
 			}).on('change', () => {

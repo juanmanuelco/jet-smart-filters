@@ -6,7 +6,7 @@ export default class SelectHierarchical {
 
 	filters = [];
 
-	constructor ($container) {
+	constructor($container) {
 		const $filters = $container.find('.jet-select');
 
 		if (!$filters.length)
@@ -19,14 +19,14 @@ export default class SelectHierarchical {
 			filter.$container = $container;
 			filter.isHierarchy = true;
 			filter.depth = index;
-			filter.singleTax = filter.$filter.data('singleTax')
+			filter.singleTax = filter.$filter.data('singleTax');
 
 			this.filters.push(filter);
 
 			// overwrite processData method
 			filter.processData = () => {
 				this.hierarchicalFilterProcessData(filter);
-			}
+			};
 		});
 
 		this.isHierarchy = true;
@@ -34,7 +34,6 @@ export default class SelectHierarchical {
 		this.lastFilter = this.filters[this.filters.length - 1];
 		this.filterId = this.lastFilter.filterId;
 		this.isReloadType = this.lastFilter.isReloadType;
-		this.isSingleTaxonomy = this.filters.every(filter => { return filter.queryKey === this.filters[0].queryKey });
 
 		// if reload type
 		if (this.isReloadType) {
@@ -50,7 +49,7 @@ export default class SelectHierarchical {
 
 			this.lastFilter.$applyButton.on('click', () => {
 				this.lastFilter.emitFiterChange();
-			})
+			});
 		}
 
 		// Event subscriptions
@@ -70,19 +69,22 @@ export default class SelectHierarchical {
 		});
 	}
 
+	getHierarchicalСhain(filter) {
+		const hc = [];
+
+		for (let index = 0; index < filter.depth; index++)
+			if (this.filters[index].queryKey === filter.queryKey)
+				hc.push(this.filters[index].data);
+
+		return hc;
+	}
+
 	hierarchicalFilterProcessData(filter) {
 		filter.dataValue = filter.$selected.val();
 
 		// get hierarchical chain if same taxonomies
-		if (this.isSingleTaxonomy && filter.depth) {
-			const hierarchicalСhain = [];
-
-			/* this.filters.forEach(currentFilter => {
-				currentFilter.hierarchicalСhain = false;
-			}); */
-
-			for (let index = 0; index < filter.depth; index++)
-				hierarchicalСhain.push(this.filters[index].data);
+		if (filter.depth) {
+			const hierarchicalСhain = this.getHierarchicalСhain(filter);
 
 			if (hierarchicalСhain.length)
 				filter.hierarchicalСhain = hierarchicalСhain.join();
@@ -110,21 +112,30 @@ export default class SelectHierarchical {
 			});
 		}
 
-		this.ajaxRequest({ values, depth });
+		this.ajaxRequest({
+			values,
+			depth,
+			args: filter.layoutOptions || false
+		});
 	}
 
 	updateHierarchyLevels(filters) {
 		const values = [];
+		let args = null;
 
 		filters.forEach(filter => {
-			if (filter.dataValue)
+			if (filter.dataValue) {
+				if (args === null)
+					args = filter.layoutOptions || false;
+
 				values.push({
 					value: filter.data,
 					tax: filter.queryVar,
 				});
+			}
 		});
 
-		this.ajaxRequest({ values }, () => {
+		this.ajaxRequest({ values, args }, () => {
 			filters.forEach(filter => {
 				filter.setData(filter.data);
 			});
@@ -154,19 +165,22 @@ export default class SelectHierarchical {
 		const {
 			values,
 			depth = false,
-			indexer = this.indexer
+			indexer = this.indexer,
+			args = false
 		} = data;
 
 		const requestData = {
 			action: 'jet_smart_filters_get_hierarchy_level',
 			filter_id: this.filterId,
 			values
-		}
+		};
 
 		if (depth)
 			requestData.depth = depth;
 		if (indexer)
 			requestData.indexer = indexer;
+		if (args)
+			requestData.args = args;
 
 		$.ajax({
 			url: JetSmartFilterSettings.ajaxurl,

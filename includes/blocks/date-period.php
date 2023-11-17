@@ -9,28 +9,25 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 if ( ! class_exists( 'Jet_Smart_Filters_Block_Date_Period' ) ) {
-
 	/**
 	 * Define Jet_Smart_Filters_Block_Date_Period class
 	 */
 	class Jet_Smart_Filters_Block_Date_Period extends Jet_Smart_Filters_Block_Base {
-
 		/**
 		 * Returns block name
-		 *
-		 * @return string
 		 */
 		public function get_name() {
+
 			return 'date-period';
 		}
 
-		public function get_script_depends() {
+		/* public function get_script_depends() {
 			return 'air-datepicker';
 		}
 
 		public function get_style_depends() {
 			return 'air-datepicker';
-		}
+		} */
 
 		/* public function get_editor_script_depends() {
 			return array( 'jet-smart-filters', 'air-datepicker' );
@@ -40,7 +37,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Date_Period' ) ) {
 			return array( 'jet-smart-filters', 'air-datepicker' );
 		} */
 
-		public function add_style_manager_options(){
+		public function add_style_manager_options() {
 
 			$css_scheme =  apply_filters(
 				'jet-smart-filters/widgets/date-period/css-scheme',
@@ -913,6 +910,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Date_Period' ) ) {
 					'#datepickers-container .datepicker .datepicker--cell' => 'border-radius: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
 				),
 			]);
+			
 //Days
 			$this->controls_manager->add_control([
 				'id'            => 'calendar_days_heading',

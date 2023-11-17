@@ -19,3 +19,18 @@
 		display: none;
 	}
 }
+
+// Context Bricks
+.brxe-jet-smart-filters-pagination {
+	.jet-filters-pagination {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.jet-filters-pagination,
+	.jet-filters-pagination__item {
+		margin-bottom: 0;
+		margin-left: 0;
+		margin-right: 0;
+	}
+}

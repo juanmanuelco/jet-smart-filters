@@ -6,7 +6,7 @@ export default {
 	postsSettings: {},
 	skin: 'archive_classic',
 
-	init() {
+	addSubscribers() {
 		eventBus.subscribe('provider/content-rendered', this.eproPostRendered.bind(this));
 	},
 

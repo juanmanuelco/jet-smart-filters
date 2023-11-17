@@ -9,22 +9,20 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 if ( ! class_exists( 'Jet_Smart_Filters_Block_Select' ) ) {
-
 	/**
 	 * Define Jet_Smart_Filters_Block_Select class
 	 */
 	class Jet_Smart_Filters_Block_Select extends Jet_Smart_Filters_Block_Base {
-
 		/**
 		 * Returns block name
-		 *
-		 * @return string
 		 */
 		public function get_name() {
+
 			return 'select';
 		}
 
-		public function set_css_scheme(){
+		public function set_css_scheme() {
+
 			$this->css_scheme = apply_filters(
 				'jet-smart-filters/widgets/select/css-scheme',
 				[
@@ -37,7 +35,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Select' ) ) {
 			);
 		}
 
-		public function add_style_manager_options(){
+		public function add_style_manager_options() {
 
 			$this->controls_manager->start_section(
 				'style_controls',
@@ -64,15 +62,16 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Select' ) ) {
 					],
 				],
 				'return_value' => [
-					'line'   => 'display:flex; flex-direction:row;',
-					'column' => 'display:flex; flex-direction:column;',
+					'line'   => 'display:flex;',
+					'column' => 'display:block;',
 				],
 				'css_selector' => [
-					'{{WRAPPER}} ' . $this->css_scheme['filter'] => '{{VALUE}}',
+					'{{WRAPPER}} .jet-smart-filters-select.jet-filter' => '{{VALUE}}',
+					'{{WRAPPER}} .jet-smart-filters-hierarchy.jet-filter ' . $this->css_scheme['filter'] => '{{VALUE}}',
 				],
 				'attributes' => [
 					'default' => [
-						'value' => 'block',
+						'value' => 'column',
 					]
 				],
 			]);
@@ -82,7 +81,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Select' ) ) {
 				'type'      => 'range',
 				'label'     => esc_html__( 'Select Width', 'jet-smart-filters' ),
 				'css_selector' => [
-					'{{WRAPPER}} ' . $this->css_scheme['select'] => 'width: {{VALUE}}{{UNIT}}; max-width: {{VALUE}}{{UNIT}}',
+					'{{WRAPPER}} .jet-smart-filters-select.jet-filter ' . $this->css_scheme['filter'] => 'width: {{VALUE}}{{UNIT}}',
+					'{{WRAPPER}} .jet-smart-filters-hierarchy.jet-filter ' . $this->css_scheme['select'] => 'width: {{VALUE}}{{UNIT}}',
 				],
 				'attributes' => [
 					'default' => [
@@ -101,6 +101,138 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Select' ) ) {
 							'max'  => 100,
 						]
 					],
+				],
+			]);
+
+			$this->controls_manager->end_section();
+
+			$this->controls_manager->start_section(
+				'style_controls',
+				[
+					'id'          => 'section_hierarchical_style',
+					'initialOpen' => true,
+					'title'       => esc_html__( 'Hierarchical', 'jet-smart-filters' )
+				]
+			);
+
+			$this->controls_manager->add_control([
+				'id'        => 'hierarchical_position',
+				'type'      => 'choose',
+				'label'     => esc_html__( 'Hierarchical Position', 'jet-smart-filters' ),
+				'separator' => 'after',
+				'options'   =>[
+					'line'    => [
+						'shortcut' => esc_html__( 'Line', 'jet-smart-filters' ),
+						'icon'  => 'dashicons-ellipsis',
+					],
+					'column' => [
+						'shortcut' => esc_html__( 'Column', 'jet-smart-filters' ),
+						'icon'  => 'dashicons-menu-alt',
+					],
+				],
+				'return_value' => [
+					'line'   => 'display:flex;',
+					'column' => 'display:block;',
+				],
+				'css_selector' => [
+					'{{WRAPPER}} .jet-smart-filters-hierarchy.jet-filter .jet-filters-group' => '{{VALUE}}',
+				],
+				'attributes' => [
+					'default' => [
+						'value' => 'column',
+					]
+				],
+			]);
+
+			$this->controls_manager->add_control([
+				'id'        => 'hierarchical_vertical_offset',
+				'type'      => 'range',
+				'label'     => esc_html__( 'Vertical Space Between', 'jet-smart-filters' ),
+				'css_selector' => [
+					'{{WRAPPER}} .jet-smart-filters-hierarchy.jet-filter .jet-filters-group ' . $this->css_scheme['filter'] . ' + ' . $this->css_scheme['filter'] => 'margin-top: {{VALUE}}{{UNIT}}',
+				],
+				'attributes' => [
+					'default' => [
+						'value' => [
+							'value' => 10,
+							'unit' => 'px'
+						]
+					]
+				],
+				'units' => [
+					[
+						'value' => 'px',
+						'intervals' => [
+							'step' => 1,
+							'min'  => 0,
+							'max'  => 100,
+						]
+					],
+				],
+				'condition' => [
+					'hierarchical_position' => 'column',
+				],
+			]);
+
+			$this->controls_manager->add_control([
+				'id'        => 'hierarchical_item_width',
+				'type'      => 'range',
+				'label'     => esc_html__( 'Item Width', 'jet-smart-filters' ),
+				'separator' => 'after',
+				'css_selector' => [
+					'{{WRAPPER}} .jet-smart-filters-hierarchy.jet-filter ' . $this->css_scheme['filter'] => 'width: {{VALUE}}{{UNIT}}',
+				],
+				'attributes' => [
+					'default' => [
+						'value' => [
+							'value' => 100,
+							'unit' => '%'
+						]
+					]
+				],
+				'units' => [
+					[
+						'value' => '%',
+						'intervals' => [
+							'step' => 1,
+							'min'  => 1,
+							'max'  => 100,
+						]
+					],
+				],
+				'condition' => [
+					'hierarchical_position' => 'line',
+				],
+			]);
+
+			$this->controls_manager->add_control([
+				'id'        => 'hierarchical_horizontal_offset',
+				'type'      => 'range',
+				'label'     => esc_html__( 'Horizontal Space Between', 'jet-smart-filters' ),
+				'css_selector' => [
+					'{{WRAPPER}} .jet-smart-filters-hierarchy.jet-filter .jet-filters-group' => 'margin-left: calc(-{{VALUE}}{{UNIT}}/2); margin-right: calc(-{{VALUE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .jet-smart-filters-hierarchy.jet-filter .jet-filters-group ' . $this->css_scheme['filter'] => 'margin-left: calc({{VALUE}}{{UNIT}}/2); margin-right: calc({{VALUE}}{{UNIT}}/2)',
+				],
+				'attributes' => [
+					'default' => [
+						'value' => [
+							'value' => 10,
+							'unit' => 'px'
+						]
+					]
+				],
+				'units' => [
+					[
+						'value' => 'px',
+						'intervals' => [
+							'step' => 1,
+							'min'  => 0,
+							'max'  => 100,
+						]
+					],
+				],
+				'condition' => [
+					'hierarchical_position' => 'line',
 				],
 			]);
 
@@ -168,7 +300,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Select' ) ) {
 				'label'      => esc_html__( 'Padding', 'jet-smart-filters' ),
 				'units'      => array( 'px', '%' ),
 				'css_selector'  => array(
-					'{{WRAPPER}} ' . $this->css_scheme['select'] => 'margin: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
+					'{{WRAPPER}} ' . $this->css_scheme['select'] => 'padding: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
 				),
 				'separator'    => 'before',
 			]);

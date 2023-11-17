@@ -14,24 +14,20 @@ if ( ! defined( 'WPINC' ) ) {
 
 // If class `Jet_Smart_Filters` doesn't exists yet.
 if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
-
 	/**
 	 * Sets up and initializes the plugin.
 	 */
 	class Jet_Smart_Filters_Indexer_Manager {
 
 		public $is_indexer_enabled = false;
-		public $data               = null;
-		public $controls           = null;
-		public $table_name         = null;
+		public $data = null;
+		public $controls = null;
+		public $bricks_controls = null;
+		public $table_name = null;
 		public $indexed_post_types = array();
 
 		/**
 		 * Sets up needed actions/filters for the plugin to initialize.
-		 *
-		 * @since  1.0.0
-		 * @access public
-		 * @return void
 		 */
 		public function __construct() {
 
@@ -45,6 +41,11 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 			require jet_smart_filters()->plugin_path( 'includes/indexer/data.php' );
 			require jet_smart_filters()->plugin_path( 'includes/indexer/controls.php' );
 
+			if ( $this->has_bricks() ) {
+				require jet_smart_filters()->plugin_path( 'includes/indexer/bricks/controls.php' );
+				$this->controls = new Jet_Smart_Filters_Bricks_Indexer_Controls();
+			}
+
 			$this->data       = new Jet_Smart_Filters_Indexer_Data();
 			$this->controls   = new Jet_Smart_Filters_Indexer_Controls();
 			$this->table_name = Jet_Smart_Filters_DB::get_table_full_name( 'indexer' );
@@ -55,15 +56,13 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 				}
 			}
 
-			add_action( 'restrict_manage_posts', array( $this, 'add_index_filters_button' ), 10, 2 );
-			add_action( 'wp_ajax_jet_smart_filters_admin_indexer', array( $this, 'index_filters' ) );
+			add_action( 'wp_ajax_jet_smart_filters_admin_indexer', array( $this, 'ajax_filter_indexing' ) );
 
 			if ( filter_var( jet_smart_filters()->settings->get( 'use_auto_indexing' ), FILTER_VALIDATE_BOOLEAN ) ) {
 				add_action( 'wp_after_insert_post', array( $this, 'post_updated' ), 10, 2 );
 				add_action( 'user_register', array( $this, 'user_updated' ), 10 );
 				add_action( 'profile_update', array( $this, 'user_updated' ), 10 );
 			}
-
 		}
 
 		public function add_filter( $args ) {
@@ -76,7 +75,22 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 			$filter_id    = $args['filter_id'];
 
 			$this->data->add_indexing_data_from_filter( $provider_key, $filter_id );
+		}
 
+		/**
+		 *  AJAX callback to reindex filters data
+		 */
+		public function ajax_filter_indexing() {
+
+			if (
+				empty( $_REQUEST['nonce'] )
+				|| ! wp_verify_nonce( $_REQUEST['nonce'], 'wp_rest' )
+				|| ! current_user_can( 'edit_posts' )
+			) {
+				die( 'Permission denied' );
+			}
+
+			$this->index_filters();
 		}
 
 		/**
@@ -149,7 +163,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 						$indexed_data[] = $meta_row;
 					}
 				}
-
 			}
 
 			foreach ( array_chunk( $indexed_data, 1000 ) as $data ) {
@@ -161,7 +174,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 
 				$wpdb->query( $sql_insert );
 			}
-
 		}
 
 		public function post_updated( $post_ID, $post ) {
@@ -171,7 +183,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 			}
 
 			if ( in_array( $post->post_type, $this->indexed_post_types ) ) {
-
 				$this->remove_single_data( $post_ID, 'post' );
 
 				if ( $post->post_status !== 'publish' ) {
@@ -179,13 +190,9 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 				}
 
 				$this->add_single_data( $post_ID, 'post' );
-
 			} else if ( $post->post_type === 'jet-smart-filters' ) {
-
 				$this->index_filters();
-
 			}
-
 		}
 
 		public function user_updated( $user_ID ) {
@@ -196,30 +203,31 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 
 			$this->remove_single_data( $user_ID, 'user' );
 			$this->add_single_data( $user_ID, 'user' );
-
 		}
 
 		/**
 		 * Add single data to indexing table
-		 * @param Number $user_ID
-		 * 
-		 * @return void
 		 */
 		public function add_single_data( $id, $type = 'post' ) {
 
 			global $wpdb;
+
 			$new_rows     = array();
 			$filters_data = $this->filters_data();
 
 			if ( ! empty( $filters_data['tax_query'] ) && $type === 'post' ) {
 				foreach ( wp_get_post_terms( $id, $filters_data['tax_query'] ) as $term ) {
-					array_push( $new_rows, array(
-						'type'       => 'post',
-						'item_id'    => $id,
-						'item_query' => 'tax_query',
-						'item_key'   => $term->taxonomy,
-						'item_value' => $term->term_id
-					) );
+					if ( is_object( $term ) && ! is_wp_error( $term ) ) {
+
+						array_push( $new_rows, array(
+							'type'       => 'post',
+							'item_id'    => $id,
+							'item_query' => 'tax_query',
+							'item_key'   => $term->taxonomy,
+							'item_value' => $term->term_id
+						) );
+
+					}
 				}
 			}
 
@@ -232,6 +240,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 			}
 
 			if ( ! empty( $item_meta_data ) ) {
+
 				foreach ( $filters_data['meta_query'] as $meta_type => $filter_meta ) {
 					if ( empty( $filter_meta ) ) {
 						continue;
@@ -279,17 +288,15 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 				}
 			}
 
+			$new_rows = apply_filters( 'jet-smart-filters/indexer/single-item-data', $new_rows, $filters_data, $type, $id );
+
 			foreach ( array_unique( $new_rows, SORT_REGULAR ) as $new_row ) {
 				$wpdb->insert( $this->table_name, $new_row );
 			}
-
 		}
-		
+
 		/**
 		 * Remove single data from indexing table
-		 * @param Number $user_ID
-		 * 
-		 * @return void
 		 */
 		public function remove_single_data( $id, $type = 'post' ) {
 
@@ -299,14 +306,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 				'type'    => $type,
 				'item_id' => $id
 			) );
-
 		}
 
 		/**
 		 * Get filters taxanomies data
-		 * @param Array $taxanomies
-		 * 
-		 * @return Array
 		 */
 		function get_taxanomies_data( $taxanomies, $excluded_terms = false ) {
 
@@ -317,7 +320,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 			if ( $excluded_terms ) {
 				$excluded_terms_and = "AND $wpdb->term_taxonomy.term_id NOT IN ('" . implode( "','", $excluded_terms ) . "')";
 			}
-			
+
 			$sql = "
 			SELECT $wpdb->posts.ID as item_id, $wpdb->term_taxonomy.taxonomy as item_key, $wpdb->term_taxonomy.term_id as item_value
 				FROM $wpdb->posts, $wpdb->term_relationships, $wpdb->term_taxonomy
@@ -330,7 +333,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 			$result = $wpdb->get_results( $sql, ARRAY_A );
 
 			return $result;
-
 		}
 
 		public function get_taxanomies_parent_terms( $taxanomies ) {
@@ -349,34 +351,26 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 			$result = $wpdb->get_results( $sql, ARRAY_A );
 
 			return $result;
-
 		}
 
 		public function get_taxanomies_parent_term_posts( $tax, $term_id ) {
 
-			$term_posts_count_args = array(
-				'post_status'    => 'publish',
-				'posts_per_page' => -1,
-				'fields'         => 'ids',
-				'tax_query' => array(
-					array(
-						'taxonomy' => $tax,
-						'terms'    => $term_id,
-					),
-				),
-			);
+			global $wpdb;
+			$sql = "
+			SELECT $wpdb->term_relationships.object_id as post_id
+				FROM $wpdb->term_relationships, $wpdb->term_taxonomy
+					WHERE $wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id
+						AND $wpdb->term_taxonomy.taxonomy = '$tax'
+						AND $wpdb->term_relationships.term_taxonomy_id = '$term_id'";
+			$result = $wpdb->get_results( $sql, ARRAY_A );
 
-			$query = new WP_Query( $term_posts_count_args );
-
-			return $query->posts;
-
+			return array_map( function ( $post ) {
+				return $post['post_id'];
+			}, $result );
 		}
 
 		/**
 		 * Get filters meta data
-		 * @param Array $metadata
-		 * 
-		 * @return Array
 		 */
 		function get_post_meta_data( $metadata ) {
 
@@ -385,7 +379,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 			$metadata_sql_and = $this->get_sql_and_from_metadata( $metadata );
 
 			if ( ! $metadata_sql_and ) {
-				return $result;
+				return apply_filters( 'jet-smart-filters/indexer/get-post-meta', $result, $metadata );;
 			}
 
 			global $wpdb;
@@ -403,15 +397,11 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 				$result[$i]['type'] = 'post';
 			}
 
-			return $result;
-
+			return apply_filters( 'jet-smart-filters/indexer/get-post-meta', $result, $metadata );
 		}
 
 		/**
 		 * Get filters user meta data
-		 * @param Array $metadata
-		 * 
-		 * @return Array
 		 */
 		function get_user_meta_data( $metadata ) {
 
@@ -424,7 +414,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 			$metadata_sql_and = $this->get_sql_and_from_metadata( $metadata );
 
 			if ( ! $metadata_sql_and ) {
-				return $result;
+				return apply_filters( 'jet-smart-filters/indexer/get-user-meta', $result, $metadata );
 			}
 
 			global $wpdb;
@@ -440,15 +430,11 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 				$result[$i]['type'] = 'user';
 			}
 
-			return $result;
-
+			return apply_filters( 'jet-smart-filters/indexer/get-user-meta', $result, $metadata );
 		}
 
 		/**
 		 * Get AND MySQL query from meta data
-		 * @param Array $metadata
-		 * 
-		 * @return String
 		 */
 		function get_sql_and_from_metadata( $metadata ) {
 
@@ -467,15 +453,15 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 						if ( $metadata_sql_and ) {
 							$metadata_sql_and .= ' OR ';
 						}
-	
+
 						if ( 'serialized' === $data_type ) {
 							$metadata_sql_and .= "( meta_key = '$meta_key' AND meta_value REGEXP '[\'\"]?;s:4:\"true\"|\:[\'\"]?(" . implode( '|', $data ) . ")[\'\"]?;[^s]' )";
 						}
-	
+
 						if ( 'normal' === $data_type ) {
-							$metadata_sql_and .= "( meta_key = '$meta_key' AND meta_value IN ('" . implode( "','", $data ) . "') )";
+							$metadata_sql_and .= "( meta_key = '$meta_key' AND meta_value " . ( !empty( $data ) ? "IN ('" . implode( "','", $data ) . "') " : "IS NOT NULL" ) . ")";
 						}
-	
+
 						if ( 'range' === $data_type ) {
 							$metadata_sql_and .= "( meta_key = '$meta_key' AND meta_value >= " . $data['min'] . " AND meta_value <= " . $data['max'] . " )";
 						}
@@ -484,13 +470,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 			}
 
 			return $metadata_sql_and;
-
 		}
 
 		/**
 		 * Create table
-		 * 
-		 * @return Array
 		 */
 		public function filters_data() {
 
@@ -515,7 +498,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 				'_query_var',
 				'_source_custom_field',
 				'_source_get_from_field_data',
-				'_custom_field_source_plugin'
+				'_custom_field_source_plugin',
+				'_is_custom_query_var',
+				'_custom_query_var',
+				'_source_post_type',
 			);
 
 			global $wpdb;
@@ -539,6 +525,11 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 				if ( ! in_array( $data['_filter_type'], array( 'select', 'checkboxes', 'check-range', 'radio', 'color-image' ) ) ) {
 					continue;
 				}
+
+				$data = wp_parse_args( $data, array(
+					'_is_custom_query_var' => false,
+					'_custom_query_var'    => '',
+				) );
 
 				if ( $data['_filter_type'] === 'check-range' ) {
 					$query_var = $data['_query_var'];
@@ -574,8 +565,14 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 					}
 				}
 
-				switch ( $data['_data_source'] ) {
+				switch ( isset( $data['_data_source'] ) ? $data['_data_source'] : NULL ) {
 					case 'taxonomies':
+						if ( filter_var( $data['_is_custom_query_var'], FILTER_VALIDATE_BOOLEAN ) && $data['_custom_query_var'] ) {
+							$filters_data['meta_query']['normal'][$data['_custom_query_var']] = array();
+
+							break;
+						}
+
 						array_push( $filters_data['tax_query'], $data['_source_taxonomy'] );
 
 						break;
@@ -594,7 +591,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 							$filters_data['meta_query'][$data_type][$query_var] = array();
 						}
 
-						
+
 						if ( $data['_filter_type'] === 'color-image' ) {
 							$input_data = $data['_source_color_image_input'];
 						} else {
@@ -610,7 +607,43 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 						}
 
 						break;
-					
+
+					case 'posts':
+						$query_var = $data['_query_var'];
+
+						if ( ! $query_var ) {
+							break;
+						}
+
+						$is_serialized_data = filter_var( $data['_is_custom_checkbox'], FILTER_VALIDATE_BOOLEAN );
+						$data_type          = $is_serialized_data ? 'serialized' : 'normal';
+
+						if ( ! isset( $filters_data['meta_query'][$data_type][$query_var] ) ) {
+							$filters_data['meta_query'][$data_type][$query_var] = array();
+						}
+
+						$post_type = ! empty( $data['_source_post_type'] ) ? $data['_source_post_type'] : false;
+
+						if ( ! $post_type ) {
+							break;
+						}
+
+						global $wpdb;
+
+						$posts_table = $wpdb->posts;
+						$post_type   = esc_sql( $post_type );
+						$post_ids    = $wpdb->get_results( "SELECT ID FROM $posts_table WHERE post_type = '$post_type' AND post_status = 'publish';" );
+
+						if ( empty( $post_ids ) ) {
+							break;
+						}
+
+						foreach ( $post_ids as $post_id ) {
+							array_push( $filters_data['meta_query'][$data_type][$query_var], $post_id->ID );
+						}
+
+						break;
+
 					case 'custom_fields':
 						$query_var           = $data['_query_var'];
 						$get_from_field_data = isset( $data['_source_get_from_field_data'] ) ? filter_var( $data['_source_get_from_field_data'], FILTER_VALIDATE_BOOLEAN ) : false;
@@ -639,9 +672,22 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 						break;
 
 					default:
-						$query_var   = $data['_query_var'];
+
+						$query_var   = isset( $data['_query_var'] ) ? $data['_query_var'] : NULL;
 						$custom_args = apply_filters( 'jet-smart-filters/indexer/custom-args', array(), $filter_id );
 						$options     = ! empty( $custom_args['options'] ) ? $custom_args['options'] : false;
+
+						if ( empty( $options ) ) {
+
+							$options = apply_filters( 'jet-smart-filters/filters/filter-options', $options, $filter_id, false );
+
+							if ( ! empty( $options ) ) {
+								$options = array_filter( array_keys( $options ), function( $value ) {
+									return '' !== $value;
+								} );
+							}
+
+						}
 
 						if ( ! $query_var || ! $options ) {
 							break;
@@ -673,27 +719,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Manager' ) ) {
 			}
 
 			return $filters_data;
-
 		}
 
-		/**
-		 * Add index filter button in manage post panel
-		 *
-		 * @param $post_type
-		 * @param $which
-		 */
-		public function add_index_filters_button( $post_type, $which ) {
-
-			if ( 'jet-smart-filters' !== $post_type ) {
-				return;
-			}
-
-			printf( '<button type="button" id="jet-smart-filters-indexer-button" data-default-text="%1$s" data-loading-text="%2$s">%1$s</button>',
-				esc_html__( 'Index Filters', 'jet-smart-filters' ),
-				esc_html__( 'Indexing...', 'jet-smart-filters' )
-			);
-
+		public function has_bricks() {
+			return defined( 'BRICKS_VERSION' );
 		}
-
 	}
 }

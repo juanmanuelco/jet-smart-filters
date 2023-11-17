@@ -42,7 +42,7 @@ export default class AdditionalFilterSettings {
 		if (this.$searchClear.length)
 			this.$searchClear.on('click', () => {
 				this.searchClear();
-			})
+			});
 	}
 
 	searchApply(value) {
@@ -109,6 +109,10 @@ export default class AdditionalFilterSettings {
 		this.dropdownPlaceholderText = this.$dropdownLabel.html();
 		this.dropdownState = false;
 
+		$(document).on('click', evt => {
+			this.documentClick(evt);
+		});
+
 		if (this.$dropdownLabel.length)
 			this.$dropdownLabel.on('click', () => {
 				this.dropdownToggle();
@@ -126,8 +130,6 @@ export default class AdditionalFilterSettings {
 	dropdownClose() {
 		this.dropdownState = false;
 		this.$dropdown.removeClass(this.dropdownOpenClass);
-
-		$(document).off('click', this.documentClick);
 	}
 
 	dropdownOpen() {
@@ -136,13 +138,11 @@ export default class AdditionalFilterSettings {
 
 		if (this.$searchInput)
 			this.$searchInput.focus();
-
-		$(document).on('click', { this: this }, this.documentClick);
 	}
 
-	documentClick(e) {
-		if (!$.contains(e.data.this.$dropdown.get(0), e.target))
-			e.data.this.dropdownClose();
+	documentClick(evt) {
+		if (!$.contains(this.$dropdown.get(0), evt.target))
+			this.dropdownClose();
 	}
 
 	dropDownItemsUpdate() {

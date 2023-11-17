@@ -38,13 +38,12 @@ export default class SearchControl extends Filter {
 		});
 
 		this.$searchInput.on('keyup', evt => {
-			if (evt.keyCode === 13) {
-				this.emitFiterChange();
-			}
+			const value = evt.target.value;
+
+			if (value === this.dataValue)
+				return;
 
 			if (this.applyType === 'ajax-ontyping') {
-				let value = evt.target.value;
-
 				if (this.minLettersCount <= value.length) {
 					this.emitFiterChangeWithDelay();
 
@@ -56,6 +55,8 @@ export default class SearchControl extends Filter {
 
 					this.$searchInput.removeClass(this.inputNotEmptyClass);
 				}
+			} else if (evt.keyCode === 13) {
+				this.emitFiterChange();
 			}
 		});
 	}

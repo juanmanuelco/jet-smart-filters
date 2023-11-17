@@ -4,29 +4,35 @@ namespace Elementor;
 
 use Elementor\Group_Control_Border;
 
+// Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
-} // Exit if accessed directly
+}
 
 class Jet_Smart_Filters_Active_Tags_Widget extends Widget_Base {
 
 	public function get_name() {
+
 		return 'jet-smart-filters-active-tags';
 	}
 
 	public function get_title() {
+
 		return __( 'Active Tags', 'jet-smart-filters' );
 	}
 
 	public function get_icon() {
+
 		return 'jet-smart-filters-icon-active-filters';
 	}
 
 	public function get_html_wrapper_class() {
+
 		return 'elementor-widget-' . $this->get_name() . ' hide-widget';
 	}
 
 	public function get_help_url() {
+
 		return jet_smart_filters()->widgets->prepare_help_url(
 			'https://crocoblock.com/knowledge-base/articles/jetsmartfilters-how-to-enable-visitors-to-disable-active-filters/',
 			$this->get_name()
@@ -34,10 +40,11 @@ class Jet_Smart_Filters_Active_Tags_Widget extends Widget_Base {
 	}
 
 	public function get_categories() {
+
 		return array( jet_smart_filters()->widgets->get_category() );
 	}
 
-	protected function _register_controls() {
+	protected function register_controls() {
 
 		$css_scheme = apply_filters(
 			'jet-smart-filters/widgets/active-tags/css-scheme',
@@ -369,7 +376,6 @@ class Jet_Smart_Filters_Active_Tags_Widget extends Widget_Base {
 
 		$this->end_controls_section();
 
-
 		$this->start_controls_section(
 			'section_tag_styles',
 			array(
@@ -407,7 +413,7 @@ class Jet_Smart_Filters_Active_Tags_Widget extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'tag_value_typography',
-				'selector' => '{{WRAPPER}} ' . $css_scheme['tag-value'],
+				'selector' => '{{WRAPPER}} ' . $css_scheme['tag'],
 			)
 		);
 
@@ -426,7 +432,7 @@ class Jet_Smart_Filters_Active_Tags_Widget extends Widget_Base {
 				'label'     => esc_html__( 'Text Color', 'jet-smart-filters' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['tag-value'] => 'color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['tag'] => 'color: {{VALUE}}',
 				),
 			)
 		);
@@ -457,7 +463,7 @@ class Jet_Smart_Filters_Active_Tags_Widget extends Widget_Base {
 				'label'     => esc_html__( 'Text Color', 'jet-smart-filters' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['tag'] . ':hover ' . $css_scheme['tag-value'] => 'color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['tag'] . ':hover' => 'color: {{VALUE}}',
 				),
 			)
 		);
@@ -532,6 +538,79 @@ class Jet_Smart_Filters_Active_Tags_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'tag_item_label_heading',
+			array(
+				'label'     => esc_html__( 'Item Label', 'jet-smart-filters' ),
+				'type'      => Controls_Manager::HEADING,
+				'separator' => 'before',
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			array(
+				'name'     => 'tag_item_label_typography',
+				'selector' => '{{WRAPPER}} ' . $css_scheme['tag-label'],
+			)
+		);
+
+		$this->start_controls_tabs( 'tag_item_label_style_tabs' );
+
+		$this->start_controls_tab(
+			'tag_item_label_normal_styles',
+			array(
+				'label' => esc_html__( 'Normal', 'jet-smart-filters' ),
+			)
+		);
+
+		$this->add_control(
+			'tag_item_label_normal_color',
+			array(
+				'label'     => esc_html__( 'Text Color', 'jet-smart-filters' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['tag-label'] => 'color: {{VALUE}}',
+				),
+			)
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'tag_item_label_hover_styles',
+			array(
+				'label' => esc_html__( 'Hover', 'jet-smart-filters' ),
+			)
+		);
+
+		$this->add_control(
+			'tag_item_label_hover_color',
+			array(
+				'label'     => esc_html__( 'Text Color', 'jet-smart-filters' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['tag'] . ':hover ' . $css_scheme['tag-label'] => 'color: {{VALUE}}',
+				),
+			)
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
+		$this->add_responsive_control(
+			'tag_item_label_padding',
+			array(
+				'label'      => esc_html__( 'Padding', 'jet-smart-filters' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%' ),
+				'selectors'  => array(
+					'{{WRAPPER}} ' . $css_scheme['tag-label'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_control(
 			'tags_clear_item_heading',
 			array(
 				'label'     => esc_html__( 'Clear Item', 'jet-smart-filters' ),
@@ -555,7 +634,7 @@ class Jet_Smart_Filters_Active_Tags_Widget extends Widget_Base {
 				'label'     => esc_html__( 'Text Color', 'jet-smart-filters' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['tag'] . '--clear ' . $css_scheme['tag-value'] => 'color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['tag'] . '--clear ' => 'color: {{VALUE}}',
 				),
 			)
 		);
@@ -586,7 +665,7 @@ class Jet_Smart_Filters_Active_Tags_Widget extends Widget_Base {
 				'label'     => esc_html__( 'Text Color', 'jet-smart-filters' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['tag'] . '--clear' . ':hover ' . $css_scheme['tag-value'] => 'color: {{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['tag'] . '--clear' . ':hover' => 'color: {{VALUE}}',
 				),
 			)
 		);
@@ -803,17 +882,13 @@ class Jet_Smart_Filters_Active_Tags_Widget extends Widget_Base {
 		);
 
 		$this->end_controls_section();
-
 	}
 
 	/**
 	 * Returns CSS selector for nested element
-	 *
-	 * @param  [type] $el [description]
-	 *
-	 * @return [type]     [description]
 	 */
 	public function css_selector( $el = null ) {
+
 		return sprintf( '{{WRAPPER}} .%1$s%2$s', $this->get_name(), $el );
 	}
 
@@ -830,7 +905,7 @@ class Jet_Smart_Filters_Active_Tags_Widget extends Widget_Base {
 		$clear_item           = isset( $settings['clear_item'] ) ? filter_var( $settings['clear_item'], FILTER_VALIDATE_BOOLEAN ) : false;
 
 		printf(
-			'<div class="%1$s jet-active-tags" data-label="%6$s" data-clear-item-label="%7$s" data-content-provider="%2$s" data-additional-providers="%3$s" data-apply-type="%4$s" data-query-id="%5$s">',
+			'<div class="%1$s jet-active-tags jet-filter" data-label="%6$s" data-clear-item-label="%7$s" data-content-provider="%2$s" data-additional-providers="%3$s" data-apply-type="%4$s" data-query-id="%5$s">',
 			$base_class,
 			$provider,
 			$additional_providers,
@@ -846,7 +921,5 @@ class Jet_Smart_Filters_Active_Tags_Widget extends Widget_Base {
 		}
 
 		echo '</div>';
-
 	}
-
 }

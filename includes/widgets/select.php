@@ -4,25 +4,30 @@ namespace Elementor;
 
 use Elementor\Group_Control_Border;
 
+// Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
-} // Exit if accessed directly
+}
 
 class Jet_Smart_Filters_Select_Widget extends Jet_Smart_Filters_Base_Widget {
 
 	public function get_name() {
+
 		return 'jet-smart-filters-select';
 	}
 
 	public function get_title() {
+
 		return __( 'Select Filter', 'jet-smart-filters' );
 	}
 
 	public function get_icon() {
+
 		return 'jet-smart-filters-icon-select-filter';
 	}
 
 	public function get_help_url() {
+
 		return jet_smart_filters()->widgets->prepare_help_url(
 			'https://crocoblock.com/knowledge-base/articles/jetsmartfilters-how-to-use-the-select-filter-to-filter-publications-or-products/',
 			$this->get_name()
@@ -51,10 +56,12 @@ class Jet_Smart_Filters_Select_Widget extends Jet_Smart_Filters_Base_Widget {
 		$this->add_responsive_control(
 			'content_position',
 			array(
-				'label'   => esc_html__( 'Position', 'jet-smart-filters' ),
-				'type'    => Controls_Manager::CHOOSE,
+				'label'       => esc_html__( 'Position', 'jet-smart-filters' ),
+				'type'        => Controls_Manager::CHOOSE,
+				'toggle'      => false,
 				'label_block' => false,
-				'options' => array(
+				'default'     => 'column',
+				'options'     => array(
 					'line' => array(
 						'title' => esc_html__( 'Line', 'jet-smart-filters' ),
 						'icon'  => 'eicon-ellipsis-h',
@@ -65,11 +72,12 @@ class Jet_Smart_Filters_Select_Widget extends Jet_Smart_Filters_Base_Widget {
 					),
 				),
 				'selectors_dictionary' => array(
-					'line'      => 'display:flex; flex-direction:row;',
-					'column'    => 'display:flex; flex-direction:column;',
+					'line'   => 'display:flex;',
+					'column' => 'display:block;',
 				),
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['filter'] => '{{VALUE}}',
+					'{{WRAPPER}} .jet-smart-filters-select.jet-filter' => '{{VALUE}}',
+					'{{WRAPPER}} .jet-smart-filters-hierarchy.jet-filter ' . $css_scheme['filter'] => '{{VALUE}}',
 				),
 				'prefix_class' => 'jet-smart-filter-content-position-',
 			)
@@ -99,7 +107,8 @@ class Jet_Smart_Filters_Select_Widget extends Jet_Smart_Filters_Base_Widget {
 					'size' => 150,
 				),
 				'selectors'  => array(
-					'{{WRAPPER}} ' . $css_scheme['select'] => 'max-width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .jet-smart-filters-select.jet-filter ' . $css_scheme['filter'] => 'max-width: {{SIZE}}{{UNIT}}; flex-basis: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .jet-smart-filters-hierarchy.jet-filter ' . $css_scheme['select'] => 'max-width: {{SIZE}}{{UNIT}}; flex-basis: {{SIZE}}{{UNIT}}',
 				),
 			)
 		);
@@ -134,29 +143,32 @@ class Jet_Smart_Filters_Select_Widget extends Jet_Smart_Filters_Base_Widget {
 			)
 		);
 
-		$this->add_control(
-			'select_disabled_color',
-			array(
-				'label'     => esc_html__( 'Disabled Text Color', 'jet-smart-filters' ),
-				'type'      => Controls_Manager::COLOR,
-				'default'   => '',
-				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['select'] . ' option:disabled' => 'color: {{VALUE}};',
-				),
-				'conditions' => array(
-					'terms' => array(
-						array(
-							'name'  => 'apply_indexer',
-							'value' => 'yes',
-						),
-						array(
-							'name'  => 'show_items_rule',
-							'value' => 'disable',
+		// Don't add this control if the indexer is disabled
+		if ( filter_var( jet_smart_filters()->settings->get( 'use_indexed_filters' ), FILTER_VALIDATE_BOOLEAN ) ) {
+			$this->add_control(
+				'select_disabled_color',
+				array(
+					'label'     => esc_html__( 'Disabled Text Color', 'jet-smart-filters' ),
+					'type'      => Controls_Manager::COLOR,
+					'default'   => '',
+					'selectors' => array(
+						'{{WRAPPER}} ' . $css_scheme['select'] . ' option:disabled' => 'color: {{VALUE}};',
+					),
+					'conditions' => array(
+						'terms' => array(
+							array(
+								'name'  => 'apply_indexer',
+								'value' => 'yes',
+							),
+							array(
+								'name'  => 'show_items_rule',
+								'value' => 'disable',
+							),
 						),
 					),
-				),
-			)
-		);
+				)
+			);
+		}
 
 		$this->add_control(
 			'select_background_color',
@@ -239,7 +251,7 @@ class Jet_Smart_Filters_Select_Widget extends Jet_Smart_Filters_Base_Widget {
 					'right'  => 'margin-left: auto; margin-right: 0;',
 				),
 				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['select'] => '{{VALUE}}',
+					'{{WRAPPER}} ' . $css_scheme['filter'] => '{{VALUE}}',
 				),
 			)
 		);
@@ -262,7 +274,6 @@ class Jet_Smart_Filters_Select_Widget extends Jet_Smart_Filters_Base_Widget {
 		);
 
 		$this->end_controls_section();
-
 	}
 
 	public function base_controls_section_filter_group( $css_scheme ) {
@@ -357,9 +368,9 @@ class Jet_Smart_Filters_Select_Widget extends Jet_Smart_Filters_Base_Widget {
 		);
 
 		$this->add_responsive_control(
-			'group_filters_horisontal_offset',
+			'group_filters_horizontal_offset',
 			array(
-				'label'      => esc_html__( 'Horisontal Space Between', 'jet-smart-filters' ),
+				'label'      => esc_html__( 'Horizontal Space Between', 'jet-smart-filters' ),
 				'type'       => Controls_Manager::SLIDER,
 				'size_units' => array(
 					'px',
@@ -414,7 +425,5 @@ class Jet_Smart_Filters_Select_Widget extends Jet_Smart_Filters_Base_Widget {
 		);
 
 		$this->end_controls_section();
-
 	}
-
 }

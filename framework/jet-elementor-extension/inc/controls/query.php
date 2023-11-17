@@ -10,6 +10,12 @@ class Query_Control extends \Elementor\Control_Select2 {
 		return 'jet-query';
 	}
 
+	public function enqueue() {
+		// Styles
+		$inline_css = '.jet-query-edit-btn-wrap{margin-top:10px}.jet-query-edit-btn.elementor-button{border:none}';
+		printf( '<style>%s</style>', $inline_css );
+	}
+
 	/**
 	 * @param string|array $value
 	 * @param array $config
@@ -31,8 +37,13 @@ class Query_Control extends \Elementor\Control_Select2 {
 	protected function get_default_settings() {
 		return array_merge(
 			parent::get_default_settings(), array(
-				'query_type' => 'post',
-				'query'      => array(),
+				'query_type'      => 'post',
+				'query'           => array(),
+				'prevent_looping' => false,
+				'edit_button' => array(
+					'active' => false,
+					'label'  => 'Edit Template',
+				),
 			)
 		);
 	}

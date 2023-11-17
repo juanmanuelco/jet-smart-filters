@@ -75,5 +75,49 @@
 		&:not(.jet-filters-single-loading) .jet-input-not-empty ~ .jet-search-filter__input-clear {
 			display: block;
 		}
+
+		/* clears the 'X' from Internet Explorer */
+		.jet-search-filter__input::-ms-clear,
+		.jet-search-filter__input::-ms-reveal {
+			display: none;
+			width: 0;
+			height: 0;
+		}
+
+		/* clears the 'X' from Chrome */
+		.jet-search-filter__input::-webkit-search-decoration,
+		.jet-search-filter__input::-webkit-search-cancel-button,
+		.jet-search-filter__input::-webkit-search-results-button,
+		.jet-search-filter__input::-webkit-search-results-decoration {
+			display: none;
+		}
+	}
+}
+
+// Context Bricks
+.brxe-jet-smart-filters-search {
+	.jet-search-filter {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.jet-search-filter__submit {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		white-space: nowrap;
+	}
+
+	.jet-search-filter__submit-icon {
+		display: inline-flex;
+
+		svg {
+			width: 1em;
+			height: 1em;
+		}
+
+		svg, path {
+			fill: currentColor;
+		}
 	}
 }

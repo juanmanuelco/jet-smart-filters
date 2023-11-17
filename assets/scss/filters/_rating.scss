@@ -1,6 +1,5 @@
 .jet-rating {
 	border: none;
-	overflow: hidden;
 
 	.jet-rating-stars {
 		display: inline-block;
@@ -13,7 +12,7 @@
 	&-icon {
 		&.fa {
 			.elementor-editor-active & {
-				font-family: 'FontAwesome';
+				font-family: "FontAwesome";
 			}
 		}
 	}
@@ -54,18 +53,25 @@
 	input:not(.is-checked) ~ label:hover ~ label {
 		color: #ffed85;
 	}
+}
 
-	/* input.is-checked ~ label, //show gold star when clicked
-	&:not(.is-checked) label:hover, //hover current star
-	&:not(.is-checked) label:hover ~ label {
-		//hover previous stars in list
-		color: #ffd700;
+// Context Bricks
+.brxe-jet-smart-filters-rating {
+	.jet-rating__control {
+		line-height: 0;
 	}
 
-	input.is-checked + label:hover, //hover current star when changing jet-rating
-	input.is-checked ~ label:hover,
-	label:hover ~ input.is-checked ~ label, //lighten current selection
-	input.is-checked ~ label:hover ~ label {
-		color: #ffed85;
-	} */
+	.jet-rating-star__label {
+		color: var(--rating-color, #dddddd);
+	}
+
+	input.is-checked ~ label,
+	input.is-checked ~ label ~ label {
+		color: var(--rating-selected-color, #ffd700);
+	}
+
+	input:not(.is-checked) ~ label:hover,
+	input:not(.is-checked) ~ label:hover ~ label {
+		color: var(--rating-hover-color, #ffed85);
+	}
 }

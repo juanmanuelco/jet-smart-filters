@@ -26,7 +26,44 @@ class Ajax_Handlers {
 	public function __construct() {
 		if ( wp_doing_ajax() ) {
 			add_action( 'wp_ajax_jet_query_control_options', array( $this, 'get_query_control_options' ) );
+			add_action( 'wp_ajax_jet_query_get_edit_url',    array( $this, 'get_edit_url' ) );
 		}
+	}
+
+	public function get_edit_url() {
+
+		if ( empty( $_REQUEST['id'] ) ) {
+			wp_send_json_error();
+		}
+
+		$id         = $_REQUEST['id'];
+		$edit_url   = '';
+		$query_type = ! empty( $_REQUEST['query_type'] ) ? $_REQUEST['query_type'] : 'post';
+
+		switch ( $query_type ) {
+			case 'post':
+			case 'elementor_templates':
+
+				$is_build_with_elementor = ! ! get_post_meta( $id, '_elementor_edit_mode', true );
+
+				if ( $is_build_with_elementor ) {
+					$edit_url = \Elementor\Plugin::instance()->documents->get( $id )->get_edit_url();
+				} else {
+					$edit_url = get_edit_post_link( $id, '' );
+				}
+
+				break;
+
+			case 'tax':
+				$edit_url = get_edit_term_link( $id );
+				break;
+		}
+
+		$data = array(
+			'edit_url' => $edit_url,
+		);
+
+		wp_send_json_success( $data );
 	}
 
 	/**

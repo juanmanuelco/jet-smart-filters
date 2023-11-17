@@ -20,9 +20,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Instance' ) ) {
 
 		/**
 		 * Constructor for the class
-		 *
-		 * @param [type] $filter_id   [description]
-		 * @param [type] $filter_type [description]
 		 */
 		public function __construct( $filter_id = 0, $filter_type = null, $args = array() ) {
 
@@ -39,42 +36,45 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Instance' ) ) {
 
 			/**
 			 * Allow to filter instatnce args from 3rd party
-			 * @var array
 			 */
 			$this->args = apply_filters( 'jet-smart-filters/filter-instance/args', $this->args, $this );
 
 			if ( isset( $args['apply_indexer'] ) ) {
 				jet_smart_filters()->indexer->add_filter( $this->args );
 			}
-
 		}
 
 		/**
 		 * Returns current instance arguments
-		 *
-		 * @return [type] [description]
 		 */
 		public function get_args() {
+
 			return $this->args;
 		}
 
 		/**
-		 * Returns current instance filter ID
-		 *
-		 * @return [type] [description]
+		 * Return single argument from the arguments list
 		 */
-		public function get_filter_id() {
-			return $this->filter_id;
+		public function get_arg( $key = null ) {
+
+			$args = $this->get_args();
+
+			return isset( $args[ $key ] ) ? $args[ $key ] : false;
 		}
 
 		/**
-		 * Return current filter value from request by filter arguments
-		 *
-		 * @param  array $args [description]
-		 *
-		 * @return [type]       [description]
+		 * Returns current instance filter ID
 		 */
-		public function get_current_filter_value( $args = array() ) {
+		public function get_filter_id() {
+
+			return $this->filter_id;
+		}
+
+		public function get_query_var( $args = null ) {
+
+			if ( ! $args ) {
+				$args = $this->get_args();
+			}
 
 			$query_var = sprintf( '_%s_%s', $args['query_type'], $args['query_var'] );
 
@@ -82,8 +82,18 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Instance' ) ) {
 				$query_var .= '|' . $args['query_var_suffix'];
 			}
 
-			if ( isset( $_REQUEST[$query_var] ) ) {
-				return $_REQUEST[$query_var];
+			return $query_var;
+		}
+
+		/**
+		 * Return current filter value from request by filter arguments
+		 */
+		public function get_current_filter_value( $args = array() ) {
+
+			$query_var = $this->get_query_var( $args );
+
+			if ( isset( $_REQUEST[ $query_var ] ) ) {
+				return $_REQUEST[ $query_var ];
 			}
 
 			if ( isset( $args['current_value'] ) ) {
@@ -91,16 +101,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Instance' ) ) {
 			}
 
 			return false;
-
 		}
 
 		/**
 		 * Print required data-attributes for filter container
-		 *
-		 * @param  array $args All argumnets.
-		 * @param  object $filter Filter instance.
-		 *
-		 * @return void
 		 */
 		public function filter_data_atts( $args ) {
 
@@ -152,15 +156,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Instance' ) ) {
 			}
 
 			echo $this->get_atts_string( $atts );
-
 		}
 
 		/**
 		 * Return HTML attributes string from key=>value array
-		 *
-		 * @param  array $atts Attributes array.
-		 *
-		 * @return string
 		 */
 		public function get_atts_string( $atts ) {
 
@@ -176,13 +175,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Instance' ) ) {
 			}
 
 			return implode( ' ', $result );
-
 		}
 
 		/**
 		 * Render filter of current instance
-		 *
-		 * @return [type] [description]
 		 */
 		public function render() {
 
@@ -218,20 +214,17 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Instance' ) ) {
 			} else {
 				include $this->type->get_template( $args );
 			}
-
 		}
 
 		/**
 		 * Returns rendered tempalte for current type
-		 *
-		 * @return [type] [description]
 		 */
 		public function get_rendered_template( $args = array() ) {
+
 			ob_start();
 			include $this->type->get_template( $args );
+
 			return ob_get_clean();
 		}
-
 	}
-
 }

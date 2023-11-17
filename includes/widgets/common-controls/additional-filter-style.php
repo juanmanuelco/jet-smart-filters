@@ -6,7 +6,6 @@ use Elementor\Core\Schemes\Typography as Scheme_Typography;
 /**
  * Search items style controls
  */
-
 $css_items_search_scheme = apply_filters(
 	'jet-smart-filters/widgets/items-search/css-scheme',
 	array(
@@ -175,9 +174,9 @@ $this->add_responsive_control(
 );
 
 $this->add_responsive_control(
-	'search_remove_right_offset',
+	'search_remove_horizontal_offset',
 	array(
-		'label'     => esc_html__( 'Right Offset', 'jet-smart-filters' ),
+		'label'     => esc_html__( 'Horizontal offset', 'jet-smart-filters' ),
 		'type'      => Controls_Manager::SLIDER,
 		'range'     => array(
 			'px' => array(
@@ -186,7 +185,8 @@ $this->add_responsive_control(
 			),
 		),
 		'selectors' => array(
-			'{{WRAPPER}} ' . $css_items_search_scheme['search-clear'] => 'right: {{SIZE}}{{UNIT}};',
+			'{{WRAPPER}} ' . $css_items_search_scheme['search-clear']      => 'right: {{SIZE}}{{UNIT}};',
+			'.rtl {{WRAPPER}} ' . $css_items_search_scheme['search-clear'] => 'right: initial; left: {{SIZE}}{{UNIT}};',
 		),
 	)
 );
@@ -237,12 +237,9 @@ $this->end_controls_tabs();
 
 $this->end_controls_section();
 
-
-
 /**
  * More Less style controls
  */
-
 $css_items_moreless_scheme = apply_filters(
 	'jet-smart-filters/widgets/items-moreless/css-scheme',
 	array(
@@ -459,12 +456,9 @@ $this->add_responsive_control(
 
 $this->end_controls_section();
 
-
-
 /**
  * Dropdown style controls
  */
-
 $css_items_dropdown_scheme = apply_filters(
 	'jet-smart-filters/widgets/items-dropdown/css-scheme',
 	array(

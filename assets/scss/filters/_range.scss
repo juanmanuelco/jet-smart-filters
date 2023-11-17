@@ -24,12 +24,14 @@
 }
 
 @mixin reset {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	outline: none;
-	background: none;
-	appearance: none;
+	margin: 0 !important;
+	padding: 0 !important;
+	border-radius: 0 !important;
+	border: none !important;
+	box-shadow: none !important;
+	outline: none !important;
+	background: none !important;
+	appearance: none !important;
 }
 
 .jet-range {
@@ -57,17 +59,6 @@
 						transparent 0
 					)
 					no-repeat 0 100%/100% 100%;
-
-				.rtl & {
-					background: linear-gradient(
-							270deg,
-							transparent var(--low),
-							currentColor 0,
-							currentColor var(--high),
-							transparent 0
-						)
-						no-repeat 0 100%/100% 100%;
-				}
 			}
 		}
 
@@ -173,6 +164,7 @@
 				min-height: auto;
 				color: inherit;
 				font-family: inherit;
+				font-weight: inherit;
 				font-size: inherit;
 				line-height: normal;
 				letter-spacing: inherit;
@@ -203,39 +195,19 @@
 					border-top: 0;
 					border-left: 0;
 					border-bottom: 0;
-
-					.rtl & {
-						border-left: inherit;
-						border-right: 0;
-					}
 				}
 				&:last-child {
 					border-top: 0;
 					border-right: 0;
 					border-bottom: 0;
-
-					.rtl & {
-						border-right: inherit;
-						border-left: 0;
-					}
 				}
 			}
 
 			&:first-child {
 				margin-right: 10px;
-
-				.rtl & {
-					margin-left: 10px;
-					margin-right: 0;
-				}
 			}
 			&:last-child {
 				margin-left: 10px;
-
-				.rtl & {
-					margin-right: 10px;
-					margin-left: 0;
-				}
 			}
 		}
 	}
@@ -244,5 +216,25 @@
 		input[type="range"] {
 			pointer-events: none;
 		}
+	}
+}
+
+// Context Bricks
+.brxe-jet-smart-filters-range {
+	.jet-range__inputs {
+		display: flex;
+	}
+
+	.jet-range__inputs__container {
+		margin-right: 0;
+		margin-left: 0;
+	}
+
+	.jet-range__inputs__group:first-child {
+		margin-right: 0;
+	}
+
+	.jet-range__inputs__group:last-child {
+		margin-left: 0;
 	}
 }

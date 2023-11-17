@@ -16,7 +16,7 @@ const {
 } = wp.editor;
 
 registerBlockType('jet-smart-filters/check-range', {
-	title: __('Check Range'),
+	title: __('Check Range Filter'),
 	icon: checkRangeIcon,
 	category: 'jet-smart-filters',
 	supports: {
@@ -31,9 +31,12 @@ registerBlockType('jet-smart-filters/check-range', {
 		apply_button: attributes.apply_button,
 		apply_button_text: attributes.apply_button_text,
 		show_label: attributes.show_label,
+		query_id: attributes.query_id,
 		// Indexer
 		apply_indexer: attributes.apply_indexer,
 		show_counter: attributes.show_counter,
+		counter_prefix: attributes.counter_prefix,
+		counter_suffix: attributes.counter_suffix,
 		show_items_rule: attributes.show_items_rule,
 		change_items_rule: attributes.change_items_rule,
 		// Additional Settings

@@ -24,7 +24,7 @@ $current = $this->get_current_filter_value( $args );
 
 	if ( $scroll_height_style ) {echo '<div class="jet-filter-items-scroll" ' . $scroll_height_style . '><div class="jet-filter-items-scroll-container">'; }
 
-	echo '<div class="jet-radio-list-wrapper">';
+	echo '<form class="jet-radio-list-wrapper">';
 	if ( $by_parents ) {
 		if ( ! class_exists( 'Jet_Smart_Filters_Terms_Walker' ) ) {
 			require_once jet_smart_filters()->plugin_path( 'includes/walkers/terms-walker.php' );
@@ -61,7 +61,7 @@ $current = $this->get_current_filter_value( $args );
 			include jet_smart_filters()->get_template( 'filters/radio-item.php' );
 		}
 	}
-	echo '</div>';
+	echo '</form>';
 
 	if ( $scroll_height_style ) { echo '</div></div>'; }
 

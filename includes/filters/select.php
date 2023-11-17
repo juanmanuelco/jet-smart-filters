@@ -9,71 +9,68 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 if ( ! class_exists( 'Jet_Smart_Filters_Select_Filter' ) ) {
-
 	/**
 	 * Define Jet_Smart_Filters_Select_Filter class
 	 */
 	class Jet_Smart_Filters_Select_Filter extends Jet_Smart_Filters_Filter_Base {
-
 		/**
 		 * Constructor for the class
 		 */
 		function __construct() {
 
 			add_filter( 'jet-smart-filters/render_filter_template/base_class', array( $this, 'modify_base_class' ), 10, 2 );
-
 		}
 
 		/**
 		 * Get provider name
-		 *
-		 * @return string
 		 */
 		public function get_name() {
+
 			return __( 'Select', 'jet-smart-filters' );
 		}
 
 		/**
 		 * Get provider ID
-		 *
-		 * @return string
 		 */
 		public function get_id() {
+
 			return 'select';
 		}
 
 		/**
+		 * Get icon URL
+		 */
+		public function get_icon_url() {
+
+			return jet_smart_filters()->plugin_url( 'admin/assets/img/filter-types/select.png' );
+		}
+
+		/**
 		 * Get provider wrapper selector
-		 *
-		 * @return string
 		 */
 		public function get_scripts() {
+
 			return false;
 		}
 
 		/**
 		 * Return arguments
-		 * @return [type] [description]
 		 */
 		public function get_args() {
+
 			return $this->args;
 		}
 
 		/**
 		 * Return hierarchical boolean
-		 * @return bool
 		 */
 		public function is_hierarchical( $filter_id ) {
 
 			return filter_var( get_post_meta( $filter_id, '_is_hierarchical', true ), FILTER_VALIDATE_BOOLEAN );
-
 		}
 
 		/**
 		 * Prepare filter template argumnets
-		 *
-		 * @param  [type] $args [description]
-		 * @return [type]       [description]
 		 */
 		public function prepare_args( $args ) {
 
@@ -100,7 +97,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Select_Filter' ) ) {
 			}
 
 			switch ( $source ) {
-
 				case 'taxonomies':
 					$tax        = get_post_meta( $filter_id, '_source_taxonomy', true );
 					$query_type = 'tax_query';
@@ -117,10 +113,15 @@ if ( ! class_exists( 'Jet_Smart_Filters_Select_Filter' ) ) {
 						$current_value = get_queried_object_id();
 					}
 
+					$custom_query_var = $this->get_custom_query_var( $filter_id );
+					if ( $custom_query_var ) {
+						$query_type = 'meta_query';
+						$query_var  = $custom_query_var;
+					}
+
 					break;
 
 				case 'posts':
-
 					$post_type = get_post_meta( $filter_id, '_source_post_type', true );
 					$args      = array(
 						'post_type' => $post_type,
@@ -141,7 +142,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Select_Filter' ) ) {
 					break;
 
 				case 'custom_fields':
-
 					$custom_field   = get_post_meta( $filter_id, '_source_custom_field', true );
 					$get_from_field = get_post_meta( $filter_id, '_source_get_from_field_data', true );
 					$get_from_field = filter_var( $get_from_field, FILTER_VALIDATE_BOOLEAN );
@@ -169,7 +169,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Select_Filter' ) ) {
 						break;
 
 				default:
-
 					$options    = get_post_meta( $filter_id, '_source_manual_input', true );
 					$options    = ! empty( $options ) ? $options : array();
 					$query_type = 'meta_query';
@@ -180,7 +179,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Select_Filter' ) ) {
 					}
 
 					break;
-
 			}
 
 			if ( $is_hierarchical ) {
@@ -218,7 +216,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Select_Filter' ) ) {
 			}
 
 			return $result;
-
 		}
 
 		public function modify_base_class( $base_class, $filter_id ) {
@@ -228,9 +225,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Select_Filter' ) ) {
 			}
 
 			return $base_class;
-
 		}
-
 	}
-
 }

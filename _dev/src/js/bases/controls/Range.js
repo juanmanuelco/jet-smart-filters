@@ -24,7 +24,7 @@ export default class RangeControl extends Filter {
 			'thousands_sep': '',
 			'decimal_sep': '',
 			'decimal_num': 0,
-		}
+		};
 
 		this.initSlider();
 		this.processData();
@@ -45,14 +45,18 @@ export default class RangeControl extends Filter {
 		});
 
 		if (this.$rangeInputMin.length)
-			this.$rangeInputMin.on('change', (event) => {
+			this.$rangeInputMin.on('input keydown blur', (event) => {
 				this.minVal = this.inputNumberRangeValidation(parseFloat(this.$rangeInputMin.val())) || this.minConstraint;
-				this.valuesUpdated('min');
+
+				if (event.type === 'blur' || event.keyCode === 13)
+					this.valuesUpdated('min');
 			});
 		if (this.$rangeInputMax.length)
-			this.$rangeInputMax.on('change', (event) => {
+			this.$rangeInputMax.on('input keydown blur', (event) => {
 				this.maxVal = this.inputNumberRangeValidation(parseFloat(this.$rangeInputMax.val())) || this.maxConstraint;
-				this.valuesUpdated('max');
+
+				if (event.type === 'blur' || event.keyCode === 13)
+					this.valuesUpdated('max');
 			});
 	}
 
@@ -60,7 +64,7 @@ export default class RangeControl extends Filter {
 		this.$inputs.on('change', () => {
 			this.processData();
 			this.emitFiterChange();
-		})
+		});
 	}
 
 	removeChangeEvent() {
@@ -86,11 +90,16 @@ export default class RangeControl extends Filter {
 	setData(newData) {
 		const data = newData.split('_');
 
-		if (data[0])
-			this.$sliderInputMin.html(parseFloat(data[0]));
-		if (data[1])
-			this.$sliderInputMax.html(parseFloat(data[1]));
+		if (data[0]) {
+			this.minVal = parseFloat(data[0]);
+			this.$sliderInputMin.val(this.minVal);
+		}
+		if (data[1]) {
+			this.maxVal = parseFloat(data[1]);
+			this.$sliderInputMax.val(this.maxVal);
+		}
 
+		this.valuesUpdated();
 		this.processData();
 	}
 

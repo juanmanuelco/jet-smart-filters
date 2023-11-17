@@ -4,4 +4,4 @@
  */
 
 ?>
-<div class="jet-filters-pagination__link"><% $value %></div>
+<div class="jet-filters-pagination__link">/% $value %/</div>

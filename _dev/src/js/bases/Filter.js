@@ -43,9 +43,6 @@ export default class Filter {
 
 		if (typeof this.queryId !== 'string')
 			this.queryId = this.queryId.toString();
-
-		if (this.activeLabel)
-			this.activeLabel += ':&nbsp;';
 	}
 
 	initEvent() {
@@ -119,7 +116,9 @@ export default class Filter {
 
 	// Getters
 	get data() {
-		return this.dataValue || false;
+		return this.dataValue && !this.disabled
+			? this.dataValue
+			: false;
 	}
 
 	get queryKey() {

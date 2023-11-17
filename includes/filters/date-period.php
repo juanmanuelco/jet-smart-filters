@@ -9,44 +9,44 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 if ( ! class_exists( 'Jet_Smart_Filters_Date_Period_Filter' ) ) {
-
 	/**
 	 * Define Jet_Smart_Filters_Date_Period_Filter class
 	 */
 	class Jet_Smart_Filters_Date_Period_Filter extends Jet_Smart_Filters_Filter_Base {
-
 		/**
 		 * Get provider name
-		 *
-		 * @return string
 		 */
 		public function get_name() {
+
 			return __( 'Date Period', 'jet-smart-filters' );
 		}
 
 		/**
 		 * Get provider ID156
-		 *
-		 * @return string
 		 */
 		public function get_id() {
+
 			return 'date-period';
 		}
 
 		/**
+		 * Get icon URL
+		 */
+		public function get_icon_url() {
+
+			return jet_smart_filters()->plugin_url( 'admin/assets/img/filter-types/date-period.png' );
+		}
+
+		/**
 		 * Get provider wrapper selector
-		 *
-		 * @return string
 		 */
 		public function get_scripts() {
+
 			return false;
 		}
 
 		/**
 		 * Prepare filter template argumnets
-		 *
-		 * @param  [type] $args [description]
-		 * @return [type]       [description]
 		 */
 		public function prepare_args( $args ) {
 
@@ -68,6 +68,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Date_Period_Filter' ) ) {
 			$period_type            = get_post_meta( $filter_id, '_date_period_type', true );
 			$datepicker_button_text = get_post_meta( $filter_id, '_date_period_datepicker_button_text', true );
 			$start_end_enabled      = filter_var( get_post_meta( $filter_id, '_date_period_start_end_enabled', true ), FILTER_VALIDATE_BOOLEAN );
+			$min_max_date_enabled   = filter_var( get_post_meta( $filter_id, '_min_max_date_period_enabled', true ), FILTER_VALIDATE_BOOLEAN );
 
 			if ( $start_end_enabled ) {
 				$date_format_start = get_post_meta( $filter_id, '_date_period_start_format', true );
@@ -83,7 +84,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Date_Period_Filter' ) ) {
 				$date_format = get_post_meta( $filter_id, '_date_period_format', true );
 			}
 
-			return array(
+			$result = array(
 				'options'                => false,
 				'query_type'             => $query_type,
 				'query_var'              => $query_var,
@@ -101,6 +102,20 @@ if ( ! class_exists( 'Jet_Smart_Filters_Date_Period_Filter' ) ) {
 				'date_format'            => $date_format,
 			);
 
+			if ( $min_max_date_enabled ) {
+				$min_date = get_post_meta( $filter_id, '_min_date_period', true );
+				$max_date = get_post_meta( $filter_id, '_max_date_period', true );
+
+				if ( $min_date ) {
+					$result['min_date'] = $min_date;
+				}
+
+				if ( $max_date ) {
+					$result['max_date'] = $max_date;
+				}
+			}
+
+			return $result;
 		}
 
 		public function additional_filter_data_atts( $args ) {
@@ -110,9 +125,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Date_Period_Filter' ) ) {
 			if ( ! empty( $args['period_type'] ) ) $additional_filter_data_atts['data-period-type'] = $args['period_type'];
 
 			return $additional_filter_data_atts;
-
 		}
-
 	}
-
 }

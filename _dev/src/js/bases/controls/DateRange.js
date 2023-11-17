@@ -24,7 +24,7 @@ export default class DateRangeControl extends Filter {
 
 	initDateRangeUI() {
 		filtersUI.dateRange.init({
-			id: this.$filter.closest('.elementor-widget-jet-smart-filters-date-range').data('id') || this.$filter.closest('.jet-sm-gb-wrapper').data('block-id'),
+			id: this.$filter.closest('.elementor-widget-jet-smart-filters-date-range').data('id') || this.$filter.closest('.jet-sm-gb-wrapper').data('block-id') || this.$filter.closest('.brxe-jet-smart-filters-date-range').attr('id'),
 			$dateRangeInput: this.$dateRangeInput,
 			$dateRangeFrom: this.$dateRangeFrom,
 			$dateRangeTo: this.$dateRangeTo

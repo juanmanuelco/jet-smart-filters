@@ -4,39 +4,45 @@ if ( empty( $args ) ) {
 	return;
 }
 
-$current = $this->get_current_filter_value( $args );
+$options         = $args['options'];
+$query_var       = $args['query_var'];
+$is_hierarchical = $args['is_hierarchical'];
+$classes         = array( 'jet-select__control' );
+$current         = $this->get_current_filter_value( $args );
+$display_options = ! empty( $args['display_options'] ) ? $args['display_options'] : false;
+$counter_prefix  = ! empty( $display_options['counter_prefix'] ) ? $display_options['counter_prefix'] : false;
+$counter_suffix  = ! empty( $display_options['counter_suffix'] ) ? $display_options['counter_suffix'] : false;
 
 ?>
 <div class="jet-select" <?php $this->filter_data_atts( $args ); ?>>
 	<?php
-
-	$options   = $args['options'];
-	$query_var = $args['query_var'];
-
-	$classes = array( 'jet-select__control' );
-
 	// is hierarchical
-	if ( $args['is_hierarchical'] ) {
+	if ( $is_hierarchical ) {
 		if ( ! empty( $args['current_value'] ) ) {
 			$current = $args['current_value'];
+		} else {
+			$current = false;
 		}
 
-		if ( $current ) {
-			if ( ! wp_doing_ajax() && ! array_key_exists( $current, $options ) ) {
-				$options = array( $current => __( 'Loading...', 'jet-smart-filters' ) );
+		if ( ! wp_doing_ajax() && ! empty( $args['is_loading'] ) ) {
+			if ( ! $current ) {
+				$current = 'loading';
 			}
+
+			$options = array( $current =>'jsf-loading-item' );
 		}
 
 		$classes[] = 'depth-' . $args['depth'];
+
+		$filter_label = $args['filter_label'];
+		include jet_smart_filters()->get_template( 'common/filter-label.php' );
 	}
-
 	?>
-
-	<?php if ( ! empty( $options ) || $args['is_hierarchical'] ) : ?>
-
+	<?php if ( ! empty( $options ) || $is_hierarchical ) : ?>
 		<select
 			class="<?php echo implode( ' ', $classes ); ?>"
 			name="<?php echo $query_var; ?>"
+			<?php echo jet_smart_filters()->data->get_tabindex_attr(); ?>
 		>
 		<?php if ( ! empty( $args['placeholder'] ) ) { ?>
 			<option value=""><?php echo $args['placeholder']; ?></option>
@@ -49,7 +55,6 @@ $current = $this->get_current_filter_value( $args );
 			$selected = '';
 
 			if ( $current ) {
-
 				if ( is_array( $current ) && in_array( $value, $current ) ) {
 					$selected = ' selected';
 				}
@@ -57,23 +62,24 @@ $current = $this->get_current_filter_value( $args );
 				if ( ! is_array( $current ) && $value == $current ) {
 					$selected = ' selected';
 				}
-
 			}
-
 			?>
-			<option
-				value="<?php echo $value; ?>"
-				data-label="<?php echo $label; ?>"
-				data-counter-prefix="("
-				data-counter-suffix=")"
-				<?php echo $selected; ?>
-			><?php echo $label; ?></option>
-			<?php
-
+			<?php if ( $label === 'jsf-loading-item' ) : ?>
+				<option
+					value="<?php echo $value; ?>"
+					loading-item
+					<?php echo $selected; ?>
+				><?php _e( 'Loading...', 'jet-smart-filters' ); ?></option>
+			<?php else: ?>
+				<option
+					value="<?php echo $value; ?>"
+					data-label="<?php echo $label; ?>"
+					data-counter-prefix="<?php echo $counter_prefix; ?>"
+					data-counter-suffix="<?php echo $counter_suffix; ?>"
+					<?php echo $selected; ?>
+				><?php echo $label; ?></option>
+			<?php endif;
 		}
-
 		?></select>
-
 	<?php endif; ?>
-
 </div>

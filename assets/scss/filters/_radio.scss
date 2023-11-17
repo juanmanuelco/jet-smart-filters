@@ -73,3 +73,27 @@
 		}
 	}
 }
+
+// Context Bricks
+.brxe-jet-smart-filters-radio {
+	.jet-radio-list-wrapper {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		margin: 0;
+	}
+
+	.jet-radio-list__row {
+		margin: 0;
+		padding-top: 0;
+	}
+
+	.jet-radio-list__item {
+		display: block;
+		margin-bottom: 0;
+
+		.jet-radio-list__decorator {
+			margin-top: 0;
+		}
+	}
+}

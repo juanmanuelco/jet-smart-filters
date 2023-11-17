@@ -4,29 +4,35 @@ namespace Elementor;
 
 use Elementor\Group_Control_Border;
 
+// Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
-} // Exit if accessed directly
+}
 
 class Jet_Smart_Filters_Active_Filters_Widget extends Widget_Base {
 
 	public function get_name() {
+
 		return 'jet-smart-filters-active';
 	}
 
 	public function get_title() {
+
 		return __( 'Active Filters', 'jet-smart-filters' );
 	}
 
 	public function get_icon() {
+
 		return 'jet-smart-filters-icon-active-filters';
 	}
 
 	public function get_html_wrapper_class() {
+
 		return 'elementor-widget-' . $this->get_name() . ' hide-widget';
 	}
 
 	public function get_help_url() {
+
 		return jet_smart_filters()->widgets->prepare_help_url(
 			'https://crocoblock.com/knowledge-base/articles/jetsmartfilters-how-to-enable-visitors-to-disable-active-filters/',
 			$this->get_name()
@@ -34,10 +40,11 @@ class Jet_Smart_Filters_Active_Filters_Widget extends Widget_Base {
 	}
 
 	public function get_categories() {
+
 		return array( jet_smart_filters()->widgets->get_category() );
 	}
 
-	protected function _register_controls() {
+	protected function register_controls() {
 
 		$css_scheme = apply_filters(
 			'jet-smart-filters/widgets/active-filters/css-scheme',
@@ -162,6 +169,7 @@ class Jet_Smart_Filters_Active_Filters_Widget extends Widget_Base {
 			array(
 				'label'       => esc_html__( 'Filters Position', 'jet-smart-filters' ),
 				'type'        => Controls_Manager::CHOOSE,
+				'toggle'      => false,
 				'label_block' => false,
 				'default'     => 'row',
 				'options'     => array(
@@ -344,7 +352,6 @@ class Jet_Smart_Filters_Active_Filters_Widget extends Widget_Base {
 
 		$this->end_controls_section();
 
-
 		$this->start_controls_section(
 			'section_filters_item',
 			array(
@@ -454,12 +461,31 @@ class Jet_Smart_Filters_Active_Filters_Widget extends Widget_Base {
 			)
 		);
 
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			array(
+				'name'     => 'filters_item_typography',
+				'selector' => '{{WRAPPER}} ' . $css_scheme['filter'],
+			)
+		);
+
 		$this->start_controls_tabs( 'filters_item_style_tabs' );
 
 		$this->start_controls_tab(
 			'filters_item_normal_styles',
 			array(
 				'label' => esc_html__( 'Normal', 'jet-smart-filters' ),
+			)
+		);
+
+		$this->add_control(
+			'filters_item_normal_color',
+			array(
+				'label'     => esc_html__( 'Color', 'jet-smart-filters' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['filter'] => 'color: {{VALUE}}',
+				),
 			)
 		);
 
@@ -480,6 +506,17 @@ class Jet_Smart_Filters_Active_Filters_Widget extends Widget_Base {
 			'filters_item_hover_styles',
 			array(
 				'label' => esc_html__( 'Hover', 'jet-smart-filters' ),
+			)
+		);
+
+		$this->add_control(
+			'filters_item_value_hover_color',
+			array(
+				'label'     => esc_html__( 'Color', 'jet-smart-filters' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} ' . $css_scheme['filter'] . ':hover' => 'color: {{VALUE}}',
+				),
 			)
 		);
 
@@ -613,66 +650,17 @@ class Jet_Smart_Filters_Active_Filters_Widget extends Widget_Base {
 
 		$this->end_controls_tabs();
 
-		$this->add_control(
-			'filters_item_value_heading',
+		$this->add_responsive_control(
+			'filters_item_label_padding',
 			array(
-				'label'     => esc_html__( 'Value', 'jet-smart-filters' ),
-				'type'      => Controls_Manager::HEADING,
-				'separator' => 'before',
-			)
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			array(
-				'name'     => 'filters_item_value_typography',
-				'selector' => '{{WRAPPER}} ' . $css_scheme['filter-value'],
-			)
-		);
-
-		$this->start_controls_tabs( 'filters_item_value_style_tabs' );
-
-		$this->start_controls_tab(
-			'filters_item_value_normal_styles',
-			array(
-				'label' => esc_html__( 'Normal', 'jet-smart-filters' ),
-			)
-		);
-
-		$this->add_control(
-			'filters_item_value_normal_color',
-			array(
-				'label'     => esc_html__( 'Color', 'jet-smart-filters' ),
-				'type'      => Controls_Manager::COLOR,
-				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['filter-value'] => 'color: {{VALUE}}',
+				'label'      => esc_html__( 'Padding', 'jet-smart-filters' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', '%' ),
+				'selectors'  => array(
+					'{{WRAPPER}} ' . $css_scheme['filter-label'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				),
 			)
 		);
-
-		$this->end_controls_tab();
-
-		$this->start_controls_tab(
-			'filters_item_value_hover_styles',
-			array(
-				'label' => esc_html__( 'Hover', 'jet-smart-filters' ),
-			)
-		);
-
-		$this->add_control(
-			'filters_item_value_hover_color',
-			array(
-				'label'     => esc_html__( 'Color', 'jet-smart-filters' ),
-				'type'      => Controls_Manager::COLOR,
-				'selectors' => array(
-					'{{WRAPPER}} ' . $css_scheme['filter'] . ':hover ' . $css_scheme['filter-value'] => 'color: {{VALUE}}',
-				),
-			)
-		);
-
-		$this->end_controls_tab();
-
-		$this->end_controls_tabs();
 
 		$this->add_control(
 			'filters_item_remove_heading',
@@ -860,17 +848,13 @@ class Jet_Smart_Filters_Active_Filters_Widget extends Widget_Base {
 		);
 
 		$this->end_controls_section();
-
 	}
 
 	/**
 	 * Returns CSS selector for nested element
-	 *
-	 * @param  [type] $el [description]
-	 *
-	 * @return [type]     [description]
 	 */
 	public function css_selector( $el = null ) {
+
 		return sprintf( '{{WRAPPER}} .%1$s%2$s', $this->get_name(), $el );
 	}
 
@@ -885,7 +869,7 @@ class Jet_Smart_Filters_Active_Filters_Widget extends Widget_Base {
 		$additional_providers = jet_smart_filters()->utils->get_additional_providers( $settings );
 
 		printf(
-			'<div class="%1$s jet-active-filters" data-label="%6$s" data-content-provider="%2$s" data-additional-providers="%3$s" data-apply-type="%4$s" data-query-id="%5$s">',
+			'<div class="%1$s jet-active-filters jet-filter" data-label="%6$s" data-content-provider="%2$s" data-additional-providers="%3$s" data-apply-type="%4$s" data-query-id="%5$s">',
 			$base_class,
 			$provider,
 			$additional_providers,
@@ -900,7 +884,5 @@ class Jet_Smart_Filters_Active_Filters_Widget extends Widget_Base {
 		}
 
 		echo '</div>';
-
 	}
-
 }
