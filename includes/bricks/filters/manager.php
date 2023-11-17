@@ -118,6 +118,7 @@ class Manager {
 							filter.$provider.last().after( newContent );
 							filter.$provider = jQuery( ".jsfb-filterable.jsfb-query--" + response.query_id );
 							window.JetPlugins && window.JetPlugins.init( filter.$provider.closest( "*" ) );
+							bricksInitQueryLoopInstances();
 
 						}
 					}

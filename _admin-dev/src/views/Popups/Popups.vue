@@ -60,6 +60,9 @@ export default defineComponent({
 			if ('filterInfo' === popup.type.value)
 				componentName = 'FilterInfo';
 
+			if ('multilingualEdit' === popup.type.value)
+				componentName = 'ML_Popup';
+
 			return componentName;
 		});
 

@@ -470,6 +470,7 @@ $css_items_dropdown_scheme = apply_filters(
 		'dropdown-body'         => '.jet-filter-items-dropdown__body',
 		'dropdown-active-items' => '.jet-filter-items-dropdown__active',
 		'dropdown-active-item'  => '.jet-filter-items-dropdown__active__item',
+		'dropdown-n-selected'   => '.jet-filter-items-dropdown__n-selected',
 	)
 );
 
@@ -582,165 +583,216 @@ $this->controls_manager->add_control([
 	'separator'  => 'after',
 ]);
 
-$this->controls_manager->add_control([
-	'id'        => 'dropdown_active_items_offset',
-	'type'      => 'range',
-	'label'     => esc_html__( 'Active Item Offset', 'jet-smart-filters' ),
-	'separator' => 'after',
-	'css_selector' => [
-		'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-items'] => 'margin: -{{VALUE}}{{UNIT}};',
-		'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'margin: {{VALUE}}{{UNIT}};',
-	],
-	'attributes' => [
-		'default' => [
-			'value' => 3,
-			'unit'  => 'px'
-		]
-	],
-	'units' => [
-		[
-			'value' => 'px',
-			'intervals' => [
-				'step' => 1,
-				'min'  => 0,
-				'max'  => 40,
+// dropdown active items
+if ( $this->get_name() !== 'radio' ) {
+
+	$this->controls_manager->add_control([
+		'id'        => 'dropdown_active_items_offset',
+		'type'      => 'range',
+		'label'     => esc_html__( 'Active Item Offset', 'jet-smart-filters' ),
+		'separator' => 'after',
+		'css_selector' => [
+			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-items'] => 'margin: -{{VALUE}}{{UNIT}};',
+			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'margin: {{VALUE}}{{UNIT}};',
+		],
+		'attributes' => [
+			'default' => [
+				'value' => 3,
+				'unit'  => 'px'
 			]
 		],
-	],
-]);
-
-$this->controls_manager->add_control([
-	'id'         => 'dropdown_active_item_typography',
-	'type'       => 'typography',
-	'label'      => esc_html__( 'Active Item Typography', 'jet-smart-filters' ),
-	'attributes' => [],
-	'separator'  => 'after',
-	'css_selector' => [
-		'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'font-family: {{FAMILY}}; font-weight: {{WEIGHT}}; text-transform: {{TRANSFORM}}; font-style: {{STYLE}}; text-decoration: {{DECORATION}}; line-height: {{LINEHEIGHT}}{{LH_UNIT}}; letter-spacing: {{LETTERSPACING}}{{LS_UNIT}}; font-size: {{SIZE}}{{S_UNIT}};',
-	],
-]);
-
-$this->controls_manager->start_tabs(
-	'style_controls',
-	[
-		'id' => 'dropdown_active_item_style_tabs',
-	]
-);
-
-$this->controls_manager->start_tab(
-	'style_controls',
-	[
-		'id'    => 'dropdown_active_item_normal_styles',
-		'title' => esc_html__( 'Normal', 'jet-smart-filters' ),
-	]
-);
-
-$this->controls_manager->add_control([
-	'id'       => 'dropdown_active_item_normal_color',
-	'type'     => 'color-picker',
-	'label'     => esc_html__( 'Active Item Color', 'jet-smart-filters' ),
-	'css_selector' => array(
-		'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'color: {{VALUE}}',
-	),
-	'attributes' => [
-		'default' => [
-			'value' => ''
+		'units' => [
+			[
+				'value' => 'px',
+				'intervals' => [
+					'step' => 1,
+					'min'  => 0,
+					'max'  => 40,
+				]
+			],
 		],
-	],
-]);
+	]);
 
-$this->controls_manager->add_control([
-	'id'        => 'dropdown_active_item_normal_background_color',
-	'type'      => 'color-picker',
-	'label'     => esc_html__( 'Active Item Background Color', 'jet-smart-filters' ),
-	'separator' => 'after',
-	'css_selector' => array(
-		'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'background-color: {{VALUE}}',
-	),
-	'attributes' => [
-		'default' => [
-			'value' => ''
+	$this->controls_manager->add_control([
+		'id'         => 'dropdown_active_item_typography',
+		'type'       => 'typography',
+		'label'      => esc_html__( 'Active Item Typography', 'jet-smart-filters' ),
+		'attributes' => [],
+		'separator'  => 'after',
+		'css_selector' => [
+			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'font-family: {{FAMILY}}; font-weight: {{WEIGHT}}; text-transform: {{TRANSFORM}}; font-style: {{STYLE}}; text-decoration: {{DECORATION}}; line-height: {{LINEHEIGHT}}{{LH_UNIT}}; letter-spacing: {{LETTERSPACING}}{{LS_UNIT}}; font-size: {{SIZE}}{{S_UNIT}};',
 		],
-	],
-]);
+	]);
 
-$this->controls_manager->end_tab();
+	$this->controls_manager->start_tabs(
+		'style_controls',
+		[
+			'id' => 'dropdown_active_item_style_tabs',
+		]
+	);
 
-$this->controls_manager->start_tab(
-	'style_controls',
-	[
-		'id'    => 'dropdown_active_item_hover_styles',
-		'title' => esc_html__( 'Hover', 'jet-smart-filters' ),
-	]
-);
+	$this->controls_manager->start_tab(
+		'style_controls',
+		[
+			'id'    => 'dropdown_active_item_normal_styles',
+			'title' => esc_html__( 'Normal', 'jet-smart-filters' ),
+		]
+	);
 
-$this->controls_manager->add_control([
-	'id'       => 'dropdown_active_item_hover_color',
-	'type'     => 'color-picker',
-	'label'     => esc_html__( 'Active Item Color', 'jet-smart-filters' ),
-	'css_selector' => array(
-		'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] . ':hover' => 'color: {{VALUE}}',
-	),
-	'attributes' => [
-		'default' => [
-			'value' => ''
+	$this->controls_manager->add_control([
+		'id'       => 'dropdown_active_item_normal_color',
+		'type'     => 'color-picker',
+		'label'     => esc_html__( 'Active Item Color', 'jet-smart-filters' ),
+		'css_selector' => array(
+			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'color: {{VALUE}}',
+		),
+		'attributes' => [
+			'default' => [
+				'value' => ''
+			],
 		],
-	],
-]);
+	]);
 
-$this->controls_manager->add_control([
-	'id'       => 'dropdown_active_item_hover_background_color',
-	'type'     => 'color-picker',
-	'label'     => esc_html__( 'Active Item Background Color', 'jet-smart-filters' ),
-	'css_selector' => array(
-		'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] . ':hover' => 'background-color: {{VALUE}}',
-	),
-	'attributes' => [
-		'default' => [
-			'value' => ''
+	$this->controls_manager->add_control([
+		'id'        => 'dropdown_active_item_normal_background_color',
+		'type'      => 'color-picker',
+		'label'     => esc_html__( 'Active Item Background Color', 'jet-smart-filters' ),
+		'separator' => 'after',
+		'css_selector' => array(
+			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'background-color: {{VALUE}}',
+		),
+		'attributes' => [
+			'default' => [
+				'value' => ''
+			],
 		],
-	],
-]);
+	]);
 
-$this->controls_manager->add_control([
-	'id'        => 'dropdown_active_item_hover_border_color',
-	'type'      => 'color-picker',
-	'label'     => esc_html__( 'Active Item Border Color', 'jet-smart-filters' ),
-	'separator' => 'after',
-	'css_selector' => array(
-		'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] . ':hover' => 'border-color: {{VALUE}}',
-	),
-	'attributes' => [
-		'default' => [
-			'value' => ''
+	$this->controls_manager->end_tab();
+
+	$this->controls_manager->start_tab(
+		'style_controls',
+		[
+			'id'    => 'dropdown_active_item_hover_styles',
+			'title' => esc_html__( 'Hover', 'jet-smart-filters' ),
+		]
+	);
+
+	$this->controls_manager->add_control([
+		'id'       => 'dropdown_active_item_hover_color',
+		'type'     => 'color-picker',
+		'label'     => esc_html__( 'Active Item Color', 'jet-smart-filters' ),
+		'css_selector' => array(
+			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] . ':hover' => 'color: {{VALUE}}',
+		),
+		'attributes' => [
+			'default' => [
+				'value' => ''
+			],
 		],
-	],
-]);
+	]);
 
-$this->controls_manager->end_tab();
+	$this->controls_manager->add_control([
+		'id'       => 'dropdown_active_item_hover_background_color',
+		'type'     => 'color-picker',
+		'label'     => esc_html__( 'Active Item Background Color', 'jet-smart-filters' ),
+		'css_selector' => array(
+			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] . ':hover' => 'background-color: {{VALUE}}',
+		),
+		'attributes' => [
+			'default' => [
+				'value' => ''
+			],
+		],
+	]);
 
-$this->controls_manager->end_tabs();
+	$this->controls_manager->add_control([
+		'id'        => 'dropdown_active_item_hover_border_color',
+		'type'      => 'color-picker',
+		'label'     => esc_html__( 'Active Item Border Color', 'jet-smart-filters' ),
+		'separator' => 'after',
+		'css_selector' => array(
+			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] . ':hover' => 'border-color: {{VALUE}}',
+		),
+		'attributes' => [
+			'default' => [
+				'value' => ''
+			],
+		],
+	]);
 
-$this->controls_manager->add_control([
-	'id'        => 'dropdown_active_item_border',
-	'type'      => 'border',
-	'label'     => esc_html__( 'Active Item Border', 'jet-smart-filters' ),
-	'separator' => 'after',
-	'css_selector'  => array(
-		'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'border-style:{{STYLE}};border-width:{{WIDTH}};border-radius:{{RADIUS}};border-color:{{COLOR}};',
-	),
-]);
+	$this->controls_manager->end_tab();
 
-$this->controls_manager->add_control([
-	'id'         => 'dropdown_active_item_padding',
-	'type'       => 'dimensions',
-	'label'      => esc_html__( 'Active Item Padding', 'jet-smart-filters' ),
-	'units'      => array( 'px', '%' ),
-	'css_selector'  => array(
-		'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'padding: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
-	),
-	'separator'  => 'after',
-]);
+	$this->controls_manager->end_tabs();
+
+	$this->controls_manager->add_control([
+		'id'        => 'dropdown_active_item_border',
+		'type'      => 'border',
+		'label'     => esc_html__( 'Active Item Border', 'jet-smart-filters' ),
+		'separator' => 'after',
+		'css_selector'  => array(
+			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'border-style:{{STYLE}};border-width:{{WIDTH}};border-radius:{{RADIUS}};border-color:{{COLOR}};',
+		),
+	]);
+
+	$this->controls_manager->add_control([
+		'id'         => 'dropdown_active_item_padding',
+		'type'       => 'dimensions',
+		'label'      => esc_html__( 'Active Item Padding', 'jet-smart-filters' ),
+		'units'      => array( 'px', '%' ),
+		'css_selector'  => array(
+			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'padding: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
+		),
+		'separator'  => 'after',
+	]);
+
+	// N selected
+	$this->controls_manager->add_control([
+		'id'         => 'dropdown_n_selected_typography',
+		'type'       => 'typography',
+		'label'      => esc_html__( 'N Selected Typography', 'jet-smart-filters' ),
+		'attributes' => [],
+		'separator'  => 'after',
+		'css_selector' => [
+			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-n-selected'] => 'font-family: {{FAMILY}}; font-weight: {{WEIGHT}}; text-transform: {{TRANSFORM}}; font-style: {{STYLE}}; text-decoration: {{DECORATION}}; line-height: {{LINEHEIGHT}}{{LH_UNIT}}; letter-spacing: {{LETTERSPACING}}{{LS_UNIT}}; font-size: {{SIZE}}{{S_UNIT}};',
+		],
+		'condition' => [
+			'dropdown_n_selected_enabled' => true,
+		],
+	]);
+
+	$this->controls_manager->add_control([
+		'id'        => 'dropdown_n_selected_color',
+		'type'      => 'color-picker',
+		'label'     => esc_html__( 'N Selected Color', 'jet-smart-filters' ),
+		'separator' => 'after',
+		'css_selector' => array(
+			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-n-selected'] => 'color: {{VALUE}};',
+		),
+		'attributes' => [
+			'default' => [
+				'value' => ''
+			],
+		],
+		'condition' => [
+			'dropdown_n_selected_enabled' => true,
+		],
+	]);
+
+	$this->controls_manager->add_control([
+		'id'         => 'dropdown_n_selected_margin',
+		'type'       => 'dimensions',
+		'label'      => esc_html__( 'N Selected Margin', 'jet-smart-filters' ),
+		'units'      => array( 'px', '%' ),
+		'css_selector'  => array(
+			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-n-selected'] => 'margin: {{TOP}} {{RIGHT}} {{BOTTOM}} {{LEFT}};',
+		),
+		'separator'  => 'after',
+		'condition'  => [
+			'dropdown_n_selected_enabled' => true,
+		],
+	]);
+}
 
 $this->controls_manager->add_control([
 	'id'        => 'dropdown_body_offset',

@@ -105,18 +105,27 @@ export default class AdditionalFilterSettings {
 	dropdownInit() {
 		this.$dropdownLabel = this.$dropdown.find(`.${this.dropdownClass}__label`);
 		this.$dropdownBody = this.$dropdown.find(`.${this.dropdownClass}__body`);
+		this.$dropdownItems = this.$dropdownBody.find('input:checkbox, input:radio');
 		this.dropdownOpenClass = 'jet-dropdown-open';
 		this.dropdownPlaceholderText = this.$dropdownLabel.html();
+		this.dropdownNselectedNumber = this.$dropdown.data('dropdown-n-selected');
+		this.dropdownNselectedText = this.$dropdown.data('dropdown-n-selected-text') || 'and {number} others';
+		this.dropdownNselectedEnabled = Boolean(this.dropdownNselectedNumber || this.dropdownNselectedNumber == 0);
 		this.dropdownState = false;
 
 		$(document).on('click', evt => {
 			this.documentClick(evt);
 		});
 
-		if (this.$dropdownLabel.length)
+		if (this.$dropdownLabel.length) {
 			this.$dropdownLabel.on('click', () => {
 				this.dropdownToggle();
 			});
+
+			this.$dropdownItems.on('click', () => {
+				this.dropDownItemsUpdate();
+			});
+		}
 	}
 
 	dropdownToggle() {
@@ -158,19 +167,31 @@ export default class AdditionalFilterSettings {
 			const $items = $('<div class="jet-filter-items-dropdown__active"></div>');
 			this.$dropdownLabel.append($items);
 
-			$checked.each(index => {
-				const $item = $checked.eq(index);
+			const $displayedItems = this.dropdownNselectedEnabled
+				? this.filter.$checked.slice(0, this.dropdownNselectedNumber)
+				: this.filter.$checked;
+
+			$displayedItems.each(index => {
+				const $item = $displayedItems.eq(index);
 
 				$items.append(
 					$(`<div class="jet-filter-items-dropdown__active__item">${$item.data('label')}<span class="jet-filter-items-dropdown__active__item__remove">×</span></div>`)
-						.one('click', event => {
-							event.stopPropagation();
+						.one('click', evt => {
+							evt.stopPropagation();
 
 							this.filter.reset($item.val());
-							this.filter.emitFiterChange();
+							$item.trigger('change');
 						})
 				);
 			});
+
+			if (this.dropdownNselectedEnabled && this.dropdownNselectedNumber < $checked.length) {
+				const othersCountText = this.dropdownNselectedText.replace('{number}', $checked.length - this.dropdownNselectedNumber);
+
+				$items.append(
+					$(`<div class="jet-filter-items-dropdown__n-selected">${othersCountText}</div>`)
+				);
+			}
 		} else if ($selected && $selected.val()) {
 			this.$dropdownLabel.html($selected.data('label'));
 		} else {

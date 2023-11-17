@@ -40,6 +40,9 @@ export const filterType = ref(null);
 export const updateAvailable = computed(() => filterTitle.value && !_object.isEmpty(filterUnsavedData.value) && _object.isEmpty(requiredNotFilled));
 
 export function init() {
+	// close popup
+	popup.close();
+
 	// Init vue-router
 	router = useRouter();
 	route = useRoute();
@@ -182,12 +185,7 @@ export function saveData() {
 			updateIsFilterLoading(false);
 
 			if (filterID.value === 'new' && newID) {
-				updateFilterID(newID);
-
-				router.push({
-					name: 'filter',
-					params: { id: newID }
-				});
+				toFilter(newID)
 			}
 		});
 }
@@ -218,6 +216,15 @@ export function clearStoreData() {
 
 export function goToList() {
 	router.push('/');
+}
+
+export function toFilter(filterID) {
+	updateFilterID(filterID);
+
+	router.push({
+		name: 'filter',
+		params: { id: filterID }
+	});
 }
 
 export function moveToTrash() {
@@ -597,6 +604,7 @@ export default {
 	getSettingValue,
 	clearStoreData,
 	goToList,
+	toFilter,
 	moveToTrash,
 	beforeRouteUpdate,
 	beforeRouteLeave,

@@ -38,8 +38,8 @@ export function close() {
 	onApply = onCancel = () => { };
 }
 
-export function quickEdit(filterId, applyCB = false, cancelCB = false) {
-	open('quickEdit', { data: filterId, onApply: applyCB, onCancel: cancelCB });
+export function quickEdit(filterID, applyCB = false, cancelCB = false) {
+	open('quickEdit', { data: filterID, onApply: applyCB, onCancel: cancelCB });
 }
 
 export function deletePermanently(applyCB = false, cancelCB = false) {

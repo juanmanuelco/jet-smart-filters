@@ -29,7 +29,7 @@ export default class FilterGroup {
 		this.filters = [];
 		this.providerSelector = this.getProviderSelector();
 		this.$provider = $(this.providerSelector);
-		this.currentQuery = {};
+		this.currentQuery = Object.assign({}, this.urlParams);
 		this.isAjaxLoading = false;
 
 		// URL data
@@ -89,10 +89,17 @@ export default class FilterGroup {
 
 	// Filters initialization
 	addFilter(newFilter) {
-		// remove old duplicate
-		this.filters = this.filters.filter(filter => newFilter.path !== filter.path);
+		// remove duplicate
+		this.filters = this.filters.filter(filter => {
+			const isDuplicate = newFilter.path === filter.path;
 
-		// filter add 
+			if (isDuplicate)
+				newFilter.setData(filter.data);
+
+			return !isDuplicate;
+		});
+
+		// filter add
 		newFilter.uniqueKey = this.getFilterUniqueKey(newFilter);
 
 		// push new filter to the collection
@@ -315,6 +322,9 @@ export default class FilterGroup {
 					.not(this.providerSelectorData.item + ' ' + this.providerSelectorData.item)
 			);
 		} else if ('insert' === this.providerSelectorData.action) {
+			if ('epro-portfolio' === this.provider)
+				result = $(result).children().children();
+
 			this.$provider.html(result);
 		} else {
 			this.$provider.replaceWith(result);
@@ -329,7 +339,19 @@ export default class FilterGroup {
 					break;
 
 				case 'epro-portfolio':
-					window.elementorFrontend.hooks.doAction('frontend/element_ready/portfolio.default', this.$provider, $);
+					window.elementorFrontend.hooks.doAction('frontend/element_ready/portfolio.default', this.$provider.closest('.elementor-widget-portfolio'), $);
+					break;
+
+				case 'epro-loop-builder':
+					const $eproLoopBuilder = this.$provider.closest('.elementor-widget-loop-grid');
+
+					if ($eproLoopBuilder.length)
+						window.elementorFrontend.hooks.doAction(
+							'frontend/element_ready/' + $eproLoopBuilder.data('widget_type'),
+							$eproLoopBuilder,
+							$
+						);
+
 					break;
 			}
 
@@ -360,7 +382,7 @@ export default class FilterGroup {
 		$(document).trigger('jet-filter-content-rendered', [this.$provider, this, this.provider, this.queryId]);
 	}
 
-	setFiltersData(data = Object.assign(this.currentQuery, this.urlParams)) {
+	setFiltersData(data = this.currentQuery) {
 		this.filters.forEach(filter => {
 			if (filter.isHierarchy || filter.disabled)
 				return;
@@ -697,7 +719,7 @@ export default class FilterGroup {
 	get urlParams() {
 		const urlParams = getUrlParams();
 
-		if (urlParams[this.urlPrefix] !== this.providerKey)
+		if (urlParams[this.urlPrefix] !== (this.provider + ':' + this.queryId))
 			return false;
 
 		delete urlParams[this.urlPrefix];
@@ -722,7 +744,7 @@ export default class FilterGroup {
 		const hierarchyFilters = {};
 
 		this.uniqueFilters.forEach(filter => {
-			if (filter.isHierarchy) {
+			if (filter.isHierarchy && !filter.isAdditional) {
 				if (!hierarchyFilters[filter.filterId])
 					hierarchyFilters[filter.filterId] = [];
 

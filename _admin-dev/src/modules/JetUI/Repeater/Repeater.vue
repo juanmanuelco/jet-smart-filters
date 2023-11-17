@@ -10,7 +10,7 @@
 			<SlickItem class="jet-ui_repeater-item"
 					   v-for="(item, index) in items"
 					   :index="index"
-					   :key="index">
+					   :key="item.id">
 				<div class="jet-ui_repeater-item-heading">
 					<div class="jet-ui_repeater-item-handle"
 					     v-handle>
@@ -44,6 +44,7 @@
 <script>
 import { defineComponent, computed } from "vue";
 import { SlickList, SlickItem, HandleDirective } from "@/modules/SlickSort/index.js";
+import { getUniqueId } from "@/modules/helpers/utils.js";
 
 export default defineComponent({
 	name: "Repeater",
@@ -68,7 +69,12 @@ export default defineComponent({
 	setup(props, context) {
 		// Computed Data
 		const items = computed({
-			get: () => [...props.modelValue],
+			get: () => [...props.modelValue].map(item => {
+				if (!item.id)
+					item.id = getUniqueId();
+
+				return item;
+			}),
 			set: (value) => context.emit('update:modelValue', value)
 		});
 
@@ -112,6 +118,4 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
-@import "../scss/repeater.scss";
-</style>
+<style lang="scss">@import "../scss/repeater.scss";</style>

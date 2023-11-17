@@ -17,6 +17,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Admin' ) ) {
 		 * Components
 		 */
 		public $data;
+		public $multilingual_support;
 
 		/**
 		 * Constructor for the class
@@ -28,8 +29,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Admin' ) ) {
 				$this->data = new Jet_Smart_Filters_Admin_Data();
 			}, 999 );
 
-			//Init Setting Pages
-			require jet_smart_filters()->plugin_path( 'admin/setting-pages/setting-pages.php' );
+			// Init Setting Pages
+			require_once jet_smart_filters()->plugin_path( 'admin/setting-pages/setting-pages.php' );
 			new Jet_Smart_Filters_Admin_Setting_Pages();
 
 			// Register plugin menu page
@@ -39,8 +40,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Admin' ) ) {
 				return;
 			}
 
+			// Init Multilingual Support
+			require_once jet_smart_filters()->plugin_path( 'admin/includes/multilingual-support.php' );
+			$this->multilingual_support = new Jet_Smart_Filters_Admin_Multilingual_Support();
+
 			// Register dynamic query data
-			require jet_smart_filters()->plugin_path( 'admin/includes/dynamic-query/registration.php' );
+			require_once jet_smart_filters()->plugin_path( 'admin/includes/dynamic-query/registration.php' );
 			new Jet_Smart_Filters_Admin_Dynamic_Query_Registration();
 
 			// Register and enqueue admin assets

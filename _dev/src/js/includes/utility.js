@@ -25,6 +25,8 @@ export default {
 	dateAddDay,
 	dateAddMonth,
 	dateAddYear,
+	parseDateExpressionWithToday,
+	parseDateExpressionWithCurrent,
 	debounce,
 	stringToBoolean,
 	applyAliases,
@@ -387,6 +389,59 @@ export function dateAddYear(date, years = 1) {
 	date.setFullYear(date.getFullYear() + years);
 
 	return date;
+}
+
+export function parseDateExpressionWithToday(dateExpression) {
+	let result = new Date();
+
+	const regex = /([-+]\s*\d+(\.\d+)?\s*\w+)(?=\s*[-+]|$)/g;
+	const matches = dateExpression.match(regex);
+
+	if (matches)
+		matches.forEach(operationExpression => {
+			const operator = operationExpression.substring(0, 1);
+			const value = operator === '-'
+				? -parseInt(operationExpression.substring(1))
+				: parseInt(operationExpression.substring(1));
+
+			if (operationExpression.includes('day'))
+				dateAddDay(result, value);
+
+			if (operationExpression.includes('week'))
+				dateAddDay(result, value * 7);
+
+			if (operationExpression.includes('month'))
+				dateAddMonth(result, value);
+
+			if (operationExpression.includes('year'))
+				dateAddYear(result, value);
+		});
+
+	return result;
+}
+
+export function parseDateExpressionWithCurrent(dateExpression) {
+	const currentDate = new Date();
+	const dateData = dateExpression.split('-', 3).map((item, index) => {
+		if (item.includes('current'))
+			switch (index) {
+				case 0:
+					item = currentDate.getFullYear();
+					break;
+
+				case 1:
+					item = currentDate.getMonth() + 1;
+					break;
+
+				case 2:
+					item = currentDate.getDate();
+					break;
+			}
+
+		return item;
+	});
+
+	return new Date(dateData.join('-'));
 }
 
 export function debounce(callback, wait, immediate = false) {

@@ -133,6 +133,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 			}
 		}
 
+		
 		/**
 		 * Check if is ajax filter processed
 		 */
@@ -153,12 +154,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 				return $this->is_ajax_filter;
 			}
 
-			if ( ! wp_doing_ajax() ) {
-				$this->is_ajax_filter = false;
+			if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $allowed_actions ) ) {
+				$this->is_ajax_filter = true;
 				return $this->is_ajax_filter;
 			}
 
-			if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $allowed_actions ) ) {
+			if ( wp_doing_ajax() ) {
 				$this->is_ajax_filter = true;
 				return $this->is_ajax_filter;
 			}
@@ -274,12 +275,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 		 */
 		public function get_query_props( $provider = null, $query_id = 'default' ) {
 
-			if ( ! $query_id ) {
-				$query_id = 'default';
-			}
-
 			if ( ! $provider ) {
 				return $this->_props;
+			}
+
+			if ( ! $query_id ) {
+				$query_id = 'default';
 			}
 
 			return isset( $this->_props[ $provider ][ $query_id ] ) ? $this->_props[ $provider ][ $query_id ] : array();
@@ -770,6 +771,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 
 			if ( $operator ) {
 				$tax_query[ $key ]['operator'] = $operator;
+
+				if ( $operator === 'AND' ) {
+					$tax_query[ $key ]['include_children'] = false;
+				}
 			}
 
 			if ( ! empty( $this->_default_query['tax_query'] ) ) {
@@ -954,13 +959,13 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 				switch ( $compare_operand ) {
 					case 'less' :
 						$compare     = '<=';
-						$custom_type = 'NUMERIC';
+						$custom_type = 'CHAR';
 
 						break;
 
 					case 'greater' :
 						$compare     = '>=';
-						$custom_type = 'NUMERIC';
+						$custom_type = 'CHAR';
 
 						break;
 

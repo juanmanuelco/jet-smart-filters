@@ -42,6 +42,8 @@
 									  @click="onUpdate" />
 					</div>
 				</div>
+				<ML_Block v-if="multilingual && filterID"
+						  :filterID="filterID" />
 				<div class="jet_filter-help-block">
 					<h3 class="jet_filter-help-block-title">{{helpBlockData.title}}</h3>
 					<div class="jet_filter-help-block-list">
@@ -60,7 +62,7 @@
 </template>
 
 <script>
-import { defineComponent, computed, onMounted } from "vue";
+import { defineComponent, onMounted, inject } from "vue";
 import { onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router';
 import { useGetters } from "@/store/helper.js";
 import filter from "@/services/filter.js";
@@ -80,13 +82,16 @@ export default defineComponent({
 
 	setup(props, context) {
 		const {
+			filterID,
 			filterTitle,
 			filterDate,
 			filterSettings,
 			isPageLoading,
 			isFilterLoading,
 			isFilterNew
-		} = useGetters(['filterTitle', 'filterDate', 'filterSettings', 'isPageLoading', 'isFilterLoading', 'isFilterNew']);
+		} = useGetters(['filterID', 'filterTitle', 'filterDate', 'filterSettings', 'isPageLoading', 'isFilterLoading', 'isFilterNew']);
+
+		const multilingual = inject('multilingual');
 
 		// Lifecycles
 		onMounted(() => {
@@ -120,6 +125,7 @@ export default defineComponent({
 
 		return {
 			filterSettings,
+			filterID,
 			filterTitle,
 			filterDate,
 			updateAvailable: filter.updateAvailable,
@@ -127,6 +133,7 @@ export default defineComponent({
 			isPageLoading,
 			isFilterLoading,
 			isFilterNew,
+			multilingual,
 			onBackToList,
 			onChange,
 			onUpdate,

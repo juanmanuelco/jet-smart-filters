@@ -16,7 +16,9 @@
 				<svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.999837 13.8333C0.999837 14.75 1.74984 15.5 2.6665 15.5H9.33317C10.2498 15.5 10.9998 14.75 10.9998 13.8333V3.83333H0.999837V13.8333ZM2.6665 5.5H9.33317V13.8333H2.6665V5.5ZM8.9165 1.33333L8.08317 0.5H3.9165L3.08317 1.33333H0.166504V3H11.8332V1.33333H8.9165Z" /></svg>
 				Empty Trash
 			</Button>
-			<Submenu />
+			<div class="jet_filters-list-header-nav">
+				<Submenu />
+			</div>
 		</div>
 		<Filtration />
 		<Preloader :show="isPageLoading" />
@@ -25,11 +27,11 @@
 			<DataTable :rows="filtersList"
 					   :columns="columns"
 					   :hasCheckbox="true">
-				<template #table-head="{columns}"
+				<template #table-head="{ columns }"
 						  v-if="isСhecked">
 					<ActiveHead />
 				</template>
-				<template #table-body-cell="{column, value, rowIndex}">
+				<template #table-body-cell="{ column, value, rowIndex }">
 					<BodyCell :columnKey="column"
 							  :value="value"
 							  :rowIndex="rowIndex" />
@@ -104,5 +106,5 @@ export default defineComponent({
 			onActionClick
 		};
 	}
-})
+});
 </script>

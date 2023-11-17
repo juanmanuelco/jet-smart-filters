@@ -213,6 +213,18 @@ export default {
 		type: 'string',
 		default: __('Select some options'),
 	},
+	dropdown_n_selected_enabled: {
+		type: 'boolean',
+		default: false,
+	},
+	dropdown_n_selected_number: {
+		type: 'number',
+		default: 3,
+	},
+	dropdown_n_selected_text: {
+		type: 'string',
+		default: __('and {number} others', 'jet-smart-filters'),
+	},
 	scroll_enabled: {
 		type: 'boolean',
 		default: false,

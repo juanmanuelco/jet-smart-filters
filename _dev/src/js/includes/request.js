@@ -113,11 +113,7 @@ export default {
 		if (!isValidUrl(url))
 			url = getNesting(JetSmartFilterSettings, 'siteurl') + url;
 
-		if (redirectInNewWindow) {
-			window.open(url, '_blank');
-		} else {
-			window.location.replace(url);
-		}
+		window.open(url, redirectInNewWindow ? '_blank' : '_top');
 	},
 
 	redirectWithPOST(postParams, redirectPath, redirectInNewWindow = false) {

@@ -233,6 +233,15 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 							}
 						}
 					}
+
+					$indexed_data[ $query_type ] = apply_filters(
+						'jet-smart-filters/filters/indexed-data/query-type-data',
+						$indexed_data[ $query_type ],
+						$query_type,
+						$key,
+						$data,
+						$this
+					);
 				}
 			}
 
@@ -441,6 +450,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 
 			unset( $args['jet_smart_filters'] );
 			unset( $args['paged'] );
+			unset( $args['nopaging'] );
 
 			switch ( $type ) {
 				case 'posts':

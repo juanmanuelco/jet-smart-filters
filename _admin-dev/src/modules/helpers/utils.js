@@ -1,3 +1,48 @@
+export default {
+	getUniqueId,
+	isNestingExist,
+	getNesting,
+	clone,
+	debounce,
+	stringToBoolean
+};
+
+export function getUniqueId() {
+	return Math.random().toString(16).substr(2, 7);
+}
+
+export function isNestingExist(obj) {
+	const nesting = Array.from(arguments).splice(1);
+	let output = true;
+
+	for (let key of nesting) {
+		if (!obj[key]) {
+			output = false;
+			break;
+		}
+
+		obj = obj[key];
+	}
+
+	return output;
+}
+
+export function getNesting(obj) {
+	const nesting = Array.from(arguments).splice(1);
+	let isNestingExist = true;
+
+	for (let key of nesting) {
+		if (!obj[key]) {
+			isNestingExist = false;
+			break;
+		}
+
+		obj = obj[key];
+	}
+
+	return isNestingExist ? obj : false;
+}
+
 export function clone(o) {
 	if (typeof o !== 'object')
 		return o;
@@ -50,9 +95,3 @@ export function stringToBoolean(string) {
 			return Boolean(string);
 	}
 }
-
-export default {
-	clone,
-	debounce,
-	stringToBoolean
-};

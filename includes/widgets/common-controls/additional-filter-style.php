@@ -467,6 +467,7 @@ $css_items_dropdown_scheme = apply_filters(
 		'dropdown-body'         => '.jet-filter-items-dropdown__body',
 		'dropdown-active-items' => '.jet-filter-items-dropdown__active',
 		'dropdown-active-item'  => '.jet-filter-items-dropdown__active__item',
+		'dropdown-n-selected'   => '.jet-filter-items-dropdown__n-selected',
 	)
 );
 
@@ -587,151 +588,208 @@ $this->add_responsive_control(
 	)
 );
 
-$this->add_control(
-	'dropdown_active_items_heading',
-	array(
-		'label'     => esc_html__( 'Active Items', 'jet-smart-filters' ),
-		'type'      => Controls_Manager::HEADING,
-		'separator' => 'before',
-	)
-);
+// dropdown active items
+if ( $this->get_name() !== 'jet-smart-filters-radio' ) {
 
-$this->add_responsive_control(
-	'dropdown_active_items_offset',
-	array(
-		'label'     => esc_html__( 'Offset', 'jet-smart-filters' ),
-		'type'      => Controls_Manager::SLIDER,
-		'range'     => array(
-			'px' => array(
-				'min' => 0,
-				'max' => 40,
-			),
-		),
-		'selectors' => array(
-			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-items'] => 'margin: -{{SIZE}}{{UNIT}};',
-			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'margin: {{SIZE}}{{UNIT}};',
+	$this->add_control(
+		'dropdown_active_items_heading',
+		array(
+			'label'     => esc_html__( 'Active Items', 'jet-smart-filters' ),
+			'type'      => Controls_Manager::HEADING,
+			'separator' => 'before',
 		)
-	)
-);
+	);
 
-$this->add_group_control(
-	Group_Control_Typography::get_type(),
-	array(
-		'name'     => 'dropdown_active_item_typography',
-		'selector' => '{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'],
-	)
-);
+	$this->add_responsive_control(
+		'dropdown_active_items_offset',
+		array(
+			'label'     => esc_html__( 'Offset', 'jet-smart-filters' ),
+			'type'      => Controls_Manager::SLIDER,
+			'range'     => array(
+				'px' => array(
+					'min' => 0,
+					'max' => 40,
+				),
+			),
+			'selectors' => array(
+				'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-items'] => 'margin: -{{SIZE}}{{UNIT}};',
+				'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'margin: {{SIZE}}{{UNIT}};',
+			)
+		)
+	);
 
-$this->start_controls_tabs( 'dropdown_active_item_style_tabs' );
+	$this->add_group_control(
+		Group_Control_Typography::get_type(),
+		array(
+			'name'     => 'dropdown_active_item_typography',
+			'selector' => '{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'],
+		)
+	);
 
-$this->start_controls_tab(
-	'dropdown_active_item_normal_styles',
-	array(
-		'label' => esc_html__( 'Normal', 'jet-smart-filters' ),
-	)
-);
+	$this->start_controls_tabs( 'dropdown_active_item_style_tabs' );
 
-$this->add_control(
-	'dropdown_active_item_normal_color',
-	array(
-		'label'     => esc_html__( 'Text Color', 'jet-smart-filters' ),
-		'type'      => Controls_Manager::COLOR,
-		'selectors' => array(
-			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'color: {{VALUE}}',
-		),
-	)
-);
+	$this->start_controls_tab(
+		'dropdown_active_item_normal_styles',
+		array(
+			'label' => esc_html__( 'Normal', 'jet-smart-filters' ),
+		)
+	);
 
-$this->add_control(
-	'dropdown_active_item_normal_background_color',
-	array(
-		'label'     => esc_html__( 'Background Color', 'jet-smart-filters' ),
-		'type'      => Controls_Manager::COLOR,
-		'selectors' => array(
-			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'background-color: {{VALUE}}',
-		),
-	)
-);
+	$this->add_control(
+		'dropdown_active_item_normal_color',
+		array(
+			'label'     => esc_html__( 'Text Color', 'jet-smart-filters' ),
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array(
+				'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'color: {{VALUE}}',
+			),
+		)
+	);
 
-$this->end_controls_tab();
+	$this->add_control(
+		'dropdown_active_item_normal_background_color',
+		array(
+			'label'     => esc_html__( 'Background Color', 'jet-smart-filters' ),
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array(
+				'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'background-color: {{VALUE}}',
+			),
+		)
+	);
 
-$this->start_controls_tab(
-	'dropdown_active_item_hover_styles',
-	array(
-		'label' => esc_html__( 'Hover', 'jet-smart-filters' ),
-	)
-);
+	$this->end_controls_tab();
 
-$this->add_control(
-	'dropdown_active_item_hover_color',
-	array(
-		'label'     => esc_html__( 'Text Color', 'jet-smart-filters' ),
-		'type'      => Controls_Manager::COLOR,
-		'selectors' => array(
-			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] . ':hover' => 'color: {{VALUE}}',
-		),
-	)
-);
+	$this->start_controls_tab(
+		'dropdown_active_item_hover_styles',
+		array(
+			'label' => esc_html__( 'Hover', 'jet-smart-filters' ),
+		)
+	);
 
-$this->add_control(
-	'dropdown_active_item_hover_background_color',
-	array(
-		'label'     => esc_html__( 'Background Color', 'jet-smart-filters' ),
-		'type'      => Controls_Manager::COLOR,
-		'selectors' => array(
-			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] . ':hover' => 'background-color: {{VALUE}}',
-		),
-	)
-);
+	$this->add_control(
+		'dropdown_active_item_hover_color',
+		array(
+			'label'     => esc_html__( 'Text Color', 'jet-smart-filters' ),
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array(
+				'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] . ':hover' => 'color: {{VALUE}}',
+			),
+		)
+	);
 
-$this->add_control(
-	'dropdown_active_item_hover_border_color',
-	array(
-		'label'     => esc_html__( 'Border Color', 'jet-smart-filters' ),
-		'type'      => Controls_Manager::COLOR,
-		'selectors' => array(
-			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] . ':hover' => 'border-color: {{VALUE}}',
-		),
-	)
-);
+	$this->add_control(
+		'dropdown_active_item_hover_background_color',
+		array(
+			'label'     => esc_html__( 'Background Color', 'jet-smart-filters' ),
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array(
+				'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] . ':hover' => 'background-color: {{VALUE}}',
+			),
+		)
+	);
 
-$this->end_controls_tab();
+	$this->add_control(
+		'dropdown_active_item_hover_border_color',
+		array(
+			'label'     => esc_html__( 'Border Color', 'jet-smart-filters' ),
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array(
+				'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] . ':hover' => 'border-color: {{VALUE}}',
+			),
+		)
+	);
 
-$this->end_controls_tabs();
+	$this->end_controls_tab();
 
-$this->add_group_control(
-	Group_Control_Border::get_type(),
-	array(
-		'name'     => 'dropdown_active_item_border',
-		'label'    => esc_html__( 'Border', 'jet-smart-filters' ),
-		'default'  => '1px',
-		'selector' => '{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'],
-	)
-);
+	$this->end_controls_tabs();
 
-$this->add_control(
-	'dropdown_active_item_border_radius',
-	array(
-		'label'      => esc_html__( 'Border Radius', 'jet-smart-filters' ),
-		'type'       => Controls_Manager::DIMENSIONS,
-		'size_units' => array( 'px', '%' ),
-		'selectors'  => array(
-			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-		),
-	)
-);
+	$this->add_group_control(
+		Group_Control_Border::get_type(),
+		array(
+			'name'     => 'dropdown_active_item_border',
+			'label'    => esc_html__( 'Border', 'jet-smart-filters' ),
+			'default'  => '1px',
+			'selector' => '{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'],
+		)
+	);
 
-$this->add_responsive_control(
-	'dropdown_active_item_padding',
-	array(
-		'label'      => esc_html__( 'Padding', 'jet-smart-filters' ),
-		'type'       => Controls_Manager::DIMENSIONS,
-		'size_units' => array( 'px', '%' ),
-		'selectors'  => array(
-			'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-		),
-	)
-);
+	$this->add_control(
+		'dropdown_active_item_border_radius',
+		array(
+			'label'      => esc_html__( 'Border Radius', 'jet-smart-filters' ),
+			'type'       => Controls_Manager::DIMENSIONS,
+			'size_units' => array( 'px', '%' ),
+			'selectors'  => array(
+				'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+			),
+		)
+	);
+
+	$this->add_responsive_control(
+		'dropdown_active_item_padding',
+		array(
+			'label'      => esc_html__( 'Padding', 'jet-smart-filters' ),
+			'type'       => Controls_Manager::DIMENSIONS,
+			'size_units' => array( 'px', '%' ),
+			'selectors'  => array(
+				'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-active-item'] => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+			),
+		)
+	);
+
+	// N selected
+	$this->add_control(
+		'dropdown_n_selected_heading',
+		array(
+			'label'     => esc_html__( 'N Selected', 'jet-smart-filters' ),
+			'type'      => Controls_Manager::HEADING,
+			'separator' => 'before',
+			'condition' => array(
+				'dropdown_n_selected_enabled' => 'yes'
+			)
+		)
+	);
+
+	$this->add_group_control(
+		Group_Control_Typography::get_type(),
+		array(
+			'name'      => 'dropdown_n_selected_typography',
+			'selector'  => '{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-n-selected'],
+			'condition' => array(
+				'dropdown_n_selected_enabled' => 'yes'
+			)
+		)
+	);
+
+	$this->add_control(
+		'dropdown_n_selected_color',
+		array(
+			'label'     => esc_html__( 'Text Color', 'jet-smart-filters' ),
+			'type'      => Controls_Manager::COLOR,
+			'selectors' => array(
+				'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-n-selected'] => 'color: {{VALUE}}',
+			),
+			'condition' => array(
+				'dropdown_n_selected_enabled' => 'yes'
+			)
+		)
+	);
+
+	$this->add_responsive_control(
+		'dropdown_n_selected_margin',
+		array(
+			'label'      => esc_html__( 'Margin', 'jet-smart-filters' ),
+			'type'       => Controls_Manager::DIMENSIONS,
+			'size_units' => array( 'px', '%' ),
+			'selectors'  => array(
+				'{{WRAPPER}} ' . $css_items_dropdown_scheme['dropdown-n-selected'] => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+			),
+			'condition' => array(
+				'dropdown_n_selected_enabled' => 'yes'
+			)
+		)
+	);
+}
 
 $this->add_control(
 	'dropdown_body_heading',

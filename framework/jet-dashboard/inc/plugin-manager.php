@@ -287,6 +287,10 @@ class Plugin_Manager {
 	 */
 	public function check_update( $data ) {
 
+		if ( empty( $data ) ) {
+			return false;
+		}
+
 		delete_site_transient( 'jet_dashboard_remote_jet_plugin_list' );
 
 		$registered_plugins = Dashboard::get_instance()->get_registered_plugins();
@@ -423,9 +427,7 @@ class Plugin_Manager {
 				}
 
 				$plugin_data['licenseControl'] = array_key_exists( $plugin_slug, $registered_plugins ) ? true : false;
-
 				$plugin_data['usefulLinks'] = array_key_exists( $plugin_slug, $registered_plugins ) ? $registered_plugins[ $plugin_slug ]['plugin_links'] : array();
-
 				$plugins_list[ $plugin_data['slug'] ] = $plugin_data;
 			}
 		}

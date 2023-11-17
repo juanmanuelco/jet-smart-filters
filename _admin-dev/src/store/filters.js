@@ -29,10 +29,18 @@ const state = {
 	filterTypes: { ...window.JetSmartFiltersAdminData.filter_types },
 	filterSources: { ...window.JetSmartFiltersAdminData.filter_sources },
 	sortByList: { ...window.JetSmartFiltersAdminData.sort_by_list },
-	quantity: {
-		filters: 0,
-		trash: 0,
-	},
+	submenuList: [
+		{
+			type: 'filters',
+			label: 'All filters',
+			count: 0,
+		},
+		{
+			type: 'trash',
+			label: 'Trash',
+			count: 0,
+		}
+	],
 	isFiltersListLoading: true,
 };
 
@@ -45,12 +53,19 @@ const getters = {
 	filterTypes: state => { return state.filterTypes; },
 	filterSources: state => { return state.filterSources; },
 	sortByList: state => { return state.sortByList; },
-	quantity: state => { return state.quantity; },
+	submenuList: state => { return state.submenuList; },
 	isFiltersListLoading: state => { return state.isFiltersListLoading; },
 };
 
 // Actions
 const actions = {
+	updateColumns: ({ commit }, columns) => {
+		commit('updateState', {
+			name: 'columns',
+			data: columns
+		});
+	},
+
 	updateFiltersList: ({ commit }, filtersList) => {
 		commit('updateState', {
 			name: 'filtersList',
@@ -65,10 +80,10 @@ const actions = {
 		});
 	},
 
-	updateQuantity: ({ commit }, quantity) => {
+	updateSubmenuList: ({ commit }, submenuList) => {
 		commit('updateState', {
-			name: 'quantity',
-			data: quantity
+			name: 'submenuList',
+			data: submenuList
 		});
 	},
 

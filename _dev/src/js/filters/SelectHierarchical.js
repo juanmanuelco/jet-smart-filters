@@ -16,6 +16,7 @@ export default class SelectHierarchical {
 			const $filter = $filters.eq(index);
 			const filter = new SelectControl($container, $filter);
 
+			filter.hierarchicalInstance = this;
 			filter.name = 'select';
 			filter.$container = $container;
 			filter.isHierarchy = true;

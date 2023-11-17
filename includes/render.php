@@ -204,7 +204,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Render' ) ) {
 					$_REQUEST['props'],
 					$query_id
 				);
-
 			}
 
 			$args = array(

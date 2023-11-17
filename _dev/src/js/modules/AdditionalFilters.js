@@ -45,6 +45,9 @@ export default class AdditionalFilters {
 			return;
 
 		additionalFilter.data = parentFilter.data;
+		if (parentFilter.isHierarchy)
+			this.updateHierarchyLevelsByParent(parentFilter);
+
 		this.filterGroup.additionalRequest = true;
 		this.filterGroup.filterChangeHandler(parentFilter.applyType);
 	}
@@ -57,6 +60,8 @@ export default class AdditionalFilters {
 				return;
 
 			additionalFilter.data = parentFilter.data;
+			if (parentFilter.isHierarchy)
+				this.updateHierarchyLevelsByParent(parentFilter);
 		});
 
 		this.filterGroup.additionalRequest = true;
@@ -115,5 +120,15 @@ export default class AdditionalFilters {
 			return false;
 
 		return parentFilter.additionalProviders.includes(this.filterGroup.providerKey) ? true : false;
+	}
+
+	updateHierarchyLevelsByParent(parentFilter) {
+		parentFilter.hierarchicalInstance.filters.forEach(parentFilter => {
+			const filter = this.filters.find(filter => {
+				return filter.filterId === parentFilter.filterId && filter.depth === parentFilter.depth;
+			});
+
+			filter.data = parentFilter.data;
+		});
 	}
 }

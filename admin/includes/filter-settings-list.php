@@ -737,6 +737,6 @@ return array(
 				'_query_var'   => 'is_visible',
 				'_filter_type' => array( 'select', 'radio' ),
 			),
-		)
+		),
 	)
 );

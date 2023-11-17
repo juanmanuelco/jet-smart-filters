@@ -12,7 +12,10 @@
 				Settings
 			</a>
 			<IndexerButton v-if="isIndexerEnabled" />
-			<Submenu />
+			<div class="jet_filters-list-header-nav">
+				<Submenu />
+				<ML_LanguagesSelector v-if="multilingual" />
+			</div>
 		</div>
 		<Filtration />
 		<Preloader :show="isPageLoading" />
@@ -21,11 +24,11 @@
 			<DataTable :rows="filtersList"
 					   :columns="columns"
 					   :hasCheckbox="true">
-				<template #table-head="{columns}"
+				<template #table-head="{ columns }"
 						  v-if="isСhecked">
 					<ActiveHead />
 				</template>
-				<template #table-body-cell="{column, value, rowIndex}">
+				<template #table-body-cell="{ column, value, rowIndex }">
 					<BodyCell :columnKey="column"
 							  :value="value"
 							  :rowIndex="rowIndex" />
@@ -44,7 +47,7 @@
 </template>
 
 <script>
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, onMounted, inject } from "vue";
 import { useGetters } from "@/store/helper.js";
 import filters from "@/services/filters.js";
 import DataTable from "@/modules/DataTable";
@@ -79,6 +82,7 @@ export default defineComponent({
 		} = useGetters(['isPageLoading', 'isFiltersListLoading', 'columns', 'filtersList']);
 
 		const settingsUrl = window.JetSmartFiltersAdminData.urls.admin + 'admin.php?page=jet-dashboard-settings-page&subpage=jet-smart-filters-general-settings';
+		const multilingual = inject('multilingual');
 
 		// Lifecycles
 		onMounted(() => {
@@ -97,8 +101,9 @@ export default defineComponent({
 			columns,
 			isIndexerEnabled: filters.isIndexerEnabled,
 			isСhecked: filters.isСhecked,
-			settingsUrl
+			settingsUrl,
+			multilingual
 		};
 	}
-})
+});
 </script>

@@ -220,7 +220,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 					}
 
 					foreach ( $found_field['options'] as $option ) {
-						$result[ $option['key'] ] = $option['value'];
+						$label                  = apply_filters( 'jet-engine/compatibility/translate-string', $option['value'] );
+						$result[$option['key']] = $label;
 					}
 
 					return $result;

@@ -15,6 +15,7 @@ import Repeater from './Repeater.vue';
 import AdvancedInput from './AdvancedInput.vue';
 import TypeSelector from './TypeSelector.vue';
 import HTML from './HTML.vue';
+import ApproveDisapprove from './ApproveDisapprove.vue';
 
 const collection = {
 	Button,
@@ -33,7 +34,8 @@ const collection = {
 	Repeater,
 	AdvancedInput,
 	TypeSelector,
-	HTML
+	HTML,
+	ApproveDisapprove
 };
 
 export default {

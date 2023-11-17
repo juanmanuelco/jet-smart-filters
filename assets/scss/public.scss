@@ -67,6 +67,11 @@ body:not(.elementor-editor-active) .elementor-widget.hide-widget {
 	display: none;
 }
 
+// Empty container
+.elementor-widget-posts:after {
+	display: none;
+}
+
 // Context Bricks
 [class*="brxe-jet-smart-filters-"] {
 	.apply-filters {

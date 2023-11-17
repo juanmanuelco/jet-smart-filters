@@ -210,7 +210,7 @@ function setIndexedData(provider, query = {}) {
 }
 
 function createAdditionalFilter(additionalProvider, additionalQueryId, filter) {
-	return {
+	const filterData = {
 		isAdditional: true,
 		name: filter.name,
 		path: filter.path,
@@ -223,6 +223,13 @@ function createAdditionalFilter(additionalProvider, additionalQueryId, filter) {
 			this.data = false;
 		}
 	};
+
+	if (filter.isHierarchy) {
+		filterData.isHierarchy = true;
+		filterData.depth = filter.depth;
+	}
+
+	return filterData;
 }
 
 // filling array with names

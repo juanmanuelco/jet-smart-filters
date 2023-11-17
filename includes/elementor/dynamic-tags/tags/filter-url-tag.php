@@ -122,6 +122,10 @@ class Jet_Smart_Filters_Elementor_Filter_URL_Tag extends Elementor\Core\DynamicT
 			'query_id'         => $query_id,
 		) );
 
+		if ( ! $filter ) {
+			return;
+		}
+
 		$args = array(
 			array(
 				'query_var'   => $filter->get_arg( 'query_var' ),

@@ -1,5 +1,5 @@
 import Filter from 'bases/Filter';
-import { getNesting, isObject, convertDate, dateAddDay, debounce } from 'includes/utility';
+import { getNesting, isObject, convertDate, dateAddDay, debounce, parseDateExpressionWithToday, parseDateExpressionWithCurrent } from 'includes/utility';
 
 export default class DatePeriod extends Filter {
 	name = 'date-period';
@@ -382,17 +382,21 @@ export default class DatePeriod extends Filter {
 		return this.datepicker.formatDate(format, date);
 	}
 
-	parseDate(date) {
-		if (!date)
+	parseDate(dateExpression) {
+		if (!dateExpression)
 			return false;
 
-		if (date === 'today') {
-			date = new Date();
+		let date;
+
+		if (dateExpression.includes('today')) {
+			date = parseDateExpressionWithToday(dateExpression);
+		} else if (dateExpression.includes('current')) {
+			date = parseDateExpressionWithCurrent(dateExpression);
 		} else {
-			date = new Date(date);
+			date = new Date(dateExpression);
 		}
 
-		if (isNaN(date))
+		if (!date || isNaN(date))
 			return false;
 
 		date.setHours(0, 0, 0, 0);
