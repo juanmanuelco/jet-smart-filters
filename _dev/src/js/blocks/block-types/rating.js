@@ -36,6 +36,8 @@ registerBlockType('jet-smart-filters/rating', {
 		show_label: attributes.show_label,
 		rating_icon: attributes.rating_icon,
 		query_id: attributes.query_id,
+		additional_providers_enabled: attributes.additional_providers_enabled,
+		additional_providers_list: attributes.additional_providers_list,
 	},
 	className: 'jet-smart-filters-rating',
 	edit: class extends wp.element.Component {

@@ -570,6 +570,15 @@ class Plugin_Manager {
 			);
 		}
 
+		// Nonce checking here. The capability checking is in the appropriate methods below
+		if ( isset( $data['nonce'] ) && ! wp_verify_nonce( $data['nonce'], 'jet-dashboard' ) ) {
+			wp_send_json( [
+				'type' => 'error',
+				'title' => __( 'Error', 'jet-dashboard' ),
+				'desc'  => __( 'Server error. Stop cheating!!!', 'jet-dashboard' ),
+			] );
+		}
+
 		$action  = $data['action'];
 		$plugin  = $data['plugin'];
 		$version = isset( $data['version'] ) ? $data['version'] : false;
@@ -622,6 +631,15 @@ class Plugin_Manager {
 					'message' => $this->sys_messages['server_error']
 				)
 			);
+		}
+
+		// Nonce checking here. The capability checking is in the appropriate methods below
+		if ( isset( $data['nonce'] ) && ! wp_verify_nonce( $data['nonce'], 'jet-dashboard' ) ) {
+			wp_send_json( [
+				'type' => 'error',
+				'title' => __( 'Error', 'jet-dashboard' ),
+				'desc'  => __( 'Server error. Stop cheating!!!', 'jet-dashboard' ),
+			] );
 		}
 
 		$action  = $data['action'];
@@ -859,6 +877,15 @@ class Plugin_Manager {
 	 * @return [type]              [description]
 	 */
 	public function update_plugin( $plugin_file ) {
+
+		if ( ! current_user_can( 'update_plugins' ) ) {
+			wp_send_json(
+				array(
+					'status'  => 'error',
+					'message' => 'Sorry, you are not allowed to update plugins on this site.'
+				)
+			);
+		}
 
 		if ( ! $plugin_file ) {
 			wp_send_json(

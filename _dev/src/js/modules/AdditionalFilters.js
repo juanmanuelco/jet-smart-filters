@@ -12,7 +12,7 @@ export default class AdditionalFilters {
 		this.collectFilters();
 
 		// Event subscriptions
-		eventBus.subscribe('fiter/change', parentFilter => {
+		eventBus.subscribe('fiter/apply', parentFilter => {
 			if (!this.isCurrentAdditionalProvider(parentFilter) || parentFilter.isReload)
 				return;
 
@@ -49,7 +49,7 @@ export default class AdditionalFilters {
 			this.updateHierarchyLevelsByParent(parentFilter);
 
 		this.filterGroup.additionalRequest = true;
-		this.filterGroup.filterChangeHandler(parentFilter.applyType);
+		this.filterGroup.applyFilterHandler(parentFilter.applyType);
 	}
 
 	applyFiltersByParent(parentApplyFilter) {

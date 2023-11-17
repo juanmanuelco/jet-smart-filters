@@ -25,7 +25,8 @@ $current = $this->get_current_filter_value( $args );
 
 	if ( $scroll_height_style ) {echo '<div class="jet-filter-items-scroll" ' . $scroll_height_style . '><div class="jet-filter-items-scroll-container">'; }
 
-	echo '<fieldset class="jet-color-image-list-wrapper">';
+	echo '<form class="jet-color-image-list-wrapper">';
+	echo '<fieldset>';
 	echo '<legend style="display:none;">' . $accessibility_label . '</legend>';
 	foreach ( $options as $value => $option ) {
 		$checked = '';
@@ -45,6 +46,7 @@ $current = $this->get_current_filter_value( $args );
 		}
 	}
 	echo '</fieldset>';
+	echo '</form>';
 
 	if ( $scroll_height_style ) { echo '</div></div>'; }
 

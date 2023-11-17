@@ -93,6 +93,7 @@ export function getFiterData(filterID = false) {
 		translations: [],
 		availableLanguages: [],
 		posted: stringToBoolean(filterDate.value),
+		currentPage: currentPage.value
 	};
 
 	let fiterData = {};

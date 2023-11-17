@@ -2,7 +2,7 @@
 /**
  * Jet Dashboard Module
  *
- * Version: 2.1.3
+ * Version: 2.1.4
  */
 
 namespace Jet_Dashboard;
@@ -46,7 +46,7 @@ class Dashboard {
 	 *
 	 * @var string
 	 */
-	protected $version = '2.1.3';
+	protected $version = '2.1.4';
 
 	/**
 	 * [$dashboard_slug description]
@@ -435,8 +435,8 @@ class Dashboard {
 	 */
 	public function enqueue_dashboard_assets( $hook ) {
 
-		// enqueue WP Admin assets
-		// $this->enqueue_wp_admin_assets();
+		// Enqueue WP Admin assets
+		$this->enqueue_wp_admin_assets();
 
 		if ( ! $this->is_dashboard_page() ) {
 			return false;

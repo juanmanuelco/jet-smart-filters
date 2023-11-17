@@ -136,7 +136,10 @@ class Jet_Smart_Filters_Bricks_Search extends Jet_Smart_Filters_Bricks_Base {
 				'type'           => 'text',
 				'hasDynamicData' => false,
 				'default'        => esc_html__( 'Apply filter', 'jet-smart-filters' ),
-				'required'       => [ 'apply_type', '=', [ 'ajax', 'reload', 'mixed' ] ],
+				'required'       => [
+					[ 'apply_type', '=', [ 'ajax', 'reload', 'mixed' ] ],
+					[ 'hide_apply_button', '=', false ],
+				],
 			]
 		);
 
@@ -146,6 +149,20 @@ class Jet_Smart_Filters_Bricks_Search extends Jet_Smart_Filters_Bricks_Base {
 				'tab'      => 'content',
 				'label'    => esc_html__( 'Search button icon', 'jet-smart-filters' ),
 				'type'     => 'icon',
+				'required'       => [
+					[ 'apply_type', '=', [ 'ajax', 'reload', 'mixed' ] ],
+					[ 'hide_apply_button', '=', false ],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'hide_apply_button',
+			[
+				'tab'      => 'content',
+				'label'    => esc_html__( 'Hide apply button', 'jet-smart-filters' ),
+				'type'     => 'checkbox',
+				'default'  => false,
 				'required' => [ 'apply_type', '=', [ 'ajax', 'reload', 'mixed' ] ],
 			]
 		);
@@ -566,6 +583,7 @@ class Jet_Smart_Filters_Bricks_Search extends Jet_Smart_Filters_Bricks_Base {
 
 		$typing_min_letters_count = ! empty( $settings['typing_min_letters_count'] ) ? $settings['typing_min_letters_count'] : 3;
 		$apply_button_text        = ! empty( $settings['apply_button_text'] ) ? $settings['apply_button_text'] : '';
+		$hide_apply_button        = ! empty( $settings['hide_apply_button'] ) ? $settings['hide_apply_button'] : '';
 
 		$filter_template_args = [
 			'filter_id'            => $filter_id,
@@ -575,6 +593,7 @@ class Jet_Smart_Filters_Bricks_Search extends Jet_Smart_Filters_Bricks_Base {
 			'min_letters_count'    => $typing_min_letters_count,
 			'button_text'          => $apply_button_text,
 			'button_icon'          => $icon,
+			'hide_apply_button'    => $hide_apply_button,
 			'query_id'             => $query_id,
 		];
 

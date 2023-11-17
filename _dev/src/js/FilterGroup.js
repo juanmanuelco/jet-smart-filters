@@ -57,9 +57,12 @@ export default class FilterGroup {
 		eventBus.subscribe('fiter/change', filter => {
 			if (!this.isCurrentProvider(filter))
 				return;
-
 			this.updateSameFilters(filter);
-			this.filterChangeHandler(filter.applyType);
+		}, true);
+		eventBus.subscribe('fiter/apply', filter => {
+			if (!this.isCurrentProvider(filter))
+				return;
+			this.applyFilterHandler(filter.applyType);
 		}, true);
 		eventBus.subscribe('fiters/apply', applyFilter => {
 			if (!this.isCurrentProvider(applyFilter))
@@ -141,7 +144,7 @@ export default class FilterGroup {
 	}
 
 	// Events Handlers
-	filterChangeHandler(applyType) {
+	applyFilterHandler(applyType) {
 		this.resetFiltersByName('pagination');
 		this.apply(applyType);
 	}
@@ -294,11 +297,11 @@ export default class FilterGroup {
 		// backward compatibility for jet-engine-maps
 		if (this.provider) {
 			this.$provider
-				.closest('.elementor-widget-jet-engine-maps-listing,.jet-map-listing-block,.brxe-jet-engine-maps-listing')
+				.closest('.elementor-widget-jet-engine-maps-listing, .jet-map-listing, .brxe-jet-engine-maps-listing')
 				.trigger('jet-filter-custom-content-render', response);
 		}
 
-		eventBus.publish('ajaxFilters/updated', this.provider, this.queryId);
+		eventBus.publish('ajaxFilters/updated', this.provider, this.queryId, response);
 	}
 
 	renderResult(result, append = false) {
@@ -418,8 +421,9 @@ export default class FilterGroup {
 			if (changedFilter.data === filter.data)
 				return;
 
-			if (filter.setData)
+			if (filter.setData) {
 				filter.setData(changedFilter.data);
+			}
 		});
 	}
 

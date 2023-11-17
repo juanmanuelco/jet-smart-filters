@@ -26,14 +26,19 @@ export default class RatingControl extends Filter {
 			}
 		});
 
-		if (!this.isReloadType) {
+		this.$starsRating.on('click', (evt) => {
+			this.processData();
+			this.wasСhanged();
+		});
+
+		/* if (!this.isReloadType) {
 			this.$starsRating.on('click', (evt) => {
 				this.processData();
 				this.emitFiterChange();
 			});
 		} else {
 			this.addApplyEvent();
-		}
+		} */
 	}
 
 	removeChangeEvent() {
@@ -52,6 +57,8 @@ export default class RatingControl extends Filter {
 
 		this.$checked.removeClass('is-checked');
 		this.$starsRating.filter('[value="' + newData + '"]').addClass('is-checked');
+
+		this.processData();
 	}
 
 	reset() {

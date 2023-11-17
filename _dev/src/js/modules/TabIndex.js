@@ -75,7 +75,7 @@ export default class TabIndex {
 
 			$itemInput.prop('checked', !$itemInput.prop('checked'));
 			this.filter.processData();
-			this.filter.emitFiterChange();
+			this.filter.emitFiterApply();
 		});
 
 		this.filter.$filter.find('.jet-filter-items-moreless[tabindex]').keypress(e => {
@@ -136,7 +136,7 @@ export default class TabIndex {
 			}
 
 			if (e.keyCode === 13)
-				this.filter.emitFiterChange();
+				this.filter.emitFiterApply();
 		});
 	}
 

@@ -791,11 +791,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Active_Tags' ) ) {
 				return $this->is_editor() ? __( 'Please select a provider', 'jet-smart-filters' ) : false;
 			}
 
-			$base_class  = 'jet-smart-filters-' . $this->get_name();
-			$provider    = $settings['content_provider'];
-			$query_id    = ! empty( $settings['query_id'] ) ? $settings['query_id'] : 'default';
-			$clear_item  = isset( $settings['clear_item'] ) ? filter_var( $settings['clear_item'], FILTER_VALIDATE_BOOLEAN ) : false;
-			$clear_label = ! empty( $settings['clear_item_label'] ) && $clear_item ? $settings['clear_item_label'] : false;
+			$base_class           = 'jet-smart-filters-' . $this->get_name();
+			$provider             = $settings['content_provider'];
+			$query_id             = ! empty( $settings['query_id'] ) ? $settings['query_id'] : 'default';
+			$additional_providers = jet_smart_filters()->utils->get_additional_providers( $settings );
+			$clear_item           = isset( $settings['clear_item'] ) ? filter_var( $settings['clear_item'], FILTER_VALIDATE_BOOLEAN ) : false;
+			$clear_label          = ! empty( $settings['clear_item_label'] ) && $clear_item ? $settings['clear_item_label'] : false;
 
 			ob_start();
 
@@ -808,6 +809,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Active_Tags' ) ) {
 				$provider,
 				$settings['apply_type'],
 				$query_id,
+				$additional_providers
 			);
 
 			if ( $this->is_editor() ) {

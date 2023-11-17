@@ -127,7 +127,8 @@ class Jet_Smart_Filters_Search_Widget extends Jet_Smart_Filters_Base_Widget {
 				'type'    => Controls_Manager::TEXT,
 				'default' => __( 'Apply filter', 'jet-smart-filters' ),
 				'condition' => array(
-					'apply_type' => array( 'ajax', 'reload', 'mixed' )
+					'apply_type'        => array( 'ajax', 'reload', 'mixed' ),
+					'hide_apply_button' => ''
 				)
 			)
 		);
@@ -140,7 +141,23 @@ class Jet_Smart_Filters_Search_Widget extends Jet_Smart_Filters_Base_Widget {
 				'type'        => Controls_Manager::ICON,
 				'default'     => '',
 				'condition'   => array(
-					'apply_type' => array( 'ajax', 'reload', 'mixed' )
+					'apply_type'        => array( 'ajax', 'reload', 'mixed' ),
+					'hide_apply_button' => ''
+				)
+			)
+		);
+
+		$this->add_control(
+			'hide_apply_button',
+			array(
+				'label'        => esc_html__( 'Hide apply button', 'jet-smart-filters' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Yes', 'jet-smart-filters' ),
+				'label_off'    => esc_html__( 'No', 'jet-smart-filters' ),
+				'return_value' => 'yes',
+				'default'      => '',
+				'condition'    => array(
+					'apply_type'   => array( 'ajax', 'reload', 'mixed' ),
 				)
 			)
 		);
@@ -867,6 +884,7 @@ class Jet_Smart_Filters_Search_Widget extends Jet_Smart_Filters_Base_Widget {
 		$additional_providers = jet_smart_filters()->utils->get_additional_providers( $settings );
 		$format               = '<i class="%s"></i>';
 		$icon                 = $settings['apply_button_icon'] ? sprintf( $format, $settings['apply_button_icon'] ) : '';
+		$hide_apply_button    = ! empty( $settings['hide_apply_button'] ) ? filter_var( $settings['hide_apply_button'], FILTER_VALIDATE_BOOLEAN ) : false;
 
 		jet_smart_filters()->admin_bar_register_item( $filter_id );
 
@@ -880,6 +898,7 @@ class Jet_Smart_Filters_Search_Widget extends Jet_Smart_Filters_Base_Widget {
 			'min_letters_count'    => $settings['typing_min_letters_count'],
 			'button_text'          => $settings['apply_button_text'],
 			'button_icon'          => $icon,
+			'hide_apply_button'    => $hide_apply_button,
 			'query_id'             => $query_id,
 			'button_icon_position' => $settings['filter_apply_button_icon_position'],
 		) );

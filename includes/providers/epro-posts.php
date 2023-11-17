@@ -364,10 +364,20 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_EPro_Posts' ) ) {
 			} else {
 				$query_id = 'default';
 			}
-
 			$wp_query->set( 'jet_smart_filters', $this->get_id() . '/' . $query_id );
 
-			foreach ( jet_smart_filters()->query->get_query_args() as $query_var => $value ) {
+			$query_args = jet_smart_filters()->query->get_query_args();
+
+			// adding args from widget settings to main query in request
+			if ( ! jet_smart_filters()->query->is_ajax_filter() ) {
+				$default_queries = jet_smart_filters()->query->get_default_queries();
+				
+				if ( isset( $default_queries[$this->get_id()][$query_id] ) ) {
+					$query_args = jet_smart_filters()->utils->merge_query_args( $default_queries[$this->get_id()][$query_id], $query_args );
+				}
+			}
+
+			foreach ( $query_args as $query_var => $value ) {
 				$wp_query->set( $query_var, $value );
 			}
 		}

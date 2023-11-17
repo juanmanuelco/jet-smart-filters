@@ -151,6 +151,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Instance' ) ) {
 				$additional_filter_data_atts['data-dropdown-placeholder'] = isset( $args['dropdown_placeholder'] ) ? $args['dropdown_placeholder'] : __( 'Select some options', 'jet-smart-filters' );
 			}
 
+			if ( ! empty( $args['inputs_separators_enabled'] ) && ! empty( $args['inputs_enabled'] ) ) {
+				$atts['data-inputs-separators'] = $args['inputs_separators_enabled'];
+			}
+
 			if ( method_exists( $this->type, 'additional_filter_data_atts' ) ) {
 				$atts = array_merge( $atts, $this->type->additional_filter_data_atts( $args ) );
 			}

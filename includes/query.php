@@ -31,6 +31,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 
 			add_filter( 'the_posts', array( $this, 'query_props_handler' ), 999, 2 );
 			add_filter( 'posts_pre_query', array( $this, 'set_found_rows' ), 10, 2 );
+
+			/**
+			 * Alphabet filter
+			 * Note: Moved to the __construct to better compatibility with JetEngine LoadMore and LazyLoad
+			 */
+			add_filter( 'posts_where', array( $this, 'set_query_where' ), 10, 2 );
 		}
 
 		/**
@@ -48,7 +54,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 		/**
 		 * Store default query for passed provider
 		 */
-		public function store_provider_default_query( $provider_id, $query_args, $query_id = false ) {
+		public function store_provider_default_query( $provider_id, $query_args, $query_id = false, $force_rewrite = false ) {
 
 			if ( ! $query_id ) {
 				$query_id = 'default';
@@ -58,7 +64,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 				$this->_default_query[ $provider_id ] = array();
 			}
 
-			if ( isset( $this->_default_query[ $provider_id ][ $query_id ] ) ) {
+			if ( ! $force_rewrite && isset( $this->_default_query[ $provider_id ][ $query_id ] ) ) {
 				return;
 			}
 
@@ -159,8 +165,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 				return $this->is_ajax_filter;
 			}
 
-			if ( wp_doing_ajax() ) {
-				$this->is_ajax_filter = true;
+			if ( ! wp_doing_ajax() ) {
+				$this->is_ajax_filter = false;
 				return $this->is_ajax_filter;
 			}
 
@@ -503,6 +509,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 					$_REQUEST['_alphabet_'] = strpos( $query_var_value, ',' ) ? explode( ',', $query_var_value ) : $query_var_value;
 
 					break;
+
+				default:
+					$_REQUEST[ '_' . $query_var . '_' ] = $query_var_value;
+					break;
 			}
 		}
 
@@ -661,9 +671,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 								break;
 
 							case 'alphabet':
-
 								$this->_query[ $var ] = $value;
-								add_filter( 'posts_where', array( $this, 'set_query_where' ), 10, 2 );
+								//add_filter( 'posts_where', array( $this, 'set_query_where' ), 10, 2 );
 
 								break;
 
@@ -959,13 +968,13 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 				switch ( $compare_operand ) {
 					case 'less' :
 						$compare     = '<=';
-						$custom_type = 'CHAR';
+						$custom_type = 'DECIMAL(16,4)';
 
 						break;
 
 					case 'greater' :
 						$compare     = '>=';
-						$custom_type = 'CHAR';
+						$custom_type = 'DECIMAL(16,4)';
 
 						break;
 
@@ -1040,13 +1049,13 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 							$end_date = strtotime( str_replace( '.', '-', $date_value[1] ) ) + ( 24*60*60 ) -1;
 						}
 
-						if ( $start_date && $end_date ) {
+						if ( $start_date !== false && $end_date !== false ) {
 							$current_row['value'] = array( $start_date, $end_date );
 							$current_row['compare'] = 'BETWEEN';
-						} else if ( $start_date ) {
+						} else if ( $start_date !== false ) {
 							$current_row['value'] = $start_date;
 							$current_row['compare'] = '>=';
-						} else if ( $end_date ) {
+						} else if ( $end_date !== false ) {
 							$current_row['value'] = $end_date;
 							$current_row['compare'] = '<=';
 						}
@@ -1078,8 +1087,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 
 		public function set_query_where( $where, $query ) {
 
-			if ( $query->get( 'jet_smart_filters' ) && ! empty( $this->_query['alphabet'] ) ) {
-				$letter = $this->_query['alphabet'];
+			if ( $query->get( 'jet_smart_filters' ) && $query->get( 'alphabet' ) ) {
+				$letter = $query->get( 'alphabet' );
 
 				if ( is_array( $letter ) ) {
 					$letter = implode( '|', $letter );

@@ -42,6 +42,8 @@ registerBlockType('jet-smart-filters/apply-button', {
 		apply_redirect: attributes.apply_redirect,
 		redirect_path: attributes.redirect_path,
 		query_id: attributes.query_id,
+		additional_providers_enabled: attributes.additional_providers_enabled,
+		additional_providers_list: attributes.additional_providers_list,
 	},
 	className: 'jet-smart-filters-apply-button',
 	edit: class extends wp.element.Component {

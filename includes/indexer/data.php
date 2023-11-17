@@ -81,7 +81,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 			}
 
 			if ( ! empty( $this->indexing_data[$provider_key] ) ) {
-				$query_args   = jet_smart_filters()->utils->merge_query_args(
+				$query_args = jet_smart_filters()->utils->merge_query_args(
 					jet_smart_filters()->query->get_default_queries(),
 					jet_smart_filters()->query->get_query_args()
 				);

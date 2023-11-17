@@ -212,11 +212,19 @@ return array(
 			),
 		),
 		'_range_inputs_enabled' => array(
-			'type'        => 'switcher',
-			'title'       => __( 'Inputs enabled', 'jet-smart-filters' ),
-			'description' => $this->range_inputs_info,
-			'conditions'  => array(
+			'type'       => 'switcher',
+			'title'      => __( 'Inputs enabled', 'jet-smart-filters' ),
+			'conditions' => array(
 				'_filter_type' => 'range',
+			),
+		),
+		'_range_inputs_separators_enabled' => array(
+			'type'        => 'switcher',
+			'title'       => __( 'Inputs separators enabled', 'jet-smart-filters' ),
+			'description' => __( 'Apply thousands and decimal separators to inputs', 'jet-smart-filters' ),
+			'conditions'  => array(
+				'_filter_type'          => 'range',
+				'_range_inputs_enabled' => true
 			),
 		),
 		'_values_decimal_num' => array(
@@ -238,10 +246,9 @@ return array(
 			),
 		),
 		'_values_thousand_sep' => array(
-			'type'        => 'text',
-			'title'       => __( 'Thousands separator', 'jet-smart-filters' ),
-			'description' => __( 'Use <strong>&amp;nbsp;</strong> for space', 'jet-smart-filters' ),
-			'conditions'  => array(
+			'type'       => 'text',
+			'title'      => __( 'Thousands separator', 'jet-smart-filters' ),
+			'conditions' => array(
 				'_filter_type' => array( 'range', 'check-range' ),
 			),
 		),

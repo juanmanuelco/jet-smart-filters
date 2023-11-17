@@ -58,6 +58,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Search_Filter' ) ) {
 			$button_icon          = isset( $args['button_icon'] ) ? $args['button_icon'] : false;
 			$button_icon_position = isset( $args['button_icon_position'] ) ? $args['button_icon_position'] : 'left';
 			$min_letters_count    = isset( $args['min_letters_count'] ) && $apply_type === 'ajax-ontyping' ? $args['min_letters_count'] : false;
+			$hide_apply_button    = isset( $args['hide_apply_button'] ) ? $args['hide_apply_button'] : true;
 
 			if ( ! $filter_id ) {
 				return false;
@@ -90,6 +91,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Search_Filter' ) ) {
 				'filter_id'            => $filter_id,
 				'button_text'          => $button_text,
 				'button_icon'          => $button_icon,
+				'hide_apply_button'    => $hide_apply_button,
 				'button_icon_position' => $button_icon_position,
 				'min_letters_count'    => $min_letters_count,
 				'accessibility_label'  => $this->get_accessibility_label( $filter_id )

@@ -511,11 +511,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Search' ) ) {
 				return $this->is_editor() ? __( 'Please select a provider', 'jet-smart-filters' ) : false;
 			}
 
-			$filter_id  = apply_filters( 'jet-smart-filters/render_filter_template/filter_id', $settings['filter_id'] );
-			$base_class = 'jet-smart-filters-' . $this->get_name();
-			$provider   = $settings['content_provider'];
-			$query_id   = ! empty( $settings['query_id'] ) ? $settings['query_id'] : 'default';
-			$show_label = $settings['show_label'];
+			$filter_id            = apply_filters( 'jet-smart-filters/render_filter_template/filter_id', $settings['filter_id'] );
+			$base_class           = 'jet-smart-filters-' . $this->get_name();
+			$provider             = $settings['content_provider'];
+			$query_id             = ! empty( $settings['query_id'] ) ? $settings['query_id'] : 'default';
+			$show_label           = $settings['show_label'];
+			$additional_providers = jet_smart_filters()->utils->get_additional_providers( $settings );
 
 			if ( in_array( $settings['apply_type'], ['ajax', 'mixed'] ) ) {
 				$apply_type = $settings['apply_type'] . '-reload';
@@ -536,12 +537,14 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Search' ) ) {
 			include jet_smart_filters()->get_template( 'common/filter-label.php' );
 
 			jet_smart_filters()->filter_types->render_filter_template( $this->get_name(), array(
-				'filter_id'         => $filter_id,
-				'content_provider'  => $provider,
-				'query_id'          => $query_id,
-				'apply_type'        => $apply_type,
-				'button_text'       => $settings['apply_button_text'],
-				'min_letters_count' => $settings['typing_min_letters_count'],
+				'filter_id'            => $filter_id,
+				'content_provider'     => $provider,
+				'query_id'             => $query_id,
+				'additional_providers' => $additional_providers,
+				'apply_type'           => $apply_type,
+				'button_text'          => $settings['apply_button_text'],
+				'hide_apply_button'    => $settings['hide_apply_button'],
+				'min_letters_count'    => $settings['typing_min_letters_count'],
 				//'button_icon'          => $icon,
 				//'button_icon_position' => $settings['filter_apply_button_icon_position'],
 			) );

@@ -215,15 +215,15 @@ export default class DatePeriod extends Filter {
 
 	addFilterChangeEvent() {
 		this.$prevPeriodBtn.on('click', () => {
-			this.emitFiterChange();
+			this.wasСhanged();
 		});
 
 		this.$nextPeriodBtn.on('click', () => {
-			this.emitFiterChange();
+			this.wasСhanged();
 		});
 
 		this.$datepickerInput.on('change', () => {
-			this.emitFiterChange();
+			this.wasСhanged();
 		});
 	}
 

@@ -18,7 +18,8 @@ $current = $this->get_current_filter_value( $args );
 ?>
 <div class="jet-alphabet-list" <?php $this->filter_data_atts( $args ); ?>><?php
 
-	echo '<fieldset class="jet-alphabet-list__wrapper">';
+	echo '<form class="jet-alphabet-list-wrapper">';
+	echo '<fieldset>';
 	echo '<legend style="display:none;">' . $accessibility_label . '</legend>';
 	foreach ( $options as $value ) {
 		$checked = '';
@@ -38,5 +39,6 @@ $current = $this->get_current_filter_value( $args );
 		}
 	}
 	echo '</fieldset>';
+	echo '</form>';
 
 ?></div>

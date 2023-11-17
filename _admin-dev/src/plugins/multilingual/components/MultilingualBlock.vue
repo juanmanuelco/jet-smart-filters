@@ -1,7 +1,7 @@
 <template >
 	<div class="jet-multilingual"
 		 :class="{ 'jet-multilingual--loading': isLoading }">
-		<template v-if="!data.posted">
+		<template v-if="data.currentPage !== 'filters' && !data.posted">
 			<h3 class="jet-multilingual-title">{{ texts.title }}</h3>
 			<div class="jet-multilingual-current">
 				<div class="jet-multilingual-current-label">{{ texts.currentLanguageLabel }}</div>

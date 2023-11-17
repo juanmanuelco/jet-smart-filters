@@ -25,7 +25,7 @@ export default class Indexer {
 		// needed to implement the option "Change Counters -> Other Filters Changed"
 		let onlyCurrentFilterChanged = true;
 
-		eventBus.subscribe('fiter/change', filter => {
+		eventBus.subscribe('fiter/apply', filter => {
 			if (filter.filterId != this.filter.filterId)
 				onlyCurrentFilterChanged = false;
 		});

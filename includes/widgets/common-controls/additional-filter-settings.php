@@ -162,7 +162,7 @@ if ( $this->get_name() !== 'jet-smart-filters-radio' ) {
 			'label'       => esc_html__( 'Generic text', 'jet-smart-filters' ),
 			'label_block' => true,
 			'type'        => Controls_Manager::TEXT,
-			'description' => esc_html__( 'Use a {number} macro to display the number of other itemse' ),
+			'description' => esc_html__( 'Use a {number} macro to display the number of other items', 'jet-smart-filters' ),
 			'placeholder' => esc_html__( 'and {number} others', 'jet-smart-filters' ),
 			'condition'   => array(
 				'dropdown_enabled'            => 'yes',

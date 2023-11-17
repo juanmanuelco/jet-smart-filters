@@ -2,6 +2,26 @@
 
 # ChangeLog
 
+## 3.2.1
+* ADD: block editor additional providers
+* ADD: range filter Inputs thousands and decimal separators
+* ADD: allow disabling apply button in the Search filter
+* ADD: ePro loop "No Result Text" option
+* UPD: allow to register custom query variables for different request types
+* UPD: allow to rewrite default query for provider and query ID pair
+* UPD: ePro loop default query
+* UPD: jetDashboard framework
+* FIX: changing duplicated filters on change
+* FIX: ePro loop + predefined filters
+* FIX: date range/period RTL datepicker arrows
+* FIX: comparison operator with decimal numbers
+* FIX: visual filter img alt
+* FIX: date filter if date 1970-1-1
+* FIX: ePro loop alternate template static item position
+* FIX: admin multilingual custom flag
+* FIX: hierarchical select filter shows empty options
+* FIX: bricks showing and hiding the load more button after filtering
+
 ## 3.2.0
 * ADD: Elementor Pro Loop Grid provider
 * ADD: admin multilingual support

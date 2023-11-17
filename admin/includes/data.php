@@ -35,13 +35,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Admin_Data' ) ) {
 			// Info blocks
 			$this->date_formats_info        = jet_smart_filters()->utils->get_file_html( 'admin/templates/info-blocks/date-formats.php' );
 			$this->min_max_date_period_info = jet_smart_filters()->utils->get_file_html( 'admin/templates/info-blocks/min-max-date-period-info.php' );
-			$this->range_inputs_info        = sprintf(
-				'<strong>%1$s, %2$s, %3$s </strong> %4$s',
-				__( 'Number of decimals', 'jet-smart-filters' ),
-				__( 'Decimal separator', 'jet-smart-filters' ),
-				__( 'Thousands separator', 'jet-smart-filters' ),
-				__( 'will not be applied to inputs', 'jet-smart-filters' )
-			);
 
 			// Settings data
 			$this->settings_data = apply_filters(

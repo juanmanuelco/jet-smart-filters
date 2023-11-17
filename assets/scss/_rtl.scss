@@ -66,10 +66,40 @@ body.rtl {
 		}
 	}
 
+	// Date range
+	.ui-datepicker {
+		&-prev,
+		&-next {
+			transform: rotate(180deg);
+		}
+	}
+
 	// Date period
+	.jet-date-period {
+		&__next,
+		&__prev {
+			transform: rotate(180deg);
+		}
+
+		&__datepicker {
+			&-button {
+				&::after {
+					margin-left: initial;
+					margin-right: 5px;
+				}
+			}
+		}
+	}
+
 	#datepickers-container {
 		.datepicker:not(.active) {
 			left: 100000px !important;
+		}
+
+		.datepicker--nav {
+			&-action {
+				transform: rotate(180deg);
+			}
 		}
 	}
 

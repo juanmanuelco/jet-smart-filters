@@ -136,7 +136,7 @@ if ( $this->jet_element_render !== 'radio' ) {
 			'tab'         => 'content',
 			'label'       => esc_html__( 'Generic text', 'jet-smart-filters' ),
 			'type'        => 'text',
-			'description' => esc_html__( 'Use a {number} macro to display the number of other itemse' ),
+			'description' => esc_html__( 'Use a {number} macro to display the number of other items', 'jet-smart-filters' ),
 			'placeholder' => esc_html__( 'and {number} others', 'jet-smart-filters' ),
 			'required' => [
 				[ 'dropdown_enabled', '=', true ],

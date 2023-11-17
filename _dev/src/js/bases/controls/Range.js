@@ -12,6 +12,7 @@ export default class RangeControl extends Filter {
 		this.$sliderTrackRange = $sliderTrackRange || this.$filter.find('.jet-range__slider__track__range');
 		this.$rangeInputMin = $rangeInputMin || this.$filter.find('.jet-range__inputs__min');
 		this.$rangeInputMax = $rangeInputMax || this.$filter.find('.jet-range__inputs__max');
+		this.$rangeInputs = this.$rangeInputMin.add(this.$rangeInputMax);
 		this.$inputs = this.$sliderInputMin.add(this.$sliderInputMax).add(this.$rangeInputMin).add(this.$rangeInputMax);
 		this.minConstraint = parseFloat(this.$sliderInputMin.attr('min'));
 		this.maxConstraint = parseFloat(this.$sliderInputMax.attr('max'));
@@ -25,6 +26,8 @@ export default class RangeControl extends Filter {
 			'decimal_sep': '',
 			'decimal_num': 0,
 		};
+		this.format.thousands_sep = this.format.thousands_sep.replace(/&nbsp;/g, ' ');
+		this.rangeInputsSeparators = this.$filter.data('inputs-separators');
 
 		this.initSlider();
 		this.processData();
@@ -44,26 +47,76 @@ export default class RangeControl extends Filter {
 			this.valuesUpdated('max');
 		});
 
-		if (this.$rangeInputMin.length)
-			this.$rangeInputMin.on('input keydown blur', (event) => {
-				this.minVal = this.inputNumberRangeValidation(parseFloat(this.$rangeInputMin.val())) || this.minConstraint;
+		if (this.$rangeInputs.length)
+			this.$rangeInputs.on('input keydown blur', (event) => {
+				const elInput = event.target;
+				const value = elInput.value;
+
+				let inputType = '';
+				if (elInput.hasAttribute('min-range')) inputType = 'min';
+				if (elInput.hasAttribute('max-range')) inputType = 'max';
+
+				if (!inputType)
+					return;
+
+				if (this.rangeInputsSeparators) {
+					const oldValue = elInput.oldValue || '';
+					const caretPosition = elInput.selectionEnd;
+
+					if (value !== oldValue) {
+						this.rangeInputUpdateValue(inputType, value);
+
+						const formattedValue = elInput.value;
+						const numericValue = elInput.numericValue;
+
+						switch (inputType) {
+							case 'min':
+								this.minVal = this.inputNumberRangeValidation(numericValue);
+								break;
+
+							case 'max':
+								this.maxVal = this.inputNumberRangeValidation(numericValue);
+								break;
+						}
+
+						// set caret position
+						if (formattedValue.length === elInput.selectionEnd) {
+							let positionOffset = -1;
+
+							if (formattedValue !== oldValue)
+								positionOffset =
+									(formattedValue.slice(0, caretPosition).split(this.format.thousands_sep).length - 1)
+									-
+									(oldValue.slice(0, caretPosition).split(this.format.thousands_sep).length - 1);
+
+							if (formattedValue === oldValue)
+								if ([this.format.thousands_sep, this.format.decimal_sep].includes(formattedValue.charAt(caretPosition)))
+									positionOffset = 0;
+
+							elInput.setSelectionRange(caretPosition + positionOffset, caretPosition + positionOffset);
+						}
+					}
+				} else {
+					switch (inputType) {
+						case 'min':
+							this.minVal = this.inputNumberRangeValidation(value);
+							break;
+
+						case 'max':
+							this.maxVal = this.inputNumberRangeValidation(value);
+							break;
+					}
+				}
 
 				if (event.type === 'blur' || event.keyCode === 13)
-					this.valuesUpdated('min');
-			});
-		if (this.$rangeInputMax.length)
-			this.$rangeInputMax.on('input keydown blur', (event) => {
-				this.maxVal = this.inputNumberRangeValidation(parseFloat(this.$rangeInputMax.val())) || this.maxConstraint;
-
-				if (event.type === 'blur' || event.keyCode === 13)
-					this.valuesUpdated('max');
+					this.valuesUpdated(inputType);
 			});
 	}
 
 	addFilterChangeEvent() {
 		this.$inputs.on('change', () => {
 			this.processData();
-			this.emitFiterChange();
+			this.wasСhanged();
 		});
 	}
 
@@ -74,9 +127,9 @@ export default class RangeControl extends Filter {
 
 	processData() {
 		if (this.$rangeInputMin.length)
-			this.$rangeInputMin.val(this.minVal);
+			this.rangeInputUpdateValue('min', this.minVal);
 		if (this.$rangeInputMax.length)
-			this.$rangeInputMax.val(this.maxVal);
+			this.rangeInputUpdateValue('max', this.maxVal);
 
 		// Prevent of adding slider defaults
 		if (this.minVal == this.minConstraint && this.maxVal == this.maxConstraint) {
@@ -162,7 +215,7 @@ export default class RangeControl extends Filter {
 					this.minVal = this.maxVal - this.step;
 
 				this.$sliderInputMin.val(this.minVal);
-				this.$rangeInputMin.val(this.minVal);
+				this.rangeInputUpdateValue('min', this.minVal);
 
 				break;
 
@@ -171,7 +224,7 @@ export default class RangeControl extends Filter {
 					this.maxVal = this.minVal + this.step;
 
 				this.$sliderInputMax.val(this.maxVal);
-				this.$rangeInputMax.val(this.maxVal);
+				this.rangeInputUpdateValue('max', this.maxVal);
 
 				break;
 		}
@@ -205,6 +258,66 @@ export default class RangeControl extends Filter {
 			num = data.toFixed(Math.max(0, ~~this.format.decimal_num));
 
 		return (this.format.decimal_sep ? num.replace('.', this.format.decimal_sep) : num).replace(new RegExp(re, 'g'), '$&' + (this.format.thousands_sep || ''));
+	}
+
+	restoreFormattedData(data) {
+		if (typeof data === 'number')
+			return data;
+
+		var restoreData = data
+			.replace(new RegExp('\\' + this.format.thousands_sep, 'g'), '')
+			.replace(this.format.decimal_sep, '.');
+
+		return parseFloat(this.removeNonNumeric(restoreData));
+	}
+
+	removeNonNumeric(str) {
+		return str.replace(/[^\d.-]/g, '');
+	}
+
+	rangeInputUpdateValue(inputType, newValue) {
+		if (!this.$rangeInputs.length)
+			return;
+
+		let elInput;
+		switch (inputType) {
+			case 'min':
+				elInput = this.$rangeInputMin[0];
+				break;
+
+			case 'max':
+				elInput = this.$rangeInputMax[0];
+				break;
+
+			default:
+				return;
+		}
+
+		if (this.rangeInputsSeparators) {
+			const restoreValue = this.restoreFormattedData(newValue);
+			const formattedValue = this.getFormattedData(restoreValue);
+
+			if (!isNaN(restoreValue)) {
+				elInput.value = formattedValue;
+				elInput.numericValue = restoreValue;
+			} else {
+				elInput.value = '';
+
+				switch (inputType) {
+					case 'min':
+						elInput.numericValue = this.minConstraint;
+						break;
+
+					case 'max':
+						elInput.numericValue = this.maxConstraint;
+						break;
+				}
+			}
+
+			elInput.oldValue = elInput.value;
+		} else {
+			elInput.value = newValue;
+		}
 	}
 
 	get activeValue() {

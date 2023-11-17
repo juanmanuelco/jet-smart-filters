@@ -490,6 +490,7 @@
 						data: {
 							plugin: 'crocoblock-wizard/crocoblock-wizard.php',
 							action: action,
+							nonce: window.JetDashboardConfig.nonce,
 						}
 					},
 					beforeSend: function( jqXHR, ajaxSettings ) {

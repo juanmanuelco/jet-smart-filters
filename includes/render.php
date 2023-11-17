@@ -38,6 +38,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Render' ) ) {
 			add_action( 'wp_ajax_nopriv_jet_smart_filters_get_indexed_data', array( $this, 'get_indexed_data' ) );
 		}
 
+		public function get_request_query_vars() {
+			return apply_filters( 'jet-smart-filters/render/query-vars', $this->request_query_vars );
+		}
+
 		/**
 		 * Update hierarchy levels starting from depth
 		 */
@@ -119,12 +123,12 @@ if ( ! class_exists( 'Jet_Smart_Filters_Render' ) ) {
 				return;
 			}
 
-			foreach ( $this->request_query_vars as $query_var ) {
-				if ( empty( $_REQUEST[$query_var] ) ) {
+			foreach ( $this->get_request_query_vars() as $query_var ) {
+				if ( empty( $_REQUEST[ $query_var ] ) ) {
 					continue;
 				}
 
-				jet_smart_filters()->query->set_query_var_to_request( $query_var, $_REQUEST[$query_var] );
+				jet_smart_filters()->query->set_query_var_to_request( $query_var, $_REQUEST[ $query_var ] );
 			}
 
 			jet_smart_filters()->query->get_query_from_request();
@@ -144,14 +148,19 @@ if ( ! class_exists( 'Jet_Smart_Filters_Render' ) ) {
 
 			$_REQUEST['jsf'] = strtok( $jsf_query_str, '/' );
 
-			foreach ( $this->request_query_vars as $query_var ) {
+			foreach ( $this->get_request_query_vars() as $query_var ) {
 				preg_match_all( "/$query_var\/(.*?)(\/|$)/", $jsf_query_str, $matches );
 
 				if ( empty( $matches[1][0] ) ) {
 					continue;
 				}
 
-				$_REQUEST[$query_var] = urldecode( $matches[1][0] );
+				$_REQUEST[ $query_var ] = apply_filters(
+					'jet-smart-filters/render/set-query-var',
+					urldecode( $matches[1][0] ),
+					$query_var,
+					$this
+				);
 			}
 
 			$this->apply_filters_from_request();

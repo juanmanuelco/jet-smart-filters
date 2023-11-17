@@ -114,15 +114,92 @@ class Manager {
 
 								} );
 							}
-
+							
+							const {id: styleElementId, style: styleElement} = response.styles;
+							const previousStyleElement = document.getElementById(styleElementId);
+							if (previousStyleElement) {
+							  document.body.removeChild(previousStyleElement);
+							}
+							document.body.insertAdjacentHTML("beforeend", styleElement);
 							filter.$provider.last().after( newContent );
 							filter.$provider = jQuery( ".jsfb-filterable.jsfb-query--" + response.query_id );
 							window.JetPlugins && window.JetPlugins.init( filter.$provider.closest( "*" ) );
+							
+							// Re-init Bricks scripts after filtering
+							const bricksScripts = {
+								".bricks-lightbox": bricksPhotoswipe,
+								".brxe-accordion, .brxe-accordion-nested": bricksAccordion,
+								".brxe-animated-typing": bricksAnimatedTyping,
+								".brxe-audio": bricksAudio,
+								".brxe-countdown": bricksCountdown,
+								".brxe-counter": bricksCounter,
+								".brxe-video": bricksVideo,
+								".bricks-lazy-hidden": bricksLazyLoad,
+								".brx-animated": bricksAnimation,
+								".brxe-pie-chart": bricksPieChart,
+								".brxe-progress-bar .bar span": bricksProgressBar,
+								".brxe-form": bricksForm,
+								".brx-query-trail": bricksInitQueryLoopInstances,
+								"[data-interactions]": bricksInteractions,
+								".brxe-alert svg": bricksAlertDismiss,
+								".brxe-tabs, .brxe-tabs-nested": bricksTabs,
+								".bricks-video-overlay, .bricks-video-overlay-icon, .bricks-video-preview-image": bricksVideoOverlayClickDetector,
+								".bricks-background-video-wrapper": bricksBackgroundVideoInit,
+								".brxe-toggle": bricksToggle,
+								".brxe-offcanvas": bricksOffcanvas,
+							}
+														
+							const contentWrapper = filter.$provider[0].parentNode; 
+							
+							for (key in bricksScripts) {
+								const widget = contentWrapper.querySelector(key);
+								
+								if (widget && typeof bricksScripts[key] === "function") {
+//							        console.log("Викликаємо функцію за ключем:", key);
+							        bricksScripts[key](); // Викликаємо функцію
+							    }
+							}
+							
+							const interactions = document.querySelectorAll("[data-interactions]");
+							
+							if (interactions.length) {
+								interactions.forEach(el => {
+									const interactionAttrs = JSON.parse(el.dataset.interactions);
+									const {loadMoreQuery} = interactionAttrs[0];
+										
+									if (response.element_id === loadMoreQuery) {
+										const {max_num_pages: maxPages, page} = response.pagination;
+									
+										if (page >= maxPages) {
+											el.style.display = "none";
+										} else {
+											el.style.display = "";
+										}
+									}
+								});	
+							}
+							
 							bricksInitQueryLoopInstances();
 
 						}
 					}
 				} );
+				
+				/*window.JetSmartFilters.events.subscribe( "ajaxFilters/updated", ( provider, queryId ) => {
+
+					if ( "bricks-query-loop" !== provider ) {
+						return;
+					}
+		
+					let filterGroup = window.JetSmartFilters.filterGroups[ provider + "/" + queryId ];
+					
+					console.log(filterGroup);
+		
+					if ( ! filterGroup || ! filterGroup.$provider ) {
+						return;
+					}
+		
+				} );*/
 
 			' );
 

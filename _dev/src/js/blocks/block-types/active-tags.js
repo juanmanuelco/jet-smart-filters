@@ -41,6 +41,8 @@ registerBlockType('jet-smart-filters/active-tags', {
 		clear_item: attributes.clear_item,
 		clear_item_label: attributes.clear_item_label,
 		query_id: attributes.query_id,
+		additional_providers_enabled: attributes.additional_providers_enabled,
+		additional_providers_list: attributes.additional_providers_list,
 	},
 	className: 'jet-smart-filters-active-tags',
 	edit: class extends wp.element.Component {

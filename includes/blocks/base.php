@@ -22,7 +22,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Base' ) ) {
 
 		public function __construct() {
 
-			$attributes =$this->get_attributes();
+			$attributes = $this->get_attributes();
 
 			/**
 			 * Set default blocks attributes to avoid errors
@@ -184,6 +184,20 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Base' ) ) {
 				'query_id' => array(
 					'type'    => 'string',
 					'default' => '',
+				),
+				// Additional providers
+				'additional_providers_enabled' => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+				'additional_providers_list' => array(
+					'type'    => 'array',
+					'default' => array(
+						array(
+							'additional_provider'       => '',
+							'additional_providers_list' => '',
+						)
+					)
 				),
 				// Indexer
 				'apply_indexer' => array(
@@ -403,6 +417,8 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Base' ) ) {
 			$dropdown_n_selected_text    = isset( $settings['dropdown_n_selected_text'] ) ? $settings['dropdown_n_selected_text'] : __( 'and {number} others', 'jet-smart-filters' );
 			// scroll
 			$scroll_height = ! empty( $settings['scroll_enabled'] ) && ! empty( $settings['scroll_height'] ) ? (int)$settings['scroll_height'] : false;
+			// additional providers
+			$additional_providers = jet_smart_filters()->utils->get_additional_providers( $settings );
 
 			if ( $apply_indexer ) {
 				$indexer_class   = 'jet-filter-indexed';
@@ -430,13 +446,14 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Base' ) ) {
 			);
 
 			$filter_template_args =  array(
-				'filter_id'        => $filter_id,
-				'content_provider' => $provider,
-				'apply_type'       => $apply_type,
-				'query_id'         => $query_id,
-				'show_label'       => $show_label,
-				'rating_icon'      => $rating_icon,
-				'display_options'  => array(
+				'filter_id'            => $filter_id,
+				'content_provider'     => $provider,
+				'additional_providers' => $additional_providers,
+				'apply_type'           => $apply_type,
+				'query_id'             => $query_id,
+				'show_label'           => $show_label,
+				'rating_icon'          => $rating_icon,
+				'display_options'      => array(
 					'show_items_label'  => $show_items_label,
 					'show_decorator'    => $show_decorator,
 					'filter_image_size' => $filter_image_size,

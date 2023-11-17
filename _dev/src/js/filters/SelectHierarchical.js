@@ -50,12 +50,12 @@ export default class SelectHierarchical {
 			});
 
 			this.lastFilter.$applyButton.on('click', () => {
-				this.lastFilter.emitFiterChange();
+				this.lastFilter.emitFiterApply();
 			});
 		}
 
 		// Event subscriptions
-		eventBus.subscribe('fiter/change', filter => {
+		eventBus.subscribe('fiter/apply', filter => {
 			if (filter.filterId === this.filterId)
 				this.getNextHierarchyLevels(filter);
 		});

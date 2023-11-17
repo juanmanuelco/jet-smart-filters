@@ -19,7 +19,7 @@ export default class SelectControl extends Filter {
 	addFilterChangeEvent() {
 		this.$select.on('change', () => {
 			this.processData();
-			this.emitFiterChange();
+			this.wasСhanged();
 		});
 
 		if (!this.isSelect && this.canDeselect) {

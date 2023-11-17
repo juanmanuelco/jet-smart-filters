@@ -105,6 +105,18 @@ export default {
 		type: 'string',
 		default: '',
 	},
+	// Additional providers
+	additional_providers_enabled: {
+		type: 'boolean',
+		default: false,
+	},
+	additional_providers_list: {
+		type: 'array',
+		default: [{
+			additional_provider: '',
+			additional_query_id: ''
+		}],
+	},
 	// Indexer
 	apply_indexer: {
 		type: 'boolean',

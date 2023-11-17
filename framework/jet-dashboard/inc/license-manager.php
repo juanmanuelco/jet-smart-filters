@@ -44,6 +44,7 @@ class License_Manager {
 		$this->maybe_theme_core_license_exist();
 
 		$this->maybe_site_not_activated();
+
 	}
 
 	/**
@@ -264,6 +265,19 @@ class License_Manager {
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function is_sublicense() {
+		$primary_license_data = $this->get_primary_license_data();
+
+		if ( isset( $primary_license_data['is_sublicense'] ) && $primary_license_data['is_sublicense'] ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * [get_primary_license_data description]
 	 * @return [type] [description]
 	 */
@@ -316,6 +330,7 @@ class License_Manager {
 				'product' => '',
 				'type'    => '',
 				'expire'  => '',
+				'is_sublicense' => false,
 			);
 		}
 
@@ -327,6 +342,7 @@ class License_Manager {
 				'product' => '',
 				'type'    => '',
 				'expire'  => '',
+				'is_sublicense' => false,
 			);
 		}
 
@@ -335,6 +351,7 @@ class License_Manager {
 			'product' => isset( $filtered_license['licenseDetails']['product_category'] ) ? $filtered_license['licenseDetails']['product_category'] : '',
 			'type'    => $filtered_license['licenseDetails']['type'],
 			'expire'  => $filtered_license['licenseDetails']['expire'],
+			'is_sublicense'  => isset( $filtered_license['licenseDetails']['is_sublicense'] ) ? $filtered_license['licenseDetails']['is_sublicense'] : false,
 		);
 	}
 

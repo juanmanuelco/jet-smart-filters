@@ -58,7 +58,7 @@ export default class Repeater extends React.Component {
 		return (
 			<div class='jsf-repeater'>
 				{data.map((itemData, index) => {
-					const item = React.cloneElement(children(itemData), { key: `${indexPrefix}-${index}` });
+					const item = React.cloneElement(children(itemData, index), { key: `${indexPrefix}-${index}` });
 
 					return (
 						<div class='jsf-repeater-item'>
