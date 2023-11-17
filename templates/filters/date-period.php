@@ -13,6 +13,7 @@ $datepicker_button_text = isset( $args['datepicker_button_text'] ) ? $args['date
 $period_duration        = isset( $args['period_duration'] ) ? $args['period_duration'] : '1';
 $min_date_attr          = isset( $args['min_date'] ) ? 'data-mindate="' . $args['min_date'] . '"' : '';
 $max_date_attr          = isset( $args['max_date'] ) ? 'data-maxdate="' . $args['max_date'] . '"' : '';
+$accessibility_label    = $args['accessibility_label'];
 
 $classes = array(
 	'jet-date-period'
@@ -32,6 +33,7 @@ if ( '' !== $args['button_icon'] ) {
 				class="jet-date-period__datepicker-input"
 				name="<?php echo $query_var; ?>"
 				value="<?php echo $current; ?>"
+				aria-label="<?php echo $accessibility_label; ?>"
 				type="hidden"
 				tabindex="-1"
 				data-format="<?php echo $date_format; ?>"

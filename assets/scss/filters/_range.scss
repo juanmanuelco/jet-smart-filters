@@ -37,7 +37,9 @@
 .jet-range {
 	&__slider {
 		position: relative;
-		margin-bottom: 20px;
+		margin: 0 0 20px;
+		border: 0;
+		padding: 0;
 
 		&__track {
 			position: relative;
@@ -146,6 +148,9 @@
 			display: flex;
 			margin-left: auto;
 			margin-right: auto;
+			margin: 0;
+			border: 0;
+			padding: 0;
 		}
 
 		&__group {

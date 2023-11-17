@@ -5,29 +5,31 @@
 
 class Jet_Smart_Filters_Service_Filter {
 
-	public $serialized_data_keys = array(
-		'_source_manual_input',
-		'_source_color_image_input',
-		'_source_manual_input_range',
-		'_ih_source_map',
-		'_data_exclude_include'
-	);
-
+	public $serialized_data_keys;
 	private $_adata;
 
 	/**
 	 * Constructor for the class
 	 */
 	public function __construct() {
-		// Init admin data
 		add_action( 'init', function() {
+			// Init serialized keys
+			$this->serialized_data_keys = apply_filters( 'jet-smart-filters/service/filter/serialized-keys', array(
+				'_source_manual_input',
+				'_source_color_image_input',
+				'_source_manual_input_range',
+				'_ih_source_map',
+				'_data_exclude_include'
+			));
+
+			// Init admin data
 			if ( isset( jet_smart_filters()->admin->data ) ) {
 				$this->_adata = jet_smart_filters()->admin->data;
 			} else {
 				require_once jet_smart_filters()->plugin_path( 'admin/includes/data.php' );
 				$this->_adata = new Jet_Smart_Filters_Admin_Data();
 			}
-		}, 9999 );
+		}, 999 );
 	}
 
 	public function get( $id ) {

@@ -2,6 +2,12 @@
 	&-wrapper {
 		margin: -3px;
 
+		fieldset {
+			margin: 0;
+			border: 0;
+			padding: 0;
+		}
+
 		// Dropdown
 		.jet-filter-items-dropdown & {
 			padding: 5px 12px;

@@ -28,7 +28,8 @@ export default {
 	debounce,
 	stringToBoolean,
 	applyAliases,
-	removeAliases
+	removeAliases,
+	getElementPath
 };
 
 export function isObject(x) {
@@ -281,7 +282,7 @@ export function isEqual(value, other) {
 };
 
 export function getProviderFilters(provider, queryId = 'default') {
-	return getNesting(JetSmartFilters, 'filterGroups', provider + '/' + queryId, 'filters') || [];
+	return getNesting(JetSmartFilters, 'filterGroups', provider + '/' + queryId, 'uniqueFilters') || [];
 }
 
 export function getUrlParams() {
@@ -465,4 +466,25 @@ export function applyAliases(url, aliases = null) {
 
 export function removeAliases(url, aliases = null) {
 	return urlAliasesTransform(url, aliases, true);
+}
+
+export function getElementPath(node) {
+	let selector = '';
+
+	try {
+		while (node.parentElement) {
+			const siblings = Array.from(node.parentElement.children).filter(
+				e => e.tagName === node.tagName
+			);
+
+			selector = (siblings.indexOf(node)
+				? `${node.tagName}:nth-of-type(${siblings.indexOf(node) + 1})`
+				: `${node.tagName}`) + `${selector ? '>' : ''}${selector}`;
+			node = node.parentElement;
+		}
+
+		return `html > ${selector.toLowerCase()}`;
+	} catch (error) {
+		return false;
+	}
 }

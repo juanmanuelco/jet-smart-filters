@@ -106,7 +106,11 @@ if ( ! class_exists( 'Jet_Smart_Filters_Render' ) ) {
 				return;
 			}
 
-			jet_smart_filters()->query->set_provider_from_request( $_REQUEST['jsf'] );
+			$provider_name = ! empty( $_REQUEST['provider'] )
+				? $_REQUEST['provider']
+				: $_REQUEST['jsf'];
+
+			jet_smart_filters()->query->set_provider_from_request( $provider_name );
 
 			$provider_id = $this->request_provider( 'provider' );
 			$provider    = jet_smart_filters()->providers->get_providers( $provider_id );

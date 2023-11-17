@@ -384,3 +384,56 @@
 		}
 	}
 }
+
+// RTL
+.rtl {
+	.jet-smart-filters-settings-page {
+		.url-aliases-example {
+			&-section {
+				.use-url-aliases-example {
+					right: auto;
+					left: 20px;
+
+					.cx-vui-component {
+						&__meta {
+							margin: 1px 10px 0 0;
+						}
+					}
+				}
+			}
+			&-string {
+				&-prefix {
+					padding: 8px 12px 8px 0;
+				}
+				&-editor {
+					padding: 2px 0 2px 6px;
+
+					&-tools {
+						margin-left: 0;
+						margin-right: 8px;
+					}
+				}
+			}
+			&-changes {
+				&-transformation {
+					&-resalt {
+						&-label {
+							&::before {
+								margin-right: 0;
+								margin-left: 2px;
+							}
+						}
+					}
+					&-chain {
+						&-iteration {
+							.index {
+								margin-right: 0;
+								margin-left: 5px;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

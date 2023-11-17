@@ -4,6 +4,7 @@ import General from 'blocks/editor/panels/general';
 import AdditionalSettings from 'blocks/editor/panels/additional-settings';
 import Indexer from 'blocks/editor/panels/indexer';
 import TemplateRender from 'blocks/editor/controls/templateRender';
+import Radio from 'filters/Radio';
 
 const { __ } = wp.i18n;
 
@@ -53,6 +54,21 @@ registerBlockType('jet-smart-filters/radio', {
 	},
 	className: 'jet-smart-filters-radio',
 	edit: class extends wp.element.Component {
+		componentDidMount() {
+			this._holder = $(window.ReactDOM.findDOMNode(this));
+		}
+
+		layoutUpdated() {
+			this.initRadio();
+		}
+
+		initRadio() {
+			const $filterContainer = this._holder.find('.' + window.JetSmartFilters.filtersList.Radio);
+
+			if ($filterContainer.length)
+				new Radio($filterContainer);
+		}
+
 		render() {
 			const props = this.props;
 
@@ -83,6 +99,7 @@ registerBlockType('jet-smart-filters/radio', {
 					<TemplateRender
 						block="jet-smart-filters/radio"
 						attributes={props.attributes}
+						onSuccess={() => { this.layoutUpdated(); }}
 					/>
 				</div>
 			];

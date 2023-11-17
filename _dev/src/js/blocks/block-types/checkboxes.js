@@ -4,7 +4,7 @@ import General from 'blocks/editor/panels/general';
 import AdditionalSettings from 'blocks/editor/panels/additional-settings';
 import Indexer from 'blocks/editor/panels/indexer';
 import TemplateRender from 'blocks/editor/controls/templateRender';
-//import CheckBoxes from 'filters/CheckBoxes';
+import CheckBoxes from 'filters/CheckBoxes';
 
 const { __ } = wp.i18n;
 
@@ -63,7 +63,10 @@ registerBlockType('jet-smart-filters/checkboxes', {
 		}
 
 		initCheckBoxes() {
-			new window.JetSmartFilters.filters.CheckBoxes(this._holder.find('.' + window.JetSmartFilters.filtersList.CheckBoxes));
+			const $filterContainer = this._holder.find('.' + window.JetSmartFilters.filtersList.CheckBoxes);
+
+			if ($filterContainer.length)
+				new CheckBoxes($filterContainer);
 		}
 
 		render() {
@@ -96,7 +99,7 @@ registerBlockType('jet-smart-filters/checkboxes', {
 					<TemplateRender
 						block="jet-smart-filters/checkboxes"
 						attributes={props.attributes}
-						onSuccess={() => { this.layoutUpdated() }}
+						onSuccess={() => { this.layoutUpdated(); }}
 					/>
 				</div>
 			];

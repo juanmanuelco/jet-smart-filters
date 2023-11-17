@@ -13,9 +13,10 @@ export default class SelectHierarchical {
 			return;
 
 		$filters.each(index => {
-			const $filter = $filters.eq(index),
-				filter = new SelectControl($container, $filter);
+			const $filter = $filters.eq(index);
+			const filter = new SelectControl($container, $filter);
 
+			filter.name = 'select';
 			filter.$container = $container;
 			filter.isHierarchy = true;
 			filter.depth = index;
@@ -81,6 +82,9 @@ export default class SelectHierarchical {
 
 	hierarchicalFilterProcessData(filter) {
 		filter.dataValue = filter.$selected.val();
+
+		if (filter.additionalFilterSettings)
+			filter.additionalFilterSettings.dataUpdated();
 
 		// get hierarchical chain if same taxonomies
 		if (filter.depth) {

@@ -2,6 +2,9 @@
 	&__inputs {
 		display: flex;
 		justify-content: space-between;
+		margin: 0;
+		border: 0;
+		padding: 0;
 	}
 	&__control {
 		width: 100% !important;
@@ -269,7 +272,6 @@
 	font-size: 0;
 }
 
-
 // Context Bricks
 .brxe-jet-smart-filters-date-range {
 	.jet-date-range {
@@ -292,7 +294,8 @@
 			height: 1em;
 		}
 
-		svg, path {
+		svg,
+		path {
 			fill: currentColor;
 		}
 	}

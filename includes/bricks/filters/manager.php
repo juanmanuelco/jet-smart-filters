@@ -101,20 +101,22 @@ class Manager {
 							var newContent = response.rendered_content;
 							var replaced = false;
 
-							jQuery( ".jsfb-filterable.jsfb-query--" + response.query_id ).replaceWith( () => {
+							if ( ! response.loadMore ) {
+								jQuery( ".jsfb-filterable.jsfb-query--" + response.query_id ).replaceWith( () => {
 
-								if ( replaced ) {
-									newContent = "";
-								} else {
-									replaced = true;
-								}
+									if ( replaced ) {
+										newContent = "";
+									} else {
+										replaced = true;
+									}
 
-								return newContent;
+									return newContent;
 
-							} );
+								} );
+							}
 
+							filter.$provider.last().after( newContent );
 							filter.$provider = jQuery( ".jsfb-filterable.jsfb-query--" + response.query_id );
-
 							window.JetPlugins && window.JetPlugins.init( filter.$provider.closest( "*" ) );
 
 						}

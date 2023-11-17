@@ -88,6 +88,11 @@ export default class RangeControl extends Filter {
 	}
 
 	setData(newData) {
+		this.reset();
+
+		if (!newData)
+			return;
+
 		const data = newData.split('_');
 
 		if (data[0]) {

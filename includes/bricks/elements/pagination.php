@@ -51,7 +51,14 @@ class Jet_Smart_Filters_Pagination_Widget extends \Jet_Engine\Bricks_Views\Eleme
 			]
 		);
 
-
+		$this->register_jet_control_group(
+			'pagination_load_more_style',
+			[
+				'title'    => esc_html__( 'Load More', 'jet-smart-filters' ),
+				'tab'      => 'style',
+				'required' => [ 'enable_load_more', '=', true ],
+			]
+		);
 	}
 
 	// Set builder controls
@@ -66,6 +73,7 @@ class Jet_Smart_Filters_Pagination_Widget extends \Jet_Engine\Bricks_Views\Eleme
 				'pagination-link'         => '.jet-filters-pagination__link',
 				'pagination-link-current' => '.jet-filters-pagination__current .jet-filters-pagination__link',
 				'pagination-dots'         => '.jet-filters-pagination__dots',
+				'pagination-load-more'    => '.jet-filters-pagination__load-more .jet-filters-pagination__link',
 			]
 		);
 
@@ -124,6 +132,46 @@ class Jet_Smart_Filters_Pagination_Widget extends \Jet_Engine\Bricks_Views\Eleme
 		$this->start_jet_control_group( 'section_controls' );
 
 		$this->register_jet_control(
+			'enable_items',
+			[
+				'tab'     => 'content',
+				'label'   => esc_html__( 'Enable Items', 'jet-smart-filters' ),
+				'type'    => 'checkbox',
+				'default' => true,
+			]
+		);
+
+		$this->register_jet_control(
+			'pages_center_offset',
+			[
+				'tab'         => 'content',
+				'label'       => esc_html__( 'Items center offset', 'jet-smart-filters' ),
+				'type'        => 'number',
+				'default'     => 0,
+				'min'         => 0,
+				'max'         => 50,
+				'step'        => 1,
+				'description' => esc_html__( 'Set number of items to either side of current page, not including current page.Set 0 to show all items.', 'jet-smart-filters' ),
+				'required'    => [ 'enable_items', '=', true ],
+			]
+		);
+
+		$this->register_jet_control(
+			'pages_end_offset',
+			[
+				'tab'         => 'content',
+				'label'       => esc_html__( 'Items edge offset', 'jet-smart-filters' ),
+				'type'        => 'number',
+				'default'     => 0,
+				'min'         => 0,
+				'max'         => 50,
+				'step'        => 1,
+				'description' => esc_html__( 'Set number of items on either the start and the end list edges.', 'jet-smart-filters' ),
+				'required'    => [ 'enable_items', '=', true ],
+			]
+		);
+
+		$this->register_jet_control(
 			'enable_prev_next',
 			[
 				'tab'     => 'content',
@@ -156,50 +204,49 @@ class Jet_Smart_Filters_Pagination_Widget extends \Jet_Engine\Bricks_Views\Eleme
 		);
 
 		$this->register_jet_control(
-			'pages_center_offset',
+			'enable_load_more',
 			[
-				'tab'         => 'content',
-				'label'       => esc_html__( 'Items center offset', 'jet-smart-filters' ),
-				'type'        => 'number',
-				'default'     => 0,
-				'min'         => 0,
-				'max'         => 50,
-				'step'        => 1,
-				'description' => esc_html__( 'Set number of items to either side of current page, not including current page.Set 0 to show all items.', 'jet-smart-filters' ),
-				'required'    => [ 'enable_prev_next', '=', true ],
+				'tab'     => 'content',
+				'label'   => esc_html__( 'Enable Load More', 'jet-smart-filters' ),
+				'type'    => 'checkbox',
+				'default' => true,
 			]
 		);
 
 		$this->register_jet_control(
-			'pages_end_offset',
+			'load_more_text',
+			[
+				'tab'      => 'content',
+				'label'    => esc_html__( 'Load More Text', 'jet-smart-filters' ),
+				'type'     => 'text',
+				'default'  => esc_html__( 'Load More', 'jet-smart-filters' ),
+				'required' => [ 'enable_load_more', '=', true ],
+			]
+		);
+
+		$this->register_jet_control(
+			'autoscroll',
 			[
 				'tab'         => 'content',
-				'label'       => esc_html__( 'Items edge offset', 'jet-smart-filters' ),
-				'type'        => 'number',
-				'default'     => 0,
-				'min'         => 0,
-				'max'         => 50,
-				'step'        => 1,
-				'description' => esc_html__( 'Set number of items on either the start and the end list edges.', 'jet-smart-filters' ),
-				'required'    => [ 'enable_prev_next', '=', true ],
+				'label'       => esc_html__( 'Enable autoscroll', 'jet-smart-filters' ),
+				'description' => esc_html__( 'Autoscroll to top of the provider when reloading content via AJAX.', 'jet-smart-filters' ),
+				'type'        => 'checkbox',
+				'default'     => true,
+				'required'    => [ 'apply_type', '=', [ 'ajax', 'mixed' ] ],
 			]
 		);
 
 		$this->register_jet_control(
 			'provider_top_offset',
 			[
-				'tab'         => 'content',
-				'label'       => esc_html__( 'Provider top offset', 'jet-smart-filters' ),
-				'type'        => 'number',
-				'default'     => 0,
-				'min'         => 0,
-				'max'         => 999,
-				'step'        => 1,
-				'description' => esc_html__( 'Set the distance from the top edge when reloading the content via AJAX.', 'jet-smart-filters' ),
-				'required'    => [
-					[ 'apply_type', '=', [ 'ajax', 'mixed' ] ],
-					[ 'enable_prev_next', '=', true ],
-				],
+				'tab'      => 'content',
+				'label'    => esc_html__( 'Provider top offset', 'jet-smart-filters' ),
+				'type'     => 'number',
+				'default'  => 0,
+				'min'      => 0,
+				'max'      => 999,
+				'step'     => 1,
+				'required' => [ 'autoscroll', '=', true ]
 			]
 		);
 
@@ -364,6 +411,106 @@ class Jet_Smart_Filters_Pagination_Widget extends \Jet_Engine\Bricks_Views\Eleme
 		);
 
 		$this->end_jet_control_group();
+
+		$this->start_jet_control_group( 'pagination_load_more_style' );
+
+		$this->register_jet_control(
+			'pagination_load_more_typography',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Typography', 'jet-smart-filters' ),
+				'type'  => 'typography',
+				'css'   => [
+					[
+						'property' => 'typography',
+						'selector' => $css_scheme['pagination-load-more'],
+					],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'pagination_load_more_bg_color',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Background color', 'jet-smart-filters' ),
+				'type'  => 'color',
+				'css'   => [
+					[
+						'property' => 'background-color',
+						'selector' => $css_scheme['pagination-load-more'],
+					],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'pagination_load_more_margin',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Margin', 'jet-smart-filters' ),
+				'type'  => 'dimensions',
+				'css'   => [
+					[
+						'property' => 'margin',
+						'selector' => $css_scheme['pagination-load-more'],
+					],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'pagination_load_more_padding',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Padding', 'jet-smart-filters' ),
+				'type'  => 'dimensions',
+				'css'   => [
+					[
+						'property' => 'padding',
+						'selector' => $css_scheme['pagination-load-more'],
+					],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'pagination_load_more_border',
+			[
+				'tab'   => 'style',
+				'label' => esc_html__( 'Border', 'jet-smart-filters' ),
+				'type'  => 'border',
+				'css'   => [
+					[
+						'property' => 'border',
+						'selector' => $css_scheme['pagination-load-more'],
+					],
+				],
+			]
+		);
+
+		$this->register_jet_control(
+			'pagination_load_more_position',
+			[
+				'tab'     => 'style',
+				'label'   => esc_html__( 'Position', 'jet-smart-filters' ),
+				'type'    => 'select',
+				'options' => [
+					'initial' => esc_html__( 'Right', 'jet-smart-filters' ),
+					'-1'      => esc_html__( 'Left', 'jet-smart-filters' ),
+				],
+				'default' => 'initial',
+				'css'     => [
+					[
+						'property' => 'order',
+						'selector' => '.jet-filters-pagination__load-more',
+					],
+				],
+			]
+		);
+
+		$this->end_jet_control_group();
+
 	}
 
 	// Render element HTML
@@ -383,27 +530,40 @@ class Jet_Smart_Filters_Pagination_Widget extends \Jet_Engine\Bricks_Views\Eleme
 			);
 		}
 
-		$apply_type       = ! empty( $settings['apply_type'] ) ? $settings['apply_type'] : 'ajax';
-		$query_id         = ! empty( $settings['query_id'] ) ? $settings['query_id'] : 'default';
-		$prev_text        = ! empty( $settings['prev_text'] ) ? $settings['prev_text'] : 'default';
-		$next_text        = ! empty( $settings['next_text'] ) ? $settings['next_text'] : 'default';
-		$controls_enabled = isset( $settings['enable_prev_next'] ) ? $settings['enable_prev_next'] : '';
+		$apply_type = ! empty( $settings['apply_type'] ) ? $settings['apply_type'] : 'ajax';
+		$query_id   = ! empty( $settings['query_id'] ) ? $settings['query_id'] : 'default';
 
-		if ( true === $controls_enabled ) {
+		$items_enabled     = isset( $settings['enable_items'] ) ? $settings['enable_items'] : '';
+		$nav_enabled       = isset( $settings['enable_prev_next'] ) ? $settings['enable_prev_next'] : '';
+		$load_more_enabled = isset( $settings['enable_load_more'] ) ? $settings['enable_load_more'] : '';
+		$controls          = array();
 
-			$controls = array(
-				'nav'  => true,
-				'prev' => $prev_text,
-				'next' => $next_text,
-			);
-
+		if ( true === $items_enabled ) {
+			$controls['items_enabled']  = true;
+			$controls['pages_mid_size'] = ! empty( $settings['pages_center_offset'] ) ? absint( $settings['pages_center_offset'] ) : 0;
+			$controls['pages_end_size'] = ! empty( $settings['pages_end_offset'] ) ? absint( $settings['pages_end_offset'] ) : 0;
 		} else {
-			$controls['nav'] = false;
+			$controls['items_enabled'] = false;
 		}
 
-		$controls['pages_mid_size']      = ! empty( $settings['pages_center_offset'] ) ? absint( $settings['pages_center_offset'] ) : 0;
-		$controls['pages_end_size']      = ! empty( $settings['pages_end_offset'] ) ? absint( $settings['pages_end_offset'] ) : 0;
-		$controls['provider_top_offset'] = ! empty( $settings['provider_top_offset'] ) ? absint( $settings['provider_top_offset'] ) : 0;
+		if ( true === $nav_enabled ) {
+			$controls['nav_enabled'] = true;
+			$controls['prev']        = $settings['prev_text'];
+			$controls['next']        = $settings['next_text'];
+		} else {
+			$controls['nav_enabled'] = false;
+		}
+
+		if ( true === $load_more_enabled ) {
+			$controls['load_more_enabled'] = true;
+			$controls['load_more_text']    = $settings['load_more_text'];
+		} else {
+			$controls['load_more_enabled'] = false;
+		}
+
+		if ( $settings['autoscroll'] === true ) {
+			$controls['provider_top_offset'] = ! empty( $settings['provider_top_offset'] ) ? absint( $settings['provider_top_offset'] ) : 0;
+		}
 
 		echo "<div {$this->render_attributes( '_root' )}>";
 		printf(
@@ -434,7 +594,11 @@ class Jet_Smart_Filters_Pagination_Widget extends \Jet_Engine\Bricks_Views\Eleme
 
 	public function parse_jet_render_attributes( $attrs = [] ) {
 
+		$attrs['enable_items']     = $attrs['enable_items'] ?? false;
 		$attrs['enable_prev_next'] = $attrs['enable_prev_next'] ?? false;
+		$attrs['enable_load_more'] = $attrs['enable_load_more'] ?? false;
+		$attrs['autoscroll']       = $attrs['autoscroll'] ?? false;
+
 
 		return $attrs;
 	}

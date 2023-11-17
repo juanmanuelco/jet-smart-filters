@@ -37,7 +37,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_URL_Aliases' ) ) {
 				return;
 			}
 
-			$site_path    = wp_parse_url( home_url() )['path'];
+			$site_path    = jet_smart_filters()->data->get_sitepath();
 			$replaced_url = substr( $_SERVER['REQUEST_URI'], strlen( $site_path ) );
 
 			foreach ( $aliases as $alias ) {

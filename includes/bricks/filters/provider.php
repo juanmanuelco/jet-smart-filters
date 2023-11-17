@@ -92,7 +92,6 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 		$classes[]  = $this->query_id_class_prefix . $query_id;
 
 		if ( $this->check_default_query_type( $query_type ) ) {
-
 			$this->set_default_props( $settings );
 			add_filter( "bricks/{$query_type}s/query_vars", [ $this, 'store_default_query' ], 10, 3 );
 		} else {
@@ -147,6 +146,11 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 
 		if ( $query_type === 'post' && $query_bricks !== false ) {
 			$query = $query_bricks->query_result;
+
+			if ( empty( $query ) ) {
+				return;
+			}
+
 			$props = [
 				'found_posts'   => $query->found_posts,
 				'max_num_pages' => $query->max_num_pages,
@@ -220,9 +224,13 @@ class Provider extends \Jet_Smart_Filters_Provider_Base {
 		$query_id = $settings['jsfb_query_id'] ?? 'default';
 
 		$attrs = [
-			'filtered_post_id' => isset( Database::$page_data['original_post_id'] ) ? Database::$page_data['original_post_id'] : Database::$page_data['preview_or_post_id'],
+			'filtered_post_id' => isset( Database::$active_templates['content'] ) ? Database::$active_templates['content'] : Database::$page_data['preview_or_post_id'],
 			'element_id'       => $element_id,
 		];
+
+		if ( Query::get_query_object()->object_type === 'user' ) {
+			$query_vars['_query_type'] = 'users';
+		}
 
 		jet_smart_filters()->query->store_provider_default_query(
 			$this->get_id(),

@@ -2,6 +2,17 @@
 
 # ChangeLog
 
+## 3.1.1
+* UPD: redesigned initialization of filters on the frontend
+* ADD: pagination load more
+* ADD: fieldset legends & aria-labels
+* ADD: don't send ajax request if page hasn't provider
+* ADD: filter 'jet-smart-filters/service/filter/serialized-keys'
+* ADD: reinitFilters global method
+* FIX: sitepath for url aliases
+* FIX: URL aliases settings RTL
+* FIX: fatal when Bricks query loop ("Is filterable" checked) in listing grid item
+
 ## 3.1.0
 * ADD: Allow to replace selected parts of the filtered URLs with any alias words you want;
 * ADD: Bricks Query Loop provider;

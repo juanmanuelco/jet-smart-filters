@@ -35,7 +35,7 @@ export default class DateRangeControl extends Filter {
 		this.$dateRangeSubmit.on('click', () => {
 			this.processData();
 			this.emitFiterChange();
-		})
+		});
 	}
 
 	removeChangeEvent() {
@@ -47,6 +47,11 @@ export default class DateRangeControl extends Filter {
 	}
 
 	setData(newData) {
+		this.reset();
+
+		if (!newData)
+			return;
+
 		this.$dateRangeInput.val(newData);
 
 		const data = newData.split('-');

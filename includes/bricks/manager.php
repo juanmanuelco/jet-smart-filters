@@ -4,7 +4,6 @@
  */
 namespace Jet_Smart_Filters\Bricks_Views;
 
-// If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
@@ -132,11 +131,19 @@ class Manager {
 	public static function get_allowed_providers() {
 
 		$provider_allowed = [
-			'jet-engine'          => true,
-			'jet-engine-calendar' => true,
-			'jet-engine-maps'     => true,
 			'bricks-query-loop'   => true,
 		];
+
+		if ( function_exists( 'jet_engine' ) ) {
+			$provider_allowed = array_merge(
+				$provider_allowed,
+				[
+					'jet-engine'          => true,
+					'jet-engine-maps'     => jet_engine()->modules->is_module_active('maps-listings'),
+					'jet-engine-calendar' => jet_engine()->modules->is_module_active('calendar'),
+				]
+			);
+		}
 
 		return apply_filters( 'jet-smart-filters/bricks/allowed-providers', $provider_allowed );
 	}

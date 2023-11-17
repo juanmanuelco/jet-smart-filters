@@ -100,6 +100,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Date_Period_Filter' ) ) {
 				'period_type'            => $period_type,
 				'datepicker_button_text' => $datepicker_button_text,
 				'date_format'            => $date_format,
+				'accessibility_label'    => $this->get_accessibility_label( $filter_id )
 			);
 
 			if ( $min_max_date_enabled ) {
