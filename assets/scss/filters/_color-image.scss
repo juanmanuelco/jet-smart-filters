@@ -71,7 +71,7 @@
 
 // Context Bricks
 .brxe-jet-smart-filters-color-image {
-	.jet-color-image-list-wrapper {
+	.jet-color-image-list-wrapper > fieldset {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;

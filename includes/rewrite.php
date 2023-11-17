@@ -88,8 +88,6 @@ if ( ! class_exists( 'Jet_Smart_Filters_Rewrite_Rules' ) ) {
 				}
 			}
 
-			$rewrites['(.?.+?)/' . $this->pattern] = 'index.php?pagename=$matches[1]&' . $this->query_var . '=$matches[2]';
-
 			$rewritable_post_types = jet_smart_filters()->settings->get( 'rewritable_post_types' );
 			if ( is_array( $rewritable_post_types ) ) {
 				foreach ( $rewritable_post_types as $post_type => $post_type_enabled ) {
@@ -127,6 +125,10 @@ if ( ! class_exists( 'Jet_Smart_Filters_Rewrite_Rules' ) ) {
 					}
 				}
 			}
+
+			$rewrites['([0-9]+)/' . $this->pattern] = 'index.php?p=$matches[1]&' . $this->query_var . '=$matches[2]';
+			$rewrites['(.?.+?)/' . $this->pattern]  = 'index.php?pagename=$matches[1]&' . $this->query_var . '=$matches[2]';
+			$rewrites['([^/]+)/' . $this->pattern]  = 'index.php?name=$matches[1]&' . $this->query_var . '=$matches[2]';
 
 			return array_merge( $rewrites, $rules );
 		}

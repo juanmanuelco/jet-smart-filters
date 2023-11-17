@@ -34,9 +34,45 @@ if ( ! class_exists( 'Jet_Smart_Filters_Compatibility' ) ) {
 
 			add_filter( 'jet-smart-filters/filters/localized-data',  array( $this, 'datepicker_texts' ) );
 
+			// WooCommerce product setup
+			add_action( 'jet-smart-filters/referrer/request', array( $this, 'setup_wc_product' ) );
+
 			// for CCT
 			add_filter( 'jet-smart-filters/post-type/options-data-sources', array( $this, 'cct_data_sources' ) );
 			add_filter( 'jet-smart-filters/post-type/meta-fields-settings', array( $this, 'cct_register_controls' ) );
+		}
+
+		public function setup_wc_product() {
+			
+			global $wp;
+
+			if ( ! function_exists( 'wc_setup_product_data' ) ) {
+				return;
+			}
+
+			if ( empty( $wp->query_vars['post_type'] ) || 'product' !== $wp->query_vars['post_type'] ) {
+				return;
+			}
+
+			if ( empty( $wp->query_vars['product'] ) ) {
+				return;
+			}
+
+			$posts = get_posts( [
+				'post_type' => 'product',
+				'name' => $wp->query_vars['product'],
+				'posts_per_page' => 1
+			] );
+
+			if ( empty( $posts ) ) {
+				return;
+			}
+
+			global $post;
+			$post = $posts[0];
+
+			wc_setup_product_data( $post );
+
 		}
 
 		public function add_action_to_multi_currency_ajax( $ajax_actions = array() ) {

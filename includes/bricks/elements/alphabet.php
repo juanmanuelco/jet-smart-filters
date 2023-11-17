@@ -44,7 +44,7 @@ class Jet_Smart_Filters_Bricks_Alphabet extends Jet_Smart_Filters_Bricks_Base {
 		$css_scheme = apply_filters(
 			'jet-smart-filters/widgets/alphabet/css-scheme',
 			array(
-				'list-wrapper' => '.jet-alphabet-list__wrapper',
+				'list-wrapper' => '.jet-alphabet-list__wrapper > fieldset',
 				'list-item'    => '.jet-alphabet-list__row',
 				'item'         => '.jet-alphabet-list__item',
 				'button'       => '.jet-alphabet-list__button',

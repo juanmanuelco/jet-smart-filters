@@ -40,25 +40,32 @@ class Jet_Smart_Filters_Service_Filters {
 		), $args );
 
 		// escapes data for use in a MySQL query
-		foreach ($args as $key => $value) {
+		foreach ( $args as $key => $value ) {
 			$args[$key] = esc_sql( $value );
 		}
 
 		$status = $args['status'];
 
 		// Pagination
-		$page     = $args['page'];
-		$per_page = $args['per_page'];
+		$page     = absint( $args['page'] );
+		$per_page = absint( $args['per_page'] );
 		$offset   = $per_page * ( $page - 1 );
 
 		// Sort
 		$order_by = $args['orderby'];
 		$order    = $args['order'];
 
+		$allowed_orderby = [ 'title', 'date' ];
+		$allowed_order   = [ 'asc', 'desc' ];
+
+		$order_by = in_array( $order_by, $allowed_orderby ) ? $order_by : 'title';
+		$order    = in_array( $order, $allowed_order ) ? $order : 'asc';
+
 		// Search
 		$searchSql = '';
 		$search    = $args['search'];
 
+		// escaped above
 		if ( $search ) {
 			$searchSql = "AND $wpdb->posts.post_title LIKE '%{$search}%'";
 		}
@@ -69,19 +76,23 @@ class Jet_Smart_Filters_Service_Filters {
 		$source        = $args['source'];
 		$date          = $args['date'];
 
+		// escaped above
 		if ( $type ) {
 			$filtrationSql .= "AND postmeta_type.meta_value = '$type' ";
 		}
 
+		// escaped above
 		if ( $source ) {
 			$filtrationSql .= "AND postmeta_source.meta_value = '$source' ";
 		}
 
 		if ( $date ) {
 			if ( $date['from'] ) {
+				$date['from'] = esc_sql( $date['from'] );
 				$filtrationSql .= "AND $wpdb->posts.post_date >= '" . $date['from'] . " 00:00:00' ";
 			}
 			if ( $date['to'] ) {
+				$date['to'] = esc_sql( $date['to'] );
 				$filtrationSql .= "AND $wpdb->posts.post_date <= '" . $date['to'] . " 23:59:59' ";
 			}
 		}

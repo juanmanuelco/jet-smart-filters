@@ -31,4 +31,11 @@ class AdminModeSwitch extends Base {
 
 		return jet_smart_filters()->settings->update( 'admin_mode', $mode );
 	}
+
+	/**
+	 * Check user access to current end-popint
+	 */
+	public function permission_callback( $request ) {
+		return current_user_can( 'manage_options' );
+	}
 }

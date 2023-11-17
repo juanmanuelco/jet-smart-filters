@@ -2,6 +2,15 @@
 
 # ChangeLog
 
+## 3.2.3
+* UPD: cherry-x-vue-ui
+* FIX: eProo loop custom post types & draft posts with current query
+* FIX: ePro Posts excerpt + filters
+* FIX: rewrite permalink rule for custom structure post_id
+
+## 3.2.2.1
+* FIX: Security issue.
+
 ## 3.2.2
 * FIX: ePro Loop indexer
 * FIX: rating filter on page reload

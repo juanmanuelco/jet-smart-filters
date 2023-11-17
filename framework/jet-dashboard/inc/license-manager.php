@@ -67,6 +67,24 @@ class License_Manager {
 			);
 		}
 
+		if ( ! isset( $data['nonce'] ) || ! wp_verify_nonce( $data['nonce'], 'jet-dashboard' ) ) {
+			wp_send_json( [
+				'status'  => 'error',
+				'code'    => 'server_error',
+				'message' => __( 'Page has expired. Please reload this page.', 'jet-dashboard' ),
+				'data'    => [],
+			] );
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json( [
+				'status'  => 'error',
+				'code'    => 'server_error',
+				'message' => __( 'Sorry, you are not allowed to manage license data on this site.', 'jet-dashboard' ),
+				'data'    => [],
+			] );
+		}
+
 		$license_action = $data['action'];
 
 		$license_key = $data['license'];

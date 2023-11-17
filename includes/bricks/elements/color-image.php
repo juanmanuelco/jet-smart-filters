@@ -47,7 +47,7 @@ class Jet_Smart_Filters_Bricks_Color_Image extends Jet_Smart_Filters_Bricks_Base
 				'checkbox'         => '.jet-color-image-list__decorator > *',
 				'checkbox-checked' => '.jet-color-image-list__input:checked ~ .jet-color-image-list__button .jet-color-image-list__decorator',
 				'list-item'        => '.jet-color-image-list__row',
-				'list-wrapper'     => '.jet-color-image-list-wrapper',
+				'list-wrapper'     => '.jet-color-image-list-wrapper > fieldset',
 				'list-children'    => '.jet-list-tree__children',
 			)
 		);

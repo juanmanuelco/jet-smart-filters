@@ -34,4 +34,11 @@ class Plugin_Settings extends Base {
 			'message' => __( 'Settings have been saved', 'jet-smart-filters' ),
 		] );
 	}
+
+	/**
+	 * Check user access to current end-popint
+	 */
+	public function permission_callback( $request ) {
+		return current_user_can( 'manage_options' );
+	}
 }

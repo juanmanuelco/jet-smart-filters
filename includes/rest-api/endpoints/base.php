@@ -31,9 +31,8 @@ abstract class Base {
 	/**
 	 * Check user access to current end-popint
 	 */
-	public function permission_callback() {
-
-		return current_user_can( 'edit_others_posts' );
+	public function permission_callback( $request ) {
+		return current_user_can( 'manage_options' );
 	}
 
 	/**

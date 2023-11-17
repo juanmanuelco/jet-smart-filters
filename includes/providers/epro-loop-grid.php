@@ -167,7 +167,16 @@ class Jet_Smart_Filters_Provider_EPro_Loop_Grid extends Jet_Smart_Filters_Provid
 		add_filter( 'elementor/query/query_args', array( $this, 'store_default_widget_query_settings' ), 20, 2 );
 		// current query args filter
 		add_filter( 'elementor/query/get_query_args/current_query', function( $current_query_args ) use ( $widget ) {
-			return $this->store_default_widget_query_settings( $current_query_args, $widget );
+			return $this->store_default_widget_query_settings(
+				// adding 'post_status' to current query arguments to hide draft posts
+				array_merge(
+					array(
+						'post_status' => array( 'publish', 'private' )
+					),
+					$current_query_args
+				),
+				$widget
+			);
 		} );
 	}
 
@@ -214,7 +223,7 @@ class Jet_Smart_Filters_Provider_EPro_Loop_Grid extends Jet_Smart_Filters_Provid
 			- the alternate template "Static item position" option
 			- Query source - Sales/Featured/Cross-Sells
 		*/
-		foreach ( array( 'paged', 'posts_per_page', 'post_status', 'ignore_sticky_posts', ) as $propKey ) {
+		foreach ( array( 'paged', 'posts_per_page', 'ignore_sticky_posts', ) as $propKey ) {
 			unset( $default_args[$propKey] );
 		}
 

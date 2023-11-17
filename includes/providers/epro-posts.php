@@ -206,6 +206,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_EPro_Posts' ) ) {
 				'classic_show_title',
 				'classic_title_tag',
 				'classic_excerpt_length',
+				'classic_apply_to_custom_excerpt',
 				'classic_meta_data',
 				'classic_show_read_more',
 				'classic_open_new_tab',
@@ -223,6 +224,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_EPro_Posts' ) ) {
 				'cards_title_tag',
 				'cards_show_excerpt',
 				'cards_excerpt_length',
+				'cards_apply_to_custom_excerpt',
 				'cards_meta_data',
 				'cards_show_read_more',
 				'cards_open_new_tab',
@@ -322,6 +324,9 @@ if ( ! class_exists( 'Jet_Smart_Filters_Provider_EPro_Posts' ) ) {
 			if ( ! $widget ) {
 				throw new \Exception( 'Widget not found.' );
 			}
+
+			// remove 'excerpt_length' filter in wp/wp-includes/blocks/post-excerpt.php with a condition ( is_admin() || defined( 'REST_REQUEST' ) && REST_REQUEST ) )
+			remove_all_filters('excerpt_length',PHP_INT_MAX);
 
 			ob_start();
 			$widget->render_content();

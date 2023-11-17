@@ -41,7 +41,7 @@
 
 // Context Bricks
 .jet-smart-filters-alphabet {
-	.jet-alphabet-list-wrapper {
+	.jet-alphabet-list-wrapper > fieldset {
 		gap: 8px;
 		margin: 0;
 	}

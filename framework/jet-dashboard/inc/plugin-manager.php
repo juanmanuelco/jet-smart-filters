@@ -571,11 +571,10 @@ class Plugin_Manager {
 		}
 
 		// Nonce checking here. The capability checking is in the appropriate methods below
-		if ( isset( $data['nonce'] ) && ! wp_verify_nonce( $data['nonce'], 'jet-dashboard' ) ) {
+		if ( ! isset( $data['nonce'] ) || ! wp_verify_nonce( $data['nonce'], 'jet-dashboard' ) ) {
 			wp_send_json( [
-				'type' => 'error',
-				'title' => __( 'Error', 'jet-dashboard' ),
-				'desc'  => __( 'Server error. Stop cheating!!!', 'jet-dashboard' ),
+				'status'  => 'error',
+				'message' => __( 'Page has expired. Please reload this page.', 'jet-dashboard' ),
 			] );
 		}
 
@@ -634,7 +633,7 @@ class Plugin_Manager {
 		}
 
 		// Nonce checking here. The capability checking is in the appropriate methods below
-		if ( isset( $data['nonce'] ) && ! wp_verify_nonce( $data['nonce'], 'jet-dashboard' ) ) {
+		if ( ! isset( $data['nonce'] ) || ! wp_verify_nonce( $data['nonce'], 'jet-dashboard' ) ) {
 			wp_send_json( [
 				'type' => 'error',
 				'title' => __( 'Error', 'jet-dashboard' ),
