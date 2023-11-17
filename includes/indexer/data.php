@@ -444,6 +444,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Indexer_Data' ) ) {
 
 			switch ( $type ) {
 				case 'posts':
+				case 'current-wp-query':
 					$post_main_args = [
 						'post_status'    => 'publish',
 						'posts_per_page' => -1,

@@ -106,6 +106,8 @@ class Jet_Smart_Filters_Elementor_Filter_URL_Tag extends Elementor\Core\DynamicT
 			$filter_value = jet_engine()->listings->macros->do_macros( $filter_value );
 		}
 
+		$filter_value = do_shortcode( $filter_value );
+
 		if ( ! $content_provider || ! $filter_id ) {
 			return;
 		}

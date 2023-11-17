@@ -306,7 +306,7 @@ export default class DatePeriod extends Filter {
 			return;
 
 		const newPeriodEnd = dateAddDay(periodStart.date, -1);
-		let newPeriodStart = false;
+		let newPeriodStart = newPeriodEnd;
 
 		if (this.periodType === 'week') {
 			newPeriodStart = dateAddDay(newPeriodEnd, -6);
@@ -331,7 +331,7 @@ export default class DatePeriod extends Filter {
 			return;
 
 		const newPeriodStart = dateAddDay(periodEnd.date);
-		let newPeriodEnd = false;
+		let newPeriodEnd = newPeriodStart;
 
 		if (this.periodType === 'week') {
 			newPeriodEnd = dateAddDay(new Date(newPeriodStart.getTime()), 6);

@@ -13,6 +13,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Admin_Data' ) ) {
 	/**
 	 * Define Jet_Smart_Filters_Admin_Data class
 	 */
+	#[AllowDynamicProperties]
 	class Jet_Smart_Filters_Admin_Data {
 		/**
 		 * Constructor for the class

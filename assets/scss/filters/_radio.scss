@@ -83,10 +83,13 @@
 // Context Bricks
 .brxe-jet-smart-filters-radio {
 	.jet-radio-list-wrapper {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: flex-start;
 		margin: 0;
+
+		fieldset {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: flex-start;
+		}
 	}
 
 	.jet-radio-list__row {

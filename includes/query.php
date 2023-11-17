@@ -192,14 +192,16 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 			if ( empty( $this->_props[ $provider ] ) ) {
 				$this->_props[ $provider ] = array();
 			}
+
+			if ( empty( $this->_props[ $provider ][ $query_id ] ) ) {
+				$this->_props[ $provider ][ $query_id ] = array();
+			}
 			
 			do_action( 'jet-smart-filters/query/store-query-props/' . $provider, $this, $query_id );
 
-			$this->_props[ $provider ][ $query_id ] = array(
-				'found_posts'   => $query->found_posts,
-				'max_num_pages' => $query->max_num_pages,
-				'page'          => $query->get( 'paged' )
-			);
+			$this->_props[ $provider ][ $query_id ]['found_posts']   = $query->found_posts;
+			$this->_props[ $provider ][ $query_id ]['max_num_pages'] = $query->max_num_pages;
+			$this->_props[ $provider ][ $query_id ]['page']          = $query->get( 'paged' );
 		}
 
 		/**
@@ -536,7 +538,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 				}
 
 				array_walk( $data, function( $value, $key ) use ( $var ) {
-					if ( strpos( $key, $var ) ) {
+					if ( strpos( $key, '_' . $var ) !== false ) {
 						switch ( $var ) {
 							case 'tax_query':
 								$this->add_tax_query_var( $value, $this->clear_key( $key, $var ) );
@@ -782,40 +784,47 @@ if ( ! class_exists( 'Jet_Smart_Filters_Query_Manager' ) ) {
 		 */
 		public function add_date_query_var( $value ) {
 
-			$date_query = isset( $this->_query['date_query'] ) ? $this->_query['date_query'] : array();
-			$value      = explode( '-', $value );
-
-			if ( ! empty( $value[0] ) ) {
-				$after       = explode( '.', $value[0] );
-				$after_query = array(
-					'year'  => isset( $after[0] ) ? $after[0] : false,
-					'month' => isset( $after[1] ) ? $after[1] : false,
-					'day'   => isset( $after[2] ) ? $after[2] : false,
-				);
-			} else {
-				$after_query = false;
-			}
-
-			if ( ! empty( $value[1] ) ) {
-				$before       = explode( '.', $value[1] );
-				$before_query = array(
-					'year'  => isset( $before[0] ) ? $before[0] : false,
-					'month' => isset( $before[1] ) ? $before[1] : false,
-					'day'   => isset( $before[2] ) ? $before[2] : false,
-				);
-			} else {
-				$before_query = false;
-			}
-
 			$current_query = array(
 				'inclusive' => true
 			);
 
-			if ( $after_query ) {
-				$current_query['after'] = $after_query;
-			}
-			if ( $before_query ) {
-				$current_query['before'] = $before_query;
+			if ( str_contains( $value, '-' ) ) {
+				$value = explode( '-', $value );
+
+				if ( ! empty( $value[0] ) ) {
+					$after       = explode( '.', $value[0] );
+					$after_query = array(
+						'year'  => isset( $after[0] ) ? $after[0] : false,
+						'month' => isset( $after[1] ) ? $after[1] : false,
+						'day'   => isset( $after[2] ) ? $after[2] : false,
+					);
+				} else {
+					$after_query = false;
+				}
+
+				if ( ! empty( $value[1] ) ) {
+					$before       = explode( '.', $value[1] );
+					$before_query = array(
+						'year'  => isset( $before[0] ) ? $before[0] : false,
+						'month' => isset( $before[1] ) ? $before[1] : false,
+						'day'   => isset( $before[2] ) ? $before[2] : false,
+					);
+				} else {
+					$before_query = false;
+				}
+
+				if ( $after_query ) {
+					$current_query['after'] = $after_query;
+				}
+				if ( $before_query ) {
+					$current_query['before'] = $before_query;
+				}
+			} else {
+				$date = explode( '.', $value );
+
+				$current_query['year']  = isset( $date[0] ) ? $date[0] : false;
+				$current_query['month'] = isset( $date[1] ) ? $date[1] : false;
+				$current_query['day']   = isset( $date[2] ) ? $date[2] : false;
 			}
 
 			if ( !empty( $this->_default_query['date_query'] ) ) {

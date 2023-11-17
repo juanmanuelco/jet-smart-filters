@@ -140,11 +140,11 @@ export default class SelectHierarchical {
 		});
 
 		this.ajaxRequest({ values, args }, () => {
-			filters.forEach(filter => {
+			this.filters.forEach(filter => {
 				filter.setData(filter.data);
 			});
 
-			const firstFilter = filters[0];
+			const firstFilter = this.filters[0];
 			if (firstFilter)
 				eventBus.publish('activeItems/rebuild', firstFilter.provider, firstFilter.queryId);
 		});

@@ -2,6 +2,17 @@
 
 # ChangeLog
 
+## 3.1.2
+* ADD: process shortcodes in 'URL with filtered value' dynamic tag
+* FIX: apply filter 'jet-smart-filters/render_filter_template/filter_id' for all filters
+* FIX: current WP Query & Indexer compatibility
+* FIX: date period filter period type "DAY"
+* FIX: prevent php notices on php 8.2
+* FIX: add filter Id to filter uniqueKey
+* FIX: update duplicated hierarchical filter on reload
+* FIX: fixed radio filter direction control in Bricks
+* UPD: prevent from registering DOING_AJAX constant on non-admin-ajax referrers
+
 ## 3.1.1
 * UPD: redesigned initialization of filters on the frontend
 * ADD: pagination load more

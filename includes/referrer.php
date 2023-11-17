@@ -33,6 +33,11 @@ class Jet_Smart_Filters_Referrer_Manager {
 		$this->referrer_type = jet_smart_filters()->settings->get( 'ajax_request_types' );
 
 		if ( 'default' === $this->referrer_type || ! $this->referrer_type ) {
+
+			if ( jet_smart_filters()->query->is_ajax_filter() ) {
+				$this->define_filters_request_constant();
+			}
+
 			return;
 		}
 
@@ -45,6 +50,11 @@ class Jet_Smart_Filters_Referrer_Manager {
 		if ( 'self' === $this->referrer_type && ! empty( $_GET[ $this->front_query_key ] ) ) {
 			add_action( 'parse_request', array( $this, 'setup_front_referrer' ) );
 		}
+
+	}
+
+	public function define_filters_request_constant() {
+		define( 'JET_SMART_FILTERS_DOING_REQUEST', true );
 	}
 
 	public function set_referrer_settings( $data ) {
@@ -65,10 +75,15 @@ class Jet_Smart_Filters_Referrer_Manager {
 	 */
 	public function setup_front_referrer( $wp ) {
 
+		$this->define_filters_request_constant();
+
 		$wp->query_posts();
 		$wp->register_globals();
 
-		define( 'DOING_AJAX', true );
+		if ( apply_filters( 'jet-smart-filters/referrer/front/define-ajax', false ) ) {
+			define( 'DOING_AJAX', true );
+		}
+		
 		jet_smart_filters()->query->set_is_ajax_filter();
 
 		do_action( 'jet-smart-filters/referrer/request' );
@@ -93,6 +108,8 @@ class Jet_Smart_Filters_Referrer_Manager {
 		if ( ! is_array( $referrer ) ) {
 			return;
 		}
+
+		$this->define_filters_request_constant();
 
 		global $wp;
 

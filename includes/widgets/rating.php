@@ -616,7 +616,7 @@ class Jet_Smart_Filters_Rating_Widget extends Jet_Smart_Filters_Base_Widget {
 
 		printf( '<div class="%1$s jet-filter">', $base_class );
 
-		$filter_id            = $settings['filter_id'];
+		$filter_id            = apply_filters( 'jet-smart-filters/render_filter_template/filter_id', $settings['filter_id'] );
 		$provider             = ! empty( $settings['content_provider'] ) ? $settings['content_provider'] : '';
 		$query_id             = ! empty( $settings['query_id'] ) ? $settings['query_id'] : 'default';
 		$show_label           = ! empty( $settings['show_label'] ) ? filter_var( $settings['show_label'], FILTER_VALIDATE_BOOLEAN ) : false;
@@ -636,7 +636,7 @@ class Jet_Smart_Filters_Rating_Widget extends Jet_Smart_Filters_Base_Widget {
 		include jet_smart_filters()->get_template( 'common/filter-label.php' );
 
 		jet_smart_filters()->filter_types->render_filter_template( $this->get_widget_fiter_type(), array(
-			'filter_id'            => $settings['filter_id'],
+			'filter_id'            => $filter_id,
 			'content_provider'     => $provider,
 			'additional_providers' => $additional_providers,
 			'query_id'             => $query_id,

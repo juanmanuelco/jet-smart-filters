@@ -75,6 +75,17 @@ if ( ! class_exists( 'Jet_Smart_Filters_Data' ) ) {
 		}
 
 		/**
+		 * Get baseurl.
+		 */
+		public function get_baseurl() {
+
+			$baseurl        = preg_replace( '/\bjsf[\/|=].*/', '', $_SERVER['REQUEST_URI'], 1 );
+			$parsed_baseurl = wp_parse_url( $baseurl );
+
+			return rtrim( array_key_exists( 'path', $parsed_baseurl ) ? $parsed_baseurl['path'] : $baseurl, '/' ) . '/';
+		}
+
+		/**
 		 * Return information about compare data by label
 		 */
 		public function parse_comapre_label( $label ) {

@@ -61,13 +61,11 @@ if ( ! class_exists( 'Jet_Smart_Filters_Filter_Manager' ) ) {
 				true
 			);
 
-			$parsed_home_url = wp_parse_url( home_url() );
-
 			$localized_data = apply_filters( 'jet-smart-filters/filters/localized-data', array(
 				'ajaxurl'         => admin_url( 'admin-ajax.php' ),
 				'siteurl'         => get_site_url(),
 				'sitepath'        => jet_smart_filters()->data->get_sitepath(),
-				'baseurl'         => rtrim( wp_parse_url( preg_replace( '/\bjsf[\/|=].*/', '', $_SERVER['REQUEST_URI'], 1 ) )['path'], '/' ) . '/',
+				'baseurl'         => jet_smart_filters()->data->get_baseurl(),
 				'selectors'       => jet_smart_filters()->data->get_provider_selectors(),
 				'queries'         => jet_smart_filters()->query->get_default_queries(),
 				'settings'        => jet_smart_filters()->providers->get_provider_settings(),

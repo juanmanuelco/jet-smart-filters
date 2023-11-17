@@ -1099,7 +1099,7 @@ if ( ! class_exists( 'Jet_Smart_Filters_Block_Date_Range' ) ) {
 				$apply_type = $settings['apply_type'];
 			}
 
-			$filter_id            = $settings['filter_id'];
+			$filter_id            = apply_filters( 'jet-smart-filters/render_filter_template/filter_id', $settings['filter_id'] );
 			$base_class           = 'jet-smart-filters-' . $this->get_name();
 			$provider             = $settings['content_provider'];
 			$query_id             = ! empty( $settings['query_id'] ) ? $settings['query_id'] : 'default';

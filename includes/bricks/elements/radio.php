@@ -43,7 +43,7 @@ class Jet_Smart_Filters_Bricks_Radio extends Jet_Smart_Filters_Bricks_Base_Check
 				'checkbox-checked'      => '.jet-radio-list__input:checked ~ .jet-radio-list__button .jet-radio-list__decorator',
 				'checkbox-checked-icon' => '.jet-radio-list__checked-icon',
 				'list-item'             => '.jet-radio-list__row',
-				'list-wrapper'          => '.jet-radio-list-wrapper',
+				'list-wrapper'          => '.jet-radio-list-wrapper fieldset',
 				'list-children'         => '.jet-list-tree__children',
 			]
 		);

@@ -757,6 +757,9 @@ export default class FilterGroup {
 	getFilterUniqueKey(filter) {
 		let uniqueKey = filter.name;
 
+		if (filter.filterId)
+			uniqueKey += '-' + filter.filterId;
+
 		if (filter.isHierarchy)
 			uniqueKey += '/hierarchical-depth-' + filter.depth;
 
