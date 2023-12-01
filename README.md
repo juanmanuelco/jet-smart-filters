@@ -2,6 +2,16 @@
 
 # ChangeLog
 
+## 3.2.4
+* ADD: sorting filter WPML support
+* ADD: .gitattributes
+* UPD: optimization for product indexing
+* FIX: range filter input decimal numbers
+* FIX: additional filters with URL params
+* FIX: ePro loop load more with styles
+* FIX: Active filters value Cross-Site Scripting (XSS)
+* FIX: booking listing & indexer
+
 ## 3.2.3
 * UPD: cherry-x-vue-ui
 * FIX: eProo loop custom post types & draft posts with current query

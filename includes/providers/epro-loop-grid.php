@@ -266,14 +266,6 @@ class Jet_Smart_Filters_Provider_EPro_Loop_Grid extends Jet_Smart_Filters_Provid
 	}
 
 	/**
-	 * Get provider list item selector
-	 */
-	public function get_item_selector() {
-
-		return '.e-loop-item';
-	}
-
-	/**
 	 * Set prefix for unique ID selector. Mostly is default '#' sign, but sometimes class '.' sign needed.
 	 * For example for Query Loop block we don't have HTML/CSS ID attribute, so we need to use class as unique identifier.
 	 */

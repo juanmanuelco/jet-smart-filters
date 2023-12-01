@@ -117,12 +117,19 @@ if ( ! class_exists( 'Jet_Smart_Filters_Utils' ) ) {
 		 */
 		public function merge_query_args( $current_query_args, $new_query_args ) {
 
+			$merged_keys = array( 'tax_query', 'meta_query', 'post__not_in' );
+			$merged_keys = apply_filters( 'jet-smart-filter/utils/merge-query-args/merged-keys', $merged_keys );
+
 			foreach ( $new_query_args as $key => $value ) {
-				if ( in_array( $key, array( 'tax_query', 'meta_query' ) ) && ! empty( $current_query_args[$key] ) ) {
+				if ( in_array( $key, $merged_keys ) && ! empty( $current_query_args[$key] ) ) {
 					$value = array_merge( $current_query_args[$key], $value );
+
+					if ( 'post__not_in' === $key ) {
+						$value = array_unique( $value );
+					}
 				}
 
-				if ( in_array( $key, array( 'post__in', 'post__not_in' ) ) && ! empty( $current_query_args[ $key ] ) ) {
+				if ( 'post__in' === $key && ! empty( $current_query_args[ $key ] ) ) {
 					$value = array_intersect( $current_query_args[ $key ], $value );
 
 					if ( empty( $value ) ) {
